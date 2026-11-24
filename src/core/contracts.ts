@@ -1,0 +1,265 @@
+/**
+ * The contract between everyone's work. Change it only through Yash.
+ * Rule of the product: AI may propose, code confirms, the student decides.
+ */
+
+/** What the assessment allows. Enforced at the server as well as in the UI. */
+export type AiLevel = 0 | 1 | 2 | 3;
+
+export type RegistryName = 'crossref' | 'openalex' | 'datacite' | 'doi.org';
+
+/** Verdict on whether a reference is real. Only code in core/verify may create one. */
+export type Verdict = 'confirmed' | 'details-differ' | 'wrong-paper' | 'retracted' | 'not-found' | 'could-not-check';
+
+/** Label on a claim. Only code in core/claims may create one. */
+export type ClaimLabel = 'verified' | 'reported' | 'ai-reasoning' | 'disputed' | 'not-found';
+
+/** Closed list. Every verdict or label that is not a clean pass carries at least one. */
+export type ReasonCode =
+  | 'DOI_DOES_NOT_EXIST'
+  | 'DOI_IS_ANOTHER_PAPER'
+  | 'TITLE_DIFFERS'
+  | 'AUTHOR_DIFFERS'
+  | 'YEAR_DIFFERS'
+  | 'AUTHORS_NOT_LISTED'
+  | 'NO_MATCH_IN_REGISTRIES'
+  | 'RETRACTED'
+  | 'REGISTRY_UNREACHABLE'
+  | 'NOT_ENOUGH_TO_SEARCH'
+  | 'QUOTE_NOT_IN_SOURCE'
+  | 'NUMBER_MISMATCH'
+  | 'DIRECTION_FLIPPED'
+  | 'SCOPE_OVERCLAIM'
+  | 'NO_SOURCE'
+  | 'NO_READABLE_TEXT'
+  | 'MODEL_UNSURE'
+  | 'CONTRADICTED_BY_SOURCE'
+  | 'INSTRUCTION_IN_SOURCE';
+
+/** A reference as the student (or an AI tool) wrote it. Nothing here is trusted. */
+export interface RawReference {
+  raw: string;
+  doi?: string;
+  title?: string;
+  authors?: string[];
+  year?: number;
+  container?: string;
+  url?: string;
+  isbn?: string;
+}
+
+export interface Author {
+  family: string;
+  given?: string;
+}
+
+/** A record that came from a registry. The only thing a citation may be built from. */
+export interface RegistryRecord {
+  registry: RegistryName;
+  id: string;
+  doi?: string;
+  title: string;
+  authors: Author[];
+  year?: number;
+  container?: string;
+  volume?: string;
+  issue?: string;
+  pages?: string;
+  publisher?: string;
+  type?: string;
+  url?: string;
+  abstract?: string;
+  openAccessUrl?: string;
+  citedBy?: number;
+  references?: string[];
+  retracted: boolean;
+  retractedOn?: string;
+}
+
+export interface FieldDiff {
+  field: 'title' | 'authors' | 'year' | 'doi';
+  given: string;
+  registry: string;
+  score: number;
+  ok: boolean;
+}
+
+export interface RegistryTrace {
+  registry: RegistryName;
+  status: 'match' | 'no-match' | 'not-found' | 'error' | 'skipped';
+  note?: string;
+  ms: number;
+}
+
+export interface ReferenceCheck {
+  verdict: Verdict;
+  reasons: ReasonCode[];
+  record?: RegistryRecord;
+  fields: FieldDiff[];
+  trace: RegistryTrace[];
+  checkedAt: string;
+  /** True when this result was recorded earlier and is being replayed. The UI must show SAMPLE. */
+  sample?: boolean;
+}
+
+/** Three-key rule. A source is exportable only when all three are set. */
+export interface Keys {
+  found: boolean;
+  checked: boolean;
+  approved: boolean;
+}
+
+export type CitationStyle = 'apa' | 'harvard' | 'mla' | 'chicago' | 'ieee';
+
+export interface Project {
+  id: string;
+  question: string;
+  style: CitationStyle;
+  aiLevel: AiLevel;
+  createdAt: string;
+  /** Gate 1. Set when the student approves the search plan. */
+  plan?: SearchPlan;
+}
+
+export interface SearchPlan {
+  queries: string[];
+  fromYear?: number;
+  approvedAt?: string;
+}
+
+export type SourceOrigin = 'search' | 'doi' | 'bibtex' | 'ris' | 'pdf' | 'web' | 'check' | 'manual';
+
+export interface Source {
+  id: string;
+  projectId: string;
+  origin: SourceOrigin;
+  record?: RegistryRecord;
+  raw?: RawReference;
+  check?: ReferenceCheck;
+  keys: Keys;
+  folder?: string;
+  tags: string[];
+  notes: string;
+  /** Plain text we are allowed to read: abstract, open full text, or the student's own PDF. */
+  text?: string;
+  textOrigin?: 'abstract' | 'fulltext' | 'pdf' | 'web';
+  /** Set when the student keeps a flagged source. Shown on every export. */
+  keptWithReason?: string;
+  addedAt: string;
+}
+
+export interface Passage {
+  id: string;
+  sourceId: string;
+  text: string;
+  start: number;
+  end: number;
+}
+
+export interface ClaimChecks {
+  exactQuote: boolean;
+  support: number | null;
+  contradiction: number | null;
+  numbers: boolean | null;
+  direction: boolean | null;
+  scope: boolean | null;
+}
+
+export interface Claim {
+  id: string;
+  projectId: string;
+  text: string;
+  sourceId?: string;
+  passage?: Passage;
+  label: ClaimLabel;
+  reasons: ReasonCode[];
+  checks: ClaimChecks;
+  decision?: 'accepted' | 'rewritten' | 'rejected';
+  keptWithReason?: string;
+  by: 'student' | 'ai';
+  createdAt: string;
+}
+
+export type Actor = 'student' | 'code' | 'ai';
+
+export interface LogEvent {
+  seq: number;
+  projectId: string;
+  at: string;
+  actor: Actor;
+  action: string;
+  detail: string;
+  model?: string;
+  prompt?: string;
+  prevHash: string;
+  hash: string;
+}
+
+export interface Policy {
+  allowedTypes: string[];
+  minYear: number | null;
+  peerReviewedOnly: boolean;
+  blockRetracted: boolean;
+  maxAiCallsPerProject: number;
+  overrideReasonMinChars: number;
+  thresholds: {
+    titleMatch: number;
+    titlePossible: number;
+    yearTolerance: number;
+    supportVerified: number;
+    contradiction: number;
+  };
+  styles: CitationStyle[];
+}
+
+/** Green only ever means proven. */
+export type Tone = 'ok' | 'warn' | 'bad' | 'mute';
+
+export interface LabelText {
+  label: string;
+  tone: Tone;
+  mark: string;
+  plain: string;
+}
+
+export const VERDICT_TEXT: Record<Verdict, LabelText> = {
+  confirmed: { label: 'Confirmed', tone: 'ok', mark: '✓', plain: 'A registry has this exact work.' },
+  'details-differ': { label: 'Details differ', tone: 'warn', mark: '≠', plain: 'The work is real, but something you wrote does not match the registry.' },
+  'wrong-paper': { label: 'Wrong paper', tone: 'bad', mark: '⇄', plain: 'The DOI is real and belongs to a different work.' },
+  retracted: { label: 'Retracted', tone: 'bad', mark: '✕', plain: 'The publisher has withdrawn this work.' },
+  'not-found': { label: 'Not found', tone: 'mute', mark: '?', plain: 'None of the registries we searched has it. Some real books and regional journals are not indexed.' },
+  'could-not-check': { label: 'Could not check', tone: 'mute', mark: '…', plain: 'A registry did not answer, so this is neither a pass nor a fail.' },
+};
+
+export const CLAIM_TEXT: Record<ClaimLabel, LabelText> = {
+  verified: { label: 'Verified', tone: 'ok', mark: '✓', plain: 'The source says this, in these words. That does not mean the source is right.' },
+  reported: { label: 'Reported, not checked', tone: 'mute', mark: '~', plain: 'The source is real, but we could not confirm it says this.' },
+  'ai-reasoning': { label: 'AI reasoning', tone: 'mute', mark: '⌁', plain: 'No source. Left out of exports unless you keep it with a reason.' },
+  disputed: { label: 'Disputed', tone: 'warn', mark: '≠', plain: 'The cited source, or another one, says otherwise.' },
+  'not-found': { label: 'Not found', tone: 'mute', mark: '?', plain: 'We searched and found nothing reliable.' },
+};
+
+export const REASON_TEXT: Record<ReasonCode, string> = {
+  DOI_DOES_NOT_EXIST: 'This DOI does not exist.',
+  DOI_IS_ANOTHER_PAPER: 'This DOI opens a different paper.',
+  TITLE_DIFFERS: 'The title does not match the registry.',
+  AUTHOR_DIFFERS: 'One or more authors do not match the registry.',
+  YEAR_DIFFERS: 'The year does not match the registry.',
+  AUTHORS_NOT_LISTED: 'The registry lists no authors for this work, so we could not compare them.',
+  NO_MATCH_IN_REGISTRIES: 'No registry we searched has a matching work.',
+  RETRACTED: 'The publisher has retracted this work.',
+  REGISTRY_UNREACHABLE: 'A registry did not answer.',
+  NOT_ENOUGH_TO_SEARCH: 'There is not enough here to search with. Add a title or a DOI.',
+  QUOTE_NOT_IN_SOURCE: 'These words are not in the source.',
+  NUMBER_MISMATCH: 'A number does not match the source.',
+  DIRECTION_FLIPPED: 'The source says the opposite direction.',
+  SCOPE_OVERCLAIM: 'The claim goes further than the source.',
+  NO_SOURCE: 'No source is attached.',
+  NO_READABLE_TEXT: 'We could not read the text of this source.',
+  MODEL_UNSURE: 'The support check was not sure.',
+  CONTRADICTED_BY_SOURCE: 'The source contradicts this.',
+  INSTRUCTION_IN_SOURCE: 'The source text contains instructions aimed at an AI. They were ignored.',
+};
+
+/** The only place that decides whether a source may be cited. */
+export const exportable = (s: Source): boolean => s.keys.found && s.keys.checked && s.keys.approved;

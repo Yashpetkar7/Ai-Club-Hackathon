@@ -1,0 +1,13 @@
+.bar { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; justify-content: space-between; }
+.note { background: var(--mute-bg); color: var(--mute); padding: 10px 14px; max-width: none; }
+.empty { padding: 24px; display: grid; gap: 12px; justify-items: start; }
+.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.hit { padding: 18px 20px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px; align-items: start; }
+.hit[data-choice='skipped'] { opacity: 0.6; }
+.hit[data-choice='kept'] { border-color: var(--accent); }
+.title { font-family: var(--body); font-weight: 600; font-size: 1.04rem; line-height: 1.4; overflow-wrap: anywhere; }
+.abs { font-size: 0.94rem; background: var(--raise); padding: 12px 14px; max-width: none; }
+.acts { display: flex; gap: 8px; align-items: center; }
+.kept { color: var(--accent); }
+.gate { border: 2px solid var(--gate); padding: 18px 20px; display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; justify-content: space-between; background: var(--sheet); position: sticky; bottom: 12px; }
+@media (max-width: 620px) { .hit { grid-template-columns: minmax(0, 1fr); } }

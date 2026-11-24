@@ -1,0 +1,20 @@
+.receipt { background: var(--sheet); color: var(--ink); border: 1px solid var(--line); border-bottom: 0; padding: 18px 20px 26px; display: grid; gap: 12px; min-width: 0; -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - 7px) no-repeat, conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) bottom / 14px 7px repeat-x; mask: linear-gradient(#000 0 0) top / 100% calc(100% - 7px) no-repeat, conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) bottom / 14px 7px repeat-x; }
+.feed { animation: feed 0.5s var(--ease); transform-origin: top; }
+@keyframes feed { from { transform: translateY(-10px) scaleY(0.7); opacity: 0; } }
+.head { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.plain { font-size: 0.95rem; }
+.reasons { margin: 0; padding-left: 1.2em; font-weight: 600; font-size: 0.94rem; }
+.diff { width: 100%; border-collapse: collapse; font-size: 0.9rem; table-layout: fixed; }
+.diff th, .diff td { text-align: left; vertical-align: top; padding: 7px 10px 7px 0; border-top: 1px solid var(--line); overflow-wrap: anywhere; }
+.diff thead th { border-top: 0; color: var(--soft); font-weight: 500; font-size: 0.84rem; }
+.diff th:first-child { width: 6.4em; font-weight: 600; }
+.diff tr[data-ok='true'] th span:first-child { color: var(--ok); }
+.diff tr[data-ok='false'] th span:first-child { color: var(--bad); }
+.diff tr[data-ok='false'] td { background: var(--warn-bg); box-shadow: inset 6px 0 0 var(--warn-bg); padding-left: 6px; }
+.facts { display: grid; grid-template-columns: 6.4em minmax(0, 1fr); gap: 4px 12px; margin: 0; font-size: 0.92rem; }
+.facts dt { color: var(--soft); }
+.facts dd { margin: 0; overflow-wrap: anywhere; }
+.retract { color: var(--bad); font-weight: 600; font-size: 0.94rem; }
+.asked { font-size: 0.86rem; color: var(--soft); overflow-wrap: anywhere; }
+.strip { font-family: var(--mono); font-size: 0.74rem; color: var(--soft); background: var(--raise); padding: 8px 10px; overflow-wrap: anywhere; max-width: none; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }

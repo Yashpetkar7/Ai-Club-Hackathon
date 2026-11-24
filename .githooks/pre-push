@@ -1,0 +1,20 @@
+#!/bin/sh
+# Team rule: nobody pushes until Yash says so. This stops accidents; it is not a lock.
+while read -r local_ref local_sha remote_ref remote_sha; do
+  branch="${remote_ref#refs/heads/}"
+  if [ "$PUSH_OK" != "yash-said-yes" ]; then
+    echo ""
+    echo "  STOP: pushing needs Yash's permission."
+    echo "  1. Tell Yash your branch is ready and what you tested."
+    echo "  2. When Yash says yes, run:"
+    echo "       PUSH_OK=yash-said-yes git push -u origin $branch"
+    echo "     (PowerShell:  \$env:PUSH_OK='yash-said-yes'; git push -u origin $branch; \$env:PUSH_OK='')"
+    echo ""
+    exit 1
+  fi
+  if [ "$branch" = "main" ] && [ "$(git config user.name)" != "Yashpetkar7" ]; then
+    echo "  STOP: only Yash updates main. Push your own branch and open a pull request."
+    exit 1
+  fi
+done
+exit 0

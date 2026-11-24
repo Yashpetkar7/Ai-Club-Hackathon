@@ -1,0 +1,16 @@
+node_modules
+dist
+.env
+.env.*
+!.env.example
+.DS_Store
+*.local
+coverage
+playwright-report
+test-results
+.vite
+# personal data: never commit
+*Teams*.pdf
+*Rules_and_Regulations*.pdf
+# organisers' documents: not ours to republish
+docs/official/

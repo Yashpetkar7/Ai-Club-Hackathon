@@ -1,0 +1,12 @@
+.start { padding: 26px 28px; display: grid; gap: 24px; }
+.levels { border: 0; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+.levels legend { padding: 0 0 10px; }
+.level { border: 1px solid var(--line); padding: 14px 16px; display: grid; gap: 4px; align-content: start; cursor: pointer; position: relative; font-size: 0.94rem; }
+.level input { position: absolute; opacity: 0; }
+.level:focus-within { outline: 3px solid var(--gate); outline-offset: 2px; }
+.level[data-on='true'] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: var(--raise); }
+.num { font-family: var(--display); font-size: 1.8rem; line-height: 1; color: var(--accent); }
+.error { color: var(--bad); font-weight: 600; }
+.item { padding: 16px 20px; display: grid; gap: 4px; text-decoration: none; color: var(--ink); }
+.item:hover { border-color: var(--accent); }
+@media (max-width: 520px) { .start { padding: 20px 18px; } }
