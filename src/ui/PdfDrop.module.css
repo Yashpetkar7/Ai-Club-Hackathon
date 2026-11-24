@@ -1,0 +1,6 @@
+.drop { border: 1.5px dashed var(--line); padding: 18px 20px; display: grid; gap: 8px; background: var(--sheet); }
+.drop[data-over='true'] { border-color: var(--accent); background: var(--raise); }
+.drop input { max-width: 100%; }
+.out { padding: 14px 18px; display: grid; gap: 8px; overflow-wrap: anywhere; }
+.bad { color: var(--bad); font-weight: 600; }
+.warn { background: var(--warn-bg); color: var(--warn); padding: 8px 12px; max-width: none; }

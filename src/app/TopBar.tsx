@@ -40,6 +40,12 @@ export function TopBar({ section }: { section: string }) {
             </Link>
           ))}
         </nav>
+        <button type="button" className={css.lamp} onClick={() => window.dispatchEvent(new Event('pt:palette'))}>
+          Search <kbd>Ctrl K</kbd>
+        </button>
+        <button type="button" className={css.lamp} onClick={() => window.dispatchEvent(new Event('pt:tour'))}>
+          Tour
+        </button>
         <button type="button" className={css.lamp} aria-pressed={theme === 'dark'} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
           {theme === 'dark' ? 'Lights on' : 'Lights off'}
         </button>

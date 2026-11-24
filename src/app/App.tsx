@@ -2,7 +2,9 @@ import { Component, lazy, Suspense, useEffect, useRef, type ReactNode } from 're
 import { Check } from '@/pages/Check';
 import { Projects } from '@/pages/Projects';
 import { ProjectShell } from './ProjectShell';
+import { CommandPalette } from './CommandPalette';
 import { useRoute } from './router';
+import { Tour } from './Tour';
 import { TopBar } from './TopBar';
 
 const Landing = lazy(() => import('@/landing/Landing').then((m) => ({ default: m.Landing })));
@@ -73,6 +75,8 @@ export function App() {
         Skip to content
       </a>
       {section !== '' && <TopBar section={section} />}
+      <CommandPalette />
+      <Tour />
       <Boundary resetKey={path}>
         <Suspense fallback={<main className="wrap page" aria-busy="true"><p className="soft">Loading…</p></main>}>{page}</Suspense>
       </Boundary>

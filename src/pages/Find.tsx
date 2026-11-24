@@ -7,9 +7,10 @@ import { registries, searchPapers } from '@/core/registries';
 import { cleanTitle } from '@/core/verify/normalise';
 import { checkReference } from '@/core/verify/verdict';
 import { record as log } from '@/log/log';
-import { POLICY } from '@/policy/policy';
+import { policyIssues } from '@/policy/apply';
 import { addSource } from '@/store/actions';
 import { db } from '@/store/db';
+import { PdfDrop } from '@/ui/PdfDrop';
 import { VerdictStamp } from '@/ui/Stamp';
 import css from './Find.module.css';
 
@@ -58,7 +59,7 @@ export function Find({ project }: StepProps) {
         if (r.note) said.push(r.note);
         for (const rec of r.records) {
           const key = rec.doi ?? cleanTitle(rec.title).toLowerCase();
-          if (!found.has(key) && (!POLICY.minYear || (rec.year ?? 0) >= POLICY.minYear)) found.set(key, { key, record: rec, query });
+          if (!found.has(key)) found.set(key, { key, record: rec, query });
         }
         setHits([...found.values()]);
       } catch {
@@ -90,7 +91,7 @@ export function Find({ project }: StepProps) {
 
   async function keep(h: Hit) {
     if (!h.check) return;
-    await addSource(project.id, 'search', { record: h.record, check: h.check, approve: h.check.verdict === 'confirmed' });
+    await addSource(project.id, 'search', { record: h.record, check: h.check, approve: h.check.verdict === 'confirmed' && !policyIssues(h.record).length });
     setHits((cur) => cur.map((c) => (c.key === h.key ? { ...c, choice: 'kept' } : c)));
   }
 
@@ -163,6 +164,11 @@ export function Find({ project }: StepProps) {
                     </button>
                   )}
                 </div>
+                {policyIssues(h.record).map((x) => (
+                  <p key={x} className={css.note}>
+                    {x}
+                  </p>
+                ))}
                 {show === h.key && abs && <p className={css.abs}>{abs}</p>}
               </div>
               <div className={css.acts}>
@@ -187,6 +193,7 @@ export function Find({ project }: StepProps) {
           );
         })}
       </ul>
+      <PdfDrop projectId={project.id} />
       {(kept?.length ?? 0) > 0 && (
         <div className={css.gate}>
           <p>

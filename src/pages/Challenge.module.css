@@ -1,0 +1,10 @@
+.claim { min-height: 84px; resize: vertical; }
+.warn { background: var(--warn-bg); color: var(--warn); padding: 8px 12px; max-width: none; justify-self: start; }
+.risks { margin: 0; padding: 14px 18px 14px 34px; border: 2px solid var(--gate); background: var(--sheet); display: grid; gap: 6px; }
+.cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; align-items: start; }
+.col { display: grid; gap: 12px; min-width: 0; }
+.col h2 { font-size: 1.15rem; }
+.item { padding: 16px; display: grid; gap: 10px; min-width: 0; }
+.item blockquote { margin: 0; font-size: 1rem; line-height: 1.5; overflow-wrap: anywhere; }
+.who { font-size: 0.88rem; color: var(--soft); overflow-wrap: anywhere; }
+@media (max-width: 1080px) { .cols { grid-template-columns: minmax(0, 1fr); } }
