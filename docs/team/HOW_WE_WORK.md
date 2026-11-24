@@ -1,7 +1,7 @@
 # How we work
 
 ## The rule
-Everyone works on their own branch. **Nobody pushes until Yash says yes.** Commit as much as you like on your own machine.
+Everyone works on, and pushes to, **their own branch only**. **Only Yash merges into `main`.** Nobody edits another person's files, so there is nothing to conflict.
 
 ## The repo is public
 Other teams can read everything we push. Never push keys, emails, phone numbers, the team code, the organisers' PDFs, or anything you would not show a judge.
@@ -25,25 +25,12 @@ npm run dev
 
 Then open your AI tool in this folder and paste the prompt from the end of your brief in `docs/team/`.
 
-## Asking to push
-1. `npm run verify` passes. You clicked through your pages yourself.
-2. Send Yash your handover note: branch, what works, what you tested, what does not, files changed.
-3. Yash replies "push it" for that branch.
-4. Push only your branch:
+## Pushing and asking for a merge
+1. After each finished task: `npm run verify`, commit, then `git push -u origin <your branch>`.
+2. At a checkpoint, send Yash your handover note: branch, what works, what you tested, what does not, files changed.
+3. Yash reviews and merges. Do not open or merge anything into `main` yourself.
 
-```bash
-PUSH_OK=yash-said-yes git push -u origin <your branch>
-```
-
-In PowerShell:
-
-```powershell
-$env:PUSH_OK='yash-said-yes'; git push -u origin <your branch>; $env:PUSH_OK=''
-```
-
-5. Open a pull request into `main`. Yash reviews and merges. One yes covers one push.
-
-The hook that blocks pushing is a reminder, not a lock. Please do not work around it.
+The hook and GitHub's rules stop pushes to `main`. If a push is rejected, send Yash the message.
 
 ## Getting Yash's latest main
 ```bash

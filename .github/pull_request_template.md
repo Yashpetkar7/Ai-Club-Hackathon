@@ -4,7 +4,7 @@
 **What does not work:**
 **Shared-code requests:**
 
-- [ ] Yash gave permission for this push
+- [ ] This branch is mine
 - [ ] Only files from my brief changed
 - [ ] `npm run verify` passes
 - [ ] No invented references, numbers or quotes; samples say SAMPLE

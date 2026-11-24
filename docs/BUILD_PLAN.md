@@ -186,14 +186,14 @@ Owners follow `TEAM_ROLES.md` and can be swapped. "Owner" means the person who c
 | P0 | Write: editor with cite picker and margin checks (the brief names citing while you write) | Cite while writing | Cite something not in the library | Siddal |
 | P1 | Integrity Lab: live self-test against the published five failure types | We publish our own error rate | Press Run | Hemanth |
 | P0 | Add web pages (the brief names web sources) | Save any source | Paste a URL | Siddal |
-| P1 | Add by PDF (read in the browser, never uploaded) | Full-text quotes | Drop a PDF | Siddal |
-| P1 | Constellation: 3D map of the student's own sources from real citation links, with a table twin | See how sources connect | Click a node | Siddal |
+| P1 | Add by PDF (read in the browser, never uploaded) | Full-text quotes | Drop a PDF | Yash |
+| P1 | Constellation: 3D map of the student's own sources from real citation links, with a table twin | See how sources connect | Click a node | Yash |
 | P1 | 60-second judge tour that drives the real app | Runs the demo if nerves strike | Press Play | Yash |
-| P1 | Command palette, stamp press, printing receipts | Feels finished | `Ctrl K` | Siddal |
+| P1 | Command palette, stamp press, printing receipts | Feels finished | `Ctrl K` | Yash |
 | P1 | Evidence log with a Verify button (tamper-evident) | Faculty can trust the record | Edit a line, watch it fail | Hemanth |
 | P0 | Ask your library: answers from kept sources or an honest Not found (the brief says "AI Research Assistant") | Research assistant | Ask something absent | Nihal |
 | **P2** | Harvard, MLA, Chicago, IEEE styles | Other courses | Style switch | Siddal |
-| P2 | Source balance: year, venue, open access, single-source warning | Bias awareness | Library panel | Hemanth |
+| P2 | Source balance: year, venue, open access, single-source warning | Bias awareness | Library panel | Yash |
 | P2 | Save from any page (bookmarklet) | One-click save | Click on a journal page | Yash |
 | P2 | Share a read-only evidence report | Faculty can check | Open the file | Yash |
 

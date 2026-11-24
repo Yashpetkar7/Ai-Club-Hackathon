@@ -1,20 +1,23 @@
 #!/bin/sh
-# Team rule: nobody pushes until Yash says so. This stops accidents; it is not a lock.
+# Team rule: push only to your own branch. Only Yash updates main. This stops accidents; GitHub rules are the lock.
+current=$(git symbolic-ref --short HEAD 2>/dev/null)
+zero=0000000000000000000000000000000000000000
 while read -r local_ref local_sha remote_ref remote_sha; do
   branch="${remote_ref#refs/heads/}"
-  if [ "$PUSH_OK" != "yash-said-yes" ]; then
-    echo ""
-    echo "  STOP: pushing needs Yash's permission."
-    echo "  1. Tell Yash your branch is ready and what you tested."
-    echo "  2. When Yash says yes, run:"
-    echo "       PUSH_OK=yash-said-yes git push -u origin $branch"
-    echo "     (PowerShell:  \$env:PUSH_OK='yash-said-yes'; git push -u origin $branch; \$env:PUSH_OK='')"
-    echo ""
-    exit 1
+  if [ "$branch" = "main" ]; then
+    if [ "$(git config user.name)" != "Yashpetkar7" ] || [ "$PUSH_OK" != "yash-said-yes" ]; then
+      echo "  STOP: only Yash updates main. Push your own branch instead."; exit 1
+    fi
+    continue
   fi
-  if [ "$branch" = "main" ] && [ "$(git config user.name)" != "Yashpetkar7" ]; then
-    echo "  STOP: only Yash updates main. Push your own branch and open a pull request."
-    exit 1
+  case "$branch" in
+    nihal/evidence-ask|siddal/library-cite|hemanth/lab-governance|yash/integration) ;;
+    *) echo "  STOP: '$branch' is not one of the team branches."; exit 1 ;;
+  esac
+  if [ "$local_sha" = "$zero" ]; then echo "  STOP: do not delete a team branch."; exit 1; fi
+  if [ "$branch" != "$current" ]; then echo "  STOP: you are on '$current' but pushing to '$branch'. Push only your own branch."; exit 1; fi
+  if [ "$remote_sha" != "$zero" ] && ! git merge-base --is-ancestor "$remote_sha" "$local_sha" 2>/dev/null; then
+    echo "  STOP: this would overwrite work already on '$branch'. Run: git pull --no-rebase origin $branch"; exit 1
   fi
 done
 exit 0

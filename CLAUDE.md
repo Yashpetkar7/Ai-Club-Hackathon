@@ -4,8 +4,8 @@ Team 1, SP Jain AI Club Hackathon 2026: Hemanth, Nihal, Siddal, Yash. Yash leads
 Read `docs/PROBLEM_STATEMENT.md`, then `docs/BUILD_PLAN.md`, then the brief of the person you are helping in `docs/team/`.
 
 ## Hard rules
-1. **Never push.** Nobody pushes until Yash gives permission for that push, in that conversation. Do not run `git push`, do not set `PUSH_OK`, do not open pull requests, do not use `--no-verify`, do not edit `.githooks/`.
-2. **Work only on your person's branch** (names below). Never commit to `main`. Never rebase, force, reset or delete someone else's work.
+1. **Push only to your person's own branch** (names below). Pushing there after each finished, verified task is the default. Never push to `main` or anyone else's branch, never force-push, never set `PUSH_OK`, never use `--no-verify`, never edit `.githooks/`. If a push is rejected, keep the commit and say so.
+2. **Only Yash merges into `main`**, one permission per merge. Never rebase, reset or delete someone else's work.
 3. **Never deploy** to Vercel or any other host, and never link this repo to one, unless Yash says so in that session.
 4. **Touch only the files your brief lists.** If you need a change in shared code, stop and write the request in your handover note for Yash.
 5. **No new dependencies.** Everything planned is installed. If you think you need one, ask Yash.
@@ -32,6 +32,7 @@ Read `docs/PROBLEM_STATEMENT.md`, then `docs/BUILD_PLAN.md`, then the brief of t
 | `src/store`, `src/log` | Storage actions, evidence log | Yash |
 | `src/app`, `src/ui`, `src/landing` | Shell, design system, 3D landing | Yash |
 | `src/pages/Check, Projects, Plan, Find` | Built | Yash |
+| `src/pages/Challenge, Map`, `src/core/challenge, pdf, report`, `src/map` | Challenger, map, PDF, report | Yash |
 | `src/core/claims`, `src/agents`, `src/pages/Evidence, Ask`, `server/handlers/ai.mjs` | Evidence and the assistant | Nihal |
 | `src/core/cite`, `src/core/import`, `src/pages/Library, Write, Export` | Organise and cite | Siddal |
 | `src/core/lab`, `src/pages/Lab, Rules, AiStatement`, `docs/deck` | Proof, governance, deck | Hemanth |
@@ -45,7 +46,7 @@ Branches: `nihal/evidence-ask`, `siddal/library-cite`, `hemanth/lab-governance`,
 - Each page has its own CSS module. Use the tokens in `src/ui/tokens.css` and the classes `btn`, `field`, `card`, `stack`, `row`, `soft`, `stamp`. No new colours, no gradients, no glass, no emoji icons.
 - Every page handles empty, loading, partial, error and offline states, works at 375 px, and works by keyboard.
 - Interface words: plain, short, sentence case. Buttons say what they do.
-- Commit small and often on your own branch with clear messages. Committing is fine; pushing is not.
+- Commit small and often on your own branch with clear messages, then push to that branch. Start each session with `git fetch origin` and `git merge origin/main`.
 
 ## Handover note
 When a slice is ready, write this in your reply so your person can send it to Yash:

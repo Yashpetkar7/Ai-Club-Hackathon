@@ -18,7 +18,6 @@
 3. **Citation engine** `core/cite`. `citeproc` with CSL styles in `public/styles` (APA 7, Harvard Cite Them Right, MLA 9, Chicago author-date, IEEE) and the en-US locale, from the citation-style-language project on GitHub (CC BY-SA; add a credit file). In-text citation and reference list. **APA needs sentence case titles**: convert, protect names and acronyms (words with inner capitals, all-caps words, words after a colon), and flag titles for the student to check. Never use doi.org's APA text; it gets this wrong.
 4. **Write page.** The student writes in their own words. "Cite" inserts `(Noy & Zhang, 2023)` from the library only, searchable by keyboard. Margin panel: cited and in the library; cited but not in the library; in the library but never cited. Autosave to `db.drafts`.
 5. **Export page.** Pre-flight first: blocks anything without three keys unless kept with a reason; blocks retracted sources unless kept with a reason; lists what was not checked. Then: preview, copy, Word (`docx`), BibTeX, RIS, plain text. Hanging indent and italics must survive in Word.
-6. **PDF (only if 1 to 5 are green).** `pdfjs-dist`, read in the browser, never uploaded. Find a DOI in the first two pages, run the checker, store the text with `textOrigin: 'pdf'`.
 
 ## Done means
 - Tests for APA output on at least eight real papers from `tests/unit/verify.test.ts`, with expected text you worked out by hand from the APA 7 rules. Include: two authors, four authors, 21 or more authors, a title with a question mark, a title with "ChatGPT" or "AI", no issue number, article number instead of pages, missing year (n.d.).
@@ -34,7 +33,14 @@ Q: How is this different from Zotero? Q: What happens to a book that Crossref do
 Pick Opus 5.5 and Extra effort first. Paste it once, in this folder, and let it run; turns are long at this setting.
 
 ```text
-You are the engineer for Library, Write and Export on Paper Trail, our hackathon website. I am Siddal. Build my whole brief, docs/team/SIDDAL.md, tasks 1 to 5. Task 6 only if everything else is green.
+GIT RULE, FIRST AND ALWAYS. My branch is siddal/library-cite. Push my code to siddal/library-cite by default, and nowhere else.
+- Start of every session: git fetch origin; git switch siddal/library-cite (or git switch -c siddal/library-cite origin/main the first time); git merge origin/main.
+- After every finished task: npm run verify, commit, then git push -u origin siddal/library-cite. You do not need to ask me for this push.
+- Never push to main or to anyone else's branch. Never force-push, rebase pushed work, delete a branch, or use --no-verify. Yash alone merges into main.
+- Change only the files my brief lists. That is what keeps us free of merge conflicts. If a merge conflicts in a file that is not mine, run git merge --abort and tell me.
+- If GitHub or the hook rejects a push, keep the commit, do not work around it, and tell me the message.
+
+You are the engineer for Library, Write and Export on Paper Trail, our hackathon website. I am Siddal. Build my whole brief, docs/team/SIDDAL.md, tasks 1 to 5.
 
 Read first: CLAUDE.md, docs/team/SIDDAL.md, docs/PROBLEM_STATEMENT.md, docs/BUILD_PLAN.md sections 3 and 5, src/core/contracts.ts, src/store/actions.ts, src/core/verify/parse.ts, src/pages/Check.tsx, src/pages/Find.tsx, src/ui/Receipt.tsx.
 
@@ -44,13 +50,13 @@ Two things must be true whatever else happens. First, nothing leaves through Exp
 
 Pages never set a verdict or a key; they call src/store/actions.ts. A web page is saved as origin web, is never shown as Confirmed, and needs a reason to approve. Keep <AiStatement project={project} /> at the foot of Export; Hemanth owns it. CSL styles are CC BY-SA, so add a credit file beside them.
 
-Boundaries. Work only on branch siddal/library-cite (git switch -c siddal/library-cite if it does not exist; git fetch and merge origin/main first). Change only the files my brief lists. Commit locally as you go. Do not push, open a pull request, deploy, set PUSH_OK, use --no-verify, add a dependency, or open any other team's repository. If shared code blocks you, do not edit it: write the request for Yash and carry on with the next piece. Never invent a paper, DOI, quote, number or result. Keys live only in .env.local.
+Boundaries. Do not deploy, open a pull request, add a dependency, change GitHub settings, or open any other team's repository. If shared code blocks you, do not edit it: write the request for Yash and carry on with the next piece. Never invent a paper, DOI, quote, number or result. Keys live only in .env.local.
 
 Design. Match Check and Find exactly: tokens from src/ui/tokens.css, square corners, 1px lines, Marcellus headings, Public Sans text. Do not use gradients, glass or blur, pill shapes, drop shadows on cards, emoji or sparkle icons, numbered 01/02/03 labels, uppercase eyebrow labels, or any new colour. Green only for proven.
 
 How to work. Make routine choices yourself and note them; ask me only if two readings would lead to different products. Before writing a page, write its tests. Give me a two-line update when each task is finished, not for every step. Stop for my review after task 2, after task 3 with a table of expected against actual APA strings, and after task 5.
 
-After each task: run npm run verify, fix what fails, commit, and add a row to docs/prompts/SIDDAL.md with this prompt or my follow-up and what it produced.
+After each task: run npm run verify, fix what fails, add a row to docs/prompts/SIDDAL.md with this prompt or my follow-up and what it produced, commit, and push to my branch.
 
 Done means: npm run verify is green; at least eight real papers from tests/unit/verify.test.ts format correctly, including two authors, four authors, 21 or more authors, a question-mark title, an acronym title, no issue, an article number, and no date; importing a DOI twice never duplicates; the Word file keeps italics and hanging indents, checked by reading its XML in a test; tests/e2e/library.spec.ts runs add, tag, filter, approve, cite, export in Chrome with no console errors and a clean axe scan; works at 375 px and by keyboard. Finish with the handover note from CLAUDE.md.
 ```
