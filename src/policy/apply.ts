@@ -25,6 +25,7 @@ export function policyLines(p: Policy = POLICY): string[] {
     p.peerReviewedOnly ? 'Only journal and conference papers.' : 'Journal papers, conference papers, books, reports, preprints and web pages.',
     p.blockRetracted ? 'Retracted work is blocked unless you keep it with a written reason.' : 'Retracted work is flagged.',
     `At most ${p.maxAiCallsPerProject} AI calls per project.`,
+    'The AI level is your own declaration. The server refuses AI above it, and every change is logged. It prevents accidents. It does not police cheating.',
     `Keeping anything outside these rules needs a reason of at least ${p.overrideReasonMinChars} characters.`,
   ];
 }

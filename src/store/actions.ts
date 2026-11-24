@@ -79,7 +79,19 @@ export async function removeSource(sourceId: string): Promise<void> {
 }
 
 export async function editSource(sourceId: string, patch: Pick<Partial<Source>, 'folder' | 'tags' | 'notes' | 'text' | 'textOrigin'>): Promise<void> {
+  const s = await db.sources.get(sourceId);
+  if (!s) return;
   await db.sources.update(sourceId, patch);
+  const what = Object.keys(patch).filter((k) => k !== 'textOrigin').join(', ');
+  await log(s.projectId, 'student', 'source.edited', `${s.record?.title ?? s.raw?.raw.slice(0, 120) ?? sourceId} | ${what}`);
+}
+
+/** A source the student looked at and left out. */
+export const skipSource = (projectId: string, title: string): Promise<unknown> => log(projectId, 'student', 'source.skipped', title);
+
+/** What the student did with suggestions from an AI. Counts for the AI-use statement come only from these entries. */
+export async function recordAiDecision(projectId: string, task: 'plan' | 'read' | 'challenge', d: { kept: string[]; changed: string[]; rejected: string[] }): Promise<void> {
+  await log(projectId, 'student', `ai.${task}.decided`, JSON.stringify(d));
 }
 
 /** What may be cited: all three keys, or kept with a written reason (shown as such). */

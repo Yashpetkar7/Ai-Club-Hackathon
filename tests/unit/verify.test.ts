@@ -108,6 +108,39 @@ describe('a registry that does not answer is never a pass and never a "not found
   });
 });
 
+describe('one registry is not enough for green', () => {
+  const rec = { registry: 'crossref' as const, id: '10.1234/x', doi: '10.1234/x', title: 'A study of reading habits in four cities', authors: [{ family: 'Noy' }], year: 2022, retracted: false };
+  const line = 'Noy, S. (2022). A study of reading habits in four cities. Journal of Reading, 1(1). https://doi.org/10.1234/x';
+  const none = async () => null;
+  const fail = async (): Promise<never> => { throw new Error('network error'); };
+  const base: Registries = { crossrefByDoi: async () => rec, openalexByDoi: async () => ({ ...rec, registry: 'openalex' }), dataciteByDoi: none, doiExists: async () => true, crossrefSearch: async () => [rec] };
+  it('both answer: confirmed', async () => expect((await checkReference(parseReference(line), base)).verdict).toBe('confirmed'));
+  it('the second answers that it has no record: confirmed, and the receipt says so', async () => {
+    const c = await checkReference(parseReference(line), { ...base, openalexByDoi: none });
+    expect(c.verdict).toBe('confirmed');
+    expect(c.trace.find((x) => x.registry === 'openalex')?.status).toBe('not-found');
+  });
+  it.each([['full reference', line], ['bare DOI', '10.1234/x']])('the second is down, %s: one registry only', async (_n, l) => {
+    const c = await checkReference(extractReferences(l).references[0]!, { ...base, openalexByDoi: fail });
+    expect(c.verdict).toBe('one-registry');
+    expect(c.reasons).toEqual(['SECOND_REGISTRY_UNREACHABLE']);
+  });
+  it('a problem found by one registry stands even when the other is down', async () => {
+    expect((await checkReference(parseReference(line.replace('2022', '2012')), { ...base, openalexByDoi: fail })).verdict).toBe('details-differ');
+    expect((await checkReference(parseReference(line), { ...base, crossrefByDoi: async () => ({ ...rec, retracted: true }), openalexByDoi: fail })).verdict).toBe('retracted');
+  });
+  it('DataCite works get a second look too', async () => {
+    const dc = { ...base, crossrefByDoi: none, dataciteByDoi: async () => ({ ...rec, registry: 'datacite' as const }) };
+    expect((await checkReference(parseReference(line), dc)).verdict).toBe('confirmed');
+    expect((await checkReference(parseReference(line), { ...dc, openalexByDoi: async () => ({ ...rec, registry: 'openalex' as const, retracted: true }) })).verdict).toBe('retracted');
+    expect((await checkReference(parseReference(line), { ...dc, openalexByDoi: fail })).verdict).toBe('one-registry');
+  });
+  it('a DOI we could not look up is not excused by a title match with another DOI', async () => {
+    const c = await checkReference(parseReference(line.replace('10.1234/x', '10.1234/other')), { ...base, crossrefByDoi: fail, dataciteByDoi: fail });
+    expect(c.verdict).toBe('could-not-check');
+  });
+});
+
 describe('reading pasted text', () => {
   it('splits a wrapped bibliography and flags citations with no entry', () => {
     const text = `Generative AI made writers faster (Noy & Zhang, 2023). Others disagree (Hargrove, 2024).

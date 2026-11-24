@@ -1,4 +1,5 @@
 import { ai, aiConfigured } from './handlers/ai.mjs';
+import { guardAi } from './guard.mjs';
 import { registry } from './handlers/registry.mjs';
 
 /** Returns a Response for /api/* and null for everything else. */
@@ -7,7 +8,10 @@ export async function route(req) {
   if (!p.startsWith('/api/')) return null;
   if (p === '/api/health') return Response.json({ ok: true, ai: aiConfigured(), openalexKey: Boolean(process.env.OPENALEX_API_KEY) });
   if (p === '/api/registry') return registry(req);
-  if (p === '/api/ai') return ai(req);
+  if (p === '/api/ai') {
+    const g = await guardAi(req);
+    return g.res ?? ai(g.req);
+  }
   return Response.json({ error: 'not found' }, { status: 404 });
 }
 

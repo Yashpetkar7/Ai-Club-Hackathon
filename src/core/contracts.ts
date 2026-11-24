@@ -9,7 +9,7 @@ export type AiLevel = 0 | 1 | 2 | 3;
 export type RegistryName = 'crossref' | 'openalex' | 'datacite' | 'doi.org';
 
 /** Verdict on whether a reference is real. Only code in core/verify may create one. */
-export type Verdict = 'confirmed' | 'details-differ' | 'wrong-paper' | 'retracted' | 'not-found' | 'could-not-check';
+export type Verdict = 'confirmed' | 'one-registry' | 'details-differ' | 'wrong-paper' | 'retracted' | 'not-found' | 'could-not-check';
 
 /** Label on a claim. Only code in core/claims may create one. */
 export type ClaimLabel = 'verified' | 'reported' | 'ai-reasoning' | 'disputed' | 'not-found';
@@ -25,6 +25,7 @@ export type ReasonCode =
   | 'NO_MATCH_IN_REGISTRIES'
   | 'RETRACTED'
   | 'REGISTRY_UNREACHABLE'
+  | 'SECOND_REGISTRY_UNREACHABLE'
   | 'NOT_ENOUGH_TO_SEARCH'
   | 'QUOTE_NOT_IN_SOURCE'
   | 'NUMBER_MISMATCH'
@@ -225,6 +226,7 @@ export interface LabelText {
 
 export const VERDICT_TEXT: Record<Verdict, LabelText> = {
   confirmed: { label: 'Confirmed', tone: 'ok', mark: '✓', plain: 'A registry has this exact work.' },
+  'one-registry': { label: 'One registry only', tone: 'mute', mark: '1', plain: 'One registry has this exact work. The second did not answer, so a retraction could be missed. Check again before you rely on it.' },
   'details-differ': { label: 'Details differ', tone: 'warn', mark: '≠', plain: 'The work is real, but something you wrote does not match the registry.' },
   'wrong-paper': { label: 'Wrong paper', tone: 'bad', mark: '⇄', plain: 'The DOI is real and belongs to a different work.' },
   retracted: { label: 'Retracted', tone: 'bad', mark: '✕', plain: 'The publisher has withdrawn this work.' },
@@ -250,6 +252,7 @@ export const REASON_TEXT: Record<ReasonCode, string> = {
   NO_MATCH_IN_REGISTRIES: 'No registry we searched has a matching work.',
   RETRACTED: 'The publisher has retracted this work.',
   REGISTRY_UNREACHABLE: 'A registry did not answer.',
+  SECOND_REGISTRY_UNREACHABLE: 'The second registry did not answer.',
   NOT_ENOUGH_TO_SEARCH: 'There is not enough here to search with. Add a title or a DOI.',
   QUOTE_NOT_IN_SOURCE: 'These words are not in the source.',
   NUMBER_MISMATCH: 'A number does not match the source.',

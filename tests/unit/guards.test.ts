@@ -1,4 +1,5 @@
 // @vitest-environment node
+import { execFileSync } from 'node:child_process';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -41,6 +42,11 @@ describe('honesty rules that a refactor must not break', () => {
     const importsThree = src.filter((f) => /from ['"]three['"]/.test(read(f))).map((f) => f.replace(/\\/g, '/').split('/src/')[1]).sort();
     expect(importsThree).toEqual(['landing/scene.ts', 'map/scene.ts']);
     for (const f of src) if (!f.endsWith('scene.ts')) expect(/from ['"]\.\/scene['"]/.test(read(f)), f).toBe(false);
+  });
+
+  it('git hooks are executable, so they run on Mac and Linux too', () => {
+    const modes = execFileSync('git', ['ls-files', '-s', '.githooks'], { encoding: 'utf8' }).trim().split('\n').map((l) => l.slice(0, 6));
+    expect(modes).toEqual(['100755', '100755']);
   });
 
   it('no browser code reads an API key', () => {

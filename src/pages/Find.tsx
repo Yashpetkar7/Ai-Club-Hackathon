@@ -8,7 +8,7 @@ import { cleanTitle } from '@/core/verify/normalise';
 import { checkReference } from '@/core/verify/verdict';
 import { record as log } from '@/log/log';
 import { policyIssues } from '@/policy/apply';
-import { addSource } from '@/store/actions';
+import { addSource, skipSource } from '@/store/actions';
 import { db } from '@/store/db';
 import { PdfDrop } from '@/ui/PdfDrop';
 import { VerdictStamp } from '@/ui/Stamp';
@@ -183,7 +183,7 @@ export function Find({ project }: StepProps) {
                     <button className="btn main" type="button" disabled={!h.check} onClick={() => void keep(h)}>
                       Keep
                     </button>
-                    <button className="btn" type="button" onClick={() => setHits((c) => c.map((x) => (x.key === h.key ? { ...x, choice: 'skipped' } : x)))}>
+                    <button className="btn" type="button" onClick={() => { setHits((c) => c.map((x) => (x.key === h.key ? { ...x, choice: 'skipped' } : x))); void skipSource(project.id, h.record.title); }}>
                       Skip
                     </button>
                   </>

@@ -1,3 +1,4 @@
+import { useLiveQuery } from 'dexie-react-hooks';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { go, Link } from '@/app/router';
 import type { RawReference, ReferenceCheck } from '@/core/contracts';
@@ -7,6 +8,8 @@ import { checkReference } from '@/core/verify/verdict';
 import { EXAMPLES } from '@/fixtures/sample';
 import { HANDOFF } from '@/pages/Check';
 import { AGENTS, AI_LEVELS } from '@/policy/policy';
+import { addSource } from '@/store/actions';
+import { db } from '@/store/db';
 import { Receipt } from '@/ui/Receipt';
 import css from './Landing.module.css';
 import { LAMP_TITLES } from './titles';
@@ -130,6 +133,8 @@ export function Landing() {
   const [level, setLevel] = useState(2);
   const [touring, setTouring] = useState(false);
   const run = useRef(0);
+  const latest = useLiveQuery(() => db.projects.orderBy('createdAt').last(), []);
+  const [savedTo, setSavedTo] = useState('');
 
   useEffect(() => {
     document.documentElement.dataset.theme = 'light';
@@ -162,6 +167,7 @@ export function Landing() {
     }
     const mine = ++run.current;
     setResult('busy');
+    setSavedTo('');
     const c = await checkReference(raw, registries);
     if (run.current === mine) setResult({ raw, check: c });
   }
@@ -295,6 +301,20 @@ export function Landing() {
                   {result === 'none' && <p className={css.small}>No reference found in that. Paste a DOI, a title or a full reference.</p>}
                   {result && typeof result === 'object' && (
                     <Receipt check={result.check} raw={result.raw} live>
+                      {latest ? (
+                        <button
+                          type="button"
+                          className="btn"
+                          disabled={!!savedTo}
+                          onClick={() => void addSource(latest.id, 'check', { raw: result.raw, check: result.check }).then(() => setSavedTo(latest.question))}
+                        >
+                          {savedTo ? `Saved to: ${savedTo.slice(0, 40)}` : `Save to: ${latest.question.slice(0, 40)}`}
+                        </button>
+                      ) : (
+                        <Link to="/projects" className="btn">
+                          Start a project to save this
+                        </Link>
+                      )}
                       <Link to="/check" className="btn">
                         Check a whole list
                       </Link>

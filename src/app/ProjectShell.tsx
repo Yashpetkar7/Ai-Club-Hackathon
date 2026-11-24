@@ -80,6 +80,7 @@ export function ProjectShell({ projectId, step }: { projectId: string; step: str
               </option>
             ))}
           </select>
+          <small>Your declaration. Our server holds you to it, and every change is logged.</small>
         </label>
         <button className="btn" type="button" onClick={() => void import('@/core/report/report').then(async (m) => m.download('evidence-report.html', await m.projectReport(project)))}>
           Evidence report

@@ -51,8 +51,10 @@ export async function checkReference(ref: RawReference, reg: Registries, now: ()
   const judge = async (rec: RegistryRecord, viaDoi: boolean): Promise<ReferenceCheck> => {
     const c = compare(ref, rec);
     let record = rec;
-    if (rec.doi && rec.registry === 'crossref') {
+    let second: 'answered' | 'silent' | 'none' = 'none';
+    if (rec.doi) {
       const oa = await timed(trace, 'openalex', () => reg.openalexByDoi(rec.doi!), (v) => (v ? 'match' : 'not-found'));
+      second = oa.ok ? 'answered' : 'silent';
       if (oa.ok && oa.value) {
         record = {
           ...rec,
@@ -68,9 +70,11 @@ export async function checkReference(ref: RawReference, reg: Registries, now: ()
     const bareDoi = viaDoi && !ref.title && !ref.authors?.length && tokens(ref.raw).length <= 8;
     if (viaDoi && !bareDoi && ref.title && c.title < 0.6) return done('wrong-paper', ['DOI_IS_ANOTHER_PAPER'], record, c);
     if (record.retracted) return done('retracted', ['RETRACTED', ...(bareDoi ? [] : reasonsFrom(c))], record, c);
-    if (bareDoi) return done('confirmed', [], record, c);
+    // A clean match that only one registry could vouch for is never shown as Confirmed.
+    const clean = (): ReferenceCheck => (second === 'answered' ? done('confirmed', [], record, c) : done('one-registry', ['SECOND_REGISTRY_UNREACHABLE'], record, c));
+    if (bareDoi) return clean();
     const reasons = reasonsFrom(c);
-    if (c.title >= th.titleMatch && !reasons.length) return done('confirmed', [], record, c);
+    if (c.title >= th.titleMatch && !reasons.length) return clean();
     return done('details-differ', reasons.length ? reasons : ['TITLE_DIFFERS'], record, c);
   };
 
@@ -110,6 +114,8 @@ export async function checkReference(ref: RawReference, reg: Registries, now: ()
     return done('not-found', doiMissing ? ['DOI_DOES_NOT_EXIST', 'NO_MATCH_IN_REGISTRIES'] : ['NO_MATCH_IN_REGISTRIES'], undefined, best.c);
   }
   const res = await judge(best.r, false);
+  // The DOI could not be looked up and the search led to a work with another DOI: we cannot tell which is right.
+  if (doiUnknown && res.record?.doi !== ref.doi) return { ...res, verdict: 'could-not-check', reasons: ['REGISTRY_UNREACHABLE'] };
   if (doiMissing && res.verdict !== 'retracted') {
     return { ...res, verdict: 'details-differ', reasons: ['DOI_DOES_NOT_EXIST', ...res.reasons], fields: [...res.fields, { field: 'doi', given: ref.doi!, registry: res.record?.doi ?? 'none', score: 0, ok: false }] };
   }
