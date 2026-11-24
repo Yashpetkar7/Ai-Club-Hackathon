@@ -60,6 +60,7 @@ export async function checkReference(ref: RawReference, reg: Registries, now: ()
           openAccessUrl: rec.openAccessUrl ?? oa.value.openAccessUrl,
           citedBy: oa.value.citedBy ?? rec.citedBy,
           references: oa.value.references ?? rec.references,
+          openalexId: oa.value.openalexId,
           retracted: rec.retracted || oa.value.retracted,
         } as RegistryRecord;
       }

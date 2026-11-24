@@ -70,6 +70,7 @@ export function fromOpenAlex(w: Json): RegistryRecord {
   return drop({
     registry: 'openalex' as const,
     id: String(w.id ?? '').replace('https://openalex.org/', ''),
+    openalexId: w.id ? String(w.id).replace('https://openalex.org/', '') : undefined,
     doi: w.doi ? String(w.doi).replace(/^https?:\/\/doi\.org\//i, '').toLowerCase() : undefined,
     title: stripTags(String(w.title ?? w.display_name ?? '')),
     authors: (w.authorships ?? [])

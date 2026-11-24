@@ -1,14 +1,18 @@
 /** Text helpers shared by every check. Pure functions, no network. */
 
+/** Real tags only, so "p < 0.05 and n > 30" survives. Run twice because some registries escape their tags. */
+const TAG = /<\/?[a-z][a-z0-9:-]*(?:\s[^<>]*)?\/?>/gi;
+
 export const stripTags = (s: string): string =>
   s
-    .replace(/<[^>]+>/g, ' ')
+    .replace(TAG, ' ')
     .replace(/&amp;/gi, '&')
     .replace(/&lt;/gi, '<')
     .replace(/&gt;/gi, '>')
     .replace(/&nbsp;/gi, ' ')
     .replace(/&#39;|&apos;/gi, "'")
     .replace(/&quot;/gi, '"')
+    .replace(TAG, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 

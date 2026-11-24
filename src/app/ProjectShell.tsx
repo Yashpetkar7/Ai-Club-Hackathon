@@ -15,6 +15,8 @@ export interface StepProps {
 
 const Library = lazy(() => import('@/pages/Library').then((m) => ({ default: m.Library })));
 const Evidence = lazy(() => import('@/pages/Evidence').then((m) => ({ default: m.Evidence })));
+const Challenge = lazy(() => import('@/pages/Challenge').then((m) => ({ default: m.Challenge })));
+const MapPage = lazy(() => import('@/pages/Map').then((m) => ({ default: m.MapPage })));
 const Ask = lazy(() => import('@/pages/Ask').then((m) => ({ default: m.Ask })));
 const Write = lazy(() => import('@/pages/Write').then((m) => ({ default: m.Write })));
 const Export = lazy(() => import('@/pages/Export').then((m) => ({ default: m.Export })));
@@ -23,7 +25,9 @@ const STEPS: { key: string; label: string; gate?: string; Page: ComponentType<St
   { key: 'plan', label: 'Plan', gate: 'You approve the plan', Page: Plan },
   { key: 'find', label: 'Find', gate: 'You keep or skip each source', Page: Find },
   { key: 'library', label: 'Library', Page: Library },
+  { key: 'map', label: 'Map', Page: MapPage },
   { key: 'evidence', label: 'Evidence', gate: 'You accept each claim', Page: Evidence },
+  { key: 'challenge', label: 'Challenge', Page: Challenge },
   { key: 'ask', label: 'Ask', Page: Ask },
   { key: 'write', label: 'Write', Page: Write },
   { key: 'export', label: 'Export', Page: Export },
@@ -32,6 +36,9 @@ const STEPS: { key: string; label: string; gate?: string; Page: ComponentType<St
 export function ProjectShell({ projectId, step }: { projectId: string; step: string }) {
   const project = useLiveQuery(async () => (await db.projects.get(projectId)) ?? null, [projectId]);
   const n = useLiveQuery(() => db.sources.where('projectId').equals(projectId).count(), [projectId]) ?? 0;
+
+  const approved = useLiveQuery(() => db.sources.where('projectId').equals(projectId).filter((x) => x.keys.approved).count(), [projectId]) ?? 0;
+  const decided = useLiveQuery(() => db.claims.where('projectId').equals(projectId).filter((c) => !!c.decision).count(), [projectId]) ?? 0;
 
   if (project === undefined) return <main className="wrap page" aria-busy="true"><p className="soft">Opening project…</p></main>;
   if (project === null)
@@ -46,15 +53,16 @@ export function ProjectShell({ projectId, step }: { projectId: string; step: str
 
   const now = STEPS.findIndex((s) => s.key === step);
   const { Page } = STEPS[now] ?? STEPS[0]!;
-  const reached = (k: string): boolean => (k === 'plan' ? true : k === 'find' ? !!project.plan?.approvedAt : n > 0 || !!project.plan?.approvedAt);
+  // Filled means the student did it, never just that the page was opened.
+  const done: Record<string, boolean> = { plan: !!project.plan?.approvedAt, find: n > 0, library: approved > 0, evidence: decided > 0 };
 
   return (
     <div className={css.shell}>
       <aside className={css.rail} aria-label="Your trail">
         <p className={css.q}>{project.question}</p>
         <ol className={css.steps}>
-          {STEPS.map((s, i) => (
-            <li key={s.key} data-state={s.key === (STEPS[now]?.key ?? 'plan') ? 'now' : i < now && reached(s.key) ? 'done' : 'next'} data-gate={!!s.gate}>
+          {STEPS.map((s) => (
+            <li key={s.key} data-state={s.key === (STEPS[now]?.key ?? 'plan') ? 'now' : done[s.key] ? 'done' : 'next'} data-gate={!!s.gate}>
               <Link to={`/p/${project.id}/${s.key}`} aria-current={s.key === step ? 'step' : undefined}>
                 {s.label}
                 {s.key === 'library' && n > 0 ? ` (${n})` : ''}
@@ -73,6 +81,9 @@ export function ProjectShell({ projectId, step }: { projectId: string; step: str
             ))}
           </select>
         </label>
+        <button className="btn" type="button" onClick={() => void import('@/core/report/report').then(async (m) => m.download('evidence-report.html', await m.projectReport(project)))}>
+          Evidence report
+        </button>
       </aside>
       <main className={css.main} id="main" tabIndex={-1}>
         <Suspense fallback={<p className="soft">Loading…</p>}>

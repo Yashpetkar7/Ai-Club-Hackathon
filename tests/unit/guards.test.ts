@@ -38,8 +38,8 @@ describe('honesty rules that a refactor must not break', () => {
   });
 
   it('three.js stays out of every eagerly loaded file', () => {
-    const importsThree = src.filter((f) => /from ['"]three['"]/.test(read(f))).map((f) => f.replace(/\\/g, '/').split('/src/')[1]);
-    expect(importsThree).toEqual(['landing/scene.ts']);
+    const importsThree = src.filter((f) => /from ['"]three['"]/.test(read(f))).map((f) => f.replace(/\\/g, '/').split('/src/')[1]).sort();
+    expect(importsThree).toEqual(['landing/scene.ts', 'map/scene.ts']);
     for (const f of src) if (!f.endsWith('scene.ts')) expect(/from ['"]\.\/scene['"]/.test(read(f)), f).toBe(false);
   });
 
