@@ -45,12 +45,19 @@ async function once(url: string): Promise<Response> {
   return fetch(url, { signal: AbortSignal.timeout(12000) });
 }
 
+/** A registry that says "come back in three hours" is believed, so the next search falls back at once. */
+const closedUntil = new Map<string, number>();
+const bucketOf = (url: string, lane: string): string => (/[?&]search=/.test(url) ? `${lane}:search` : lane);
+export const resetClosed = (): void => closedUntil.clear();
+
 /** Returns the JSON body, or null when the registry says the thing does not exist (404 or 410). */
 export async function getJson<T>(url: string, lane: string): Promise<T | null> {
   if (cache.has(url)) {
     const v = cache.get(url);
     return v === MISSING ? null : (v as T);
   }
+  const bucket = bucketOf(url, lane);
+  if ((closedUntil.get(bucket) ?? 0) > Date.now()) throw new RegistryError('its free daily limit is used up');
   let last = 'no answer';
   for (let attempt = 0; attempt < 3; attempt++) {
     await takeTurn(lane);
@@ -67,8 +74,14 @@ export async function getJson<T>(url: string, lane: string): Promise<T | null> {
       }
       last = `HTTP ${res.status}`;
       if (res.status !== 429 && res.status < 500) break;
+      const wait = Number(res.headers.get('retry-after')) || 0;
+      if (res.status === 429 && wait > 20) {
+        closedUntil.set(bucket, Date.now() + Math.min(wait, 6 * 3600) * 1000);
+        throw new RegistryError('its free daily limit is used up');
+      }
       await sleep(Math.min(8000, (Number(res.headers.get('retry-after')) || 1.2 * (attempt + 1)) * 1000));
     } catch (e) {
+      if (e instanceof RegistryError) throw e;
       last = e instanceof Error && e.name === 'TimeoutError' ? 'timed out' : 'network error';
       await sleep(500 * (attempt + 1));
     }

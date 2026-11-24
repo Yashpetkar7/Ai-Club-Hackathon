@@ -74,7 +74,7 @@ describe('Challenger', () => {
   it.each([
     ['Working from home improves performance', 'Home working led to a rise in performance and gains in output', 'same'],
     ['Working from home improves performance', 'Productivity fell by a fifth among home workers', 'other'],
-    ['Working from home improves performance', 'We find no significant effect on output', 'other'],
+    ['Working from home improves performance', 'We find no significant effect of home working on output', 'other'],
     ['Working from home improves performance', 'Working from home did not improve performance', 'other'],
     ['Working from home improves performance', 'Hours rose while output per hour fell', 'unclear'],
     ['Working from home is common', 'Output increased', 'unclear'],
@@ -90,6 +90,12 @@ describe('Challenger', () => {
     ['Remote work improves employee productivity', 'Remote working has several benefits, including better productivity.', 'unclear'],
     ['ChatGPT improves student learning performance', 'We found that using ChatGPT does not present a significant impact on students\u2019 learning performance.', 'other'],
     ['Remote work improves employee productivity', 'Results show remote work had no significant negative impact on employee productivity.', 'unclear'],
+    ['ChatGPT improves student learning performance', 'These results imply that it either does not matter much for their test performance or is cancelled out by positive uses of AI in the aggregate.', 'unclear'],
+    ['ChatGPT improves student learning performance', 'The findings showed that students held a moderately positive view of ChatGPT.', 'unclear'],
+    ['ChatGPT improves student learning performance', 'We found little impact of ChatGPT on test scores.', 'other'],
+    ['Remote work improves employee productivity', 'Work discipline has a positive and significant effect on employee productivity, which is 66.70%.', 'unclear'],
+    ['ChatGPT improves student learning performance', 'The results show that activity-based learning improved students\u2019 performance.', 'unclear'],
+    ['Remote work improves employee productivity', 'Telework significantly increased productivity.', 'same'],
     ['Remote work improves employee productivity', 'The evidence shows that remote work boosts productivity and engagement.', 'same'],
     ['Remote work improves employee productivity', 'Results show that remote work reduced employee productivity.', 'other'],
   ] as const)('real wording: %s / %s is %s', (c, s, want) => expect(side(c, s)).toBe(want));
