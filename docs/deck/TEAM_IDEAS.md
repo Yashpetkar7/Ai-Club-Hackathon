@@ -32,6 +32,8 @@ The policy proposal is grounded in the [official policy](https://www.spjain.org/
 
 ## One useful extension after the required work
 
+Nihal's supplied architecture supports the separation of assistance, checks and student decisions. Its database and synthesis labels need correction before inclusion in the deck. The [component alignment review](NIHAL_ALIGNMENT.md) maps every box to the current implementation and approved scope, including the distinction between deterministic checks and uncertain semantic support.
+
 **Proposed: a compact check receipt.** Let a student inspect or copy the submitted reference, matched metadata, comparison findings, consulted registries, unavailable stages, date and final student decision. Build it from existing structured results and logged events; do not add a generated assurance sentence that overstates the checks. Hemanth can present the Lab receipt using owned files; any reusable Check/export component belongs to Yash/Siddal.
 
 Acceptance would be a receipt that remains truthful when enrichment fails, no match is found, a result is replayed, or a student keeps a flagged source. The recipient must be able to distinguish identity checking from claim support and scientific validity. This is a focused workflow improvement, not a novelty claim: Zotero, Elicit and Consensus already expose forms of source evidence. [Competitor sources](RESEARCH_AUDIT.md#competitor-features-keep-the-comparison-specific).

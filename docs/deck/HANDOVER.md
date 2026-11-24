@@ -14,6 +14,7 @@
 - [RESEARCH_AUDIT.md](RESEARCH_AUDIT.md): corrections to the recovered report, source-linked competitor evidence, qualified adoption/pricing claims and research-verification limits.
 - [TEAM_IDEAS.md](TEAM_IDEAS.md): proposals with owners, file boundaries and behavioral acceptance tests.
 - [VALIDATION.md](VALIDATION.md): actual test results, installation limitation, missing visual evidence and screenshot capture instructions.
+- [NIHAL_ALIGNMENT.md](NIHAL_ALIGNMENT.md): the supplied architecture mapped to current code and agreed roles; storage/synthesis conflicts, planned features, corrected data paths and owner decisions.
 - Hemanth's exact follow-up is recorded in `docs/prompts/HEMANTH.md`.
 
 No product source, shared verifier, schema, logging code, dependency manifest or lockfile was changed.
@@ -63,13 +64,13 @@ These are handover requests only. No message has been sent to another team membe
 
 ## Files in this slice
 
-`docs/deck/DECK.md`, `docs/deck/RESEARCH_AUDIT.md`, `docs/deck/TEAM_IDEAS.md`, `docs/deck/VALIDATION.md`, `docs/deck/HANDOVER.md`, `docs/prompts/HEMANTH.md`.
+`docs/deck/DECK.md`, `docs/deck/RESEARCH_AUDIT.md`, `docs/deck/TEAM_IDEAS.md`, `docs/deck/VALIDATION.md`, `docs/deck/HANDOVER.md`, `docs/deck/NIHAL_ALIGNMENT.md`, `docs/prompts/HEMANTH.md`. The first six-file slice was followed by the requested architecture-alignment note and related documentation updates.
 
 ## Verification and delivery outcome
 
-The normal repository verification completed with exit code **0**, with its test stage starting at **22:30:14 Dubai, 24 November 2026**. Only the six owned documentation files listed above are included in this slice.
+The first slice's normal repository verification completed with exit code **0**, with its test stage starting at **22:30:14 Dubai, 24 November 2026**. The architecture follow-up also passed `npm run verify`, with its test stage starting at **22:46:56 Dubai**: typecheck passed, **49 tests passed / 1 skipped** in three files, and the production build passed. The skipped final-submission test and other limits are recorded in [VALIDATION.md](VALIDATION.md).
 
-At the time this handover was prepared for the commit, the authorised push had not yet been attempted. The delivery response will state the actual commit identifier and push result. No remote update is asserted by this document. If authentication or a hook rejects the push, preserve the commit, report the exact error and supply the requested download package without bypassing the rejection.
+The first push failed with `fatal: could not read Username for 'https://github.com': terminal prompts disabled`. Its two commits were preserved. The user subsequently confirmed GitHub authorization and requested the architecture comparison. The earlier sign-in process could not be resumed after the execution session changed; `gh auth status` still showed no account. A fresh sign-in was started. The delivery response will state the observed final commit and push result; authentication is not assumed from a user approval alone. No hook or authorization check is bypassed.
 
 ## Required next review
 

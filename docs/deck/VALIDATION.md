@@ -60,6 +60,14 @@ The documentation follow-up is checked with the same hook explicitly before its 
 
 The skipped test is `no page is still a stub` in `tests/unit/guards.test.ts`. The repository runs it only when `FINAL=1`; that variable was not enabled for this draft. Several pages are still stubs, as explicitly disclosed in the deck. Passing the normal verification command therefore does **not** establish that the whole application is ready for submission. No test was changed or newly disabled.
 
+## Architecture-alignment follow-up verification
+
+After the user supplied Nihal's architecture, the session fetched `origin`, switched to `hemanth/lab-governance` and merged `origin/main`; Git reported `Already up to date.` Application source and tests remained unchanged. The follow-up changes only Hemanth-owned documentation, including `NIHAL_ALIGNMENT.md` and the prompt log.
+
+`npm run verify` completed again with exit code **0**, with its test stage starting at **22:46:56 Dubai, 24 November 2026**. Typecheck passed; **3 test files passed, 49 tests passed and 1 was skipped**; the production build passed. The skipped test is the same `FINAL=1`-only no-stubs check described above. No new runtime, browser, accessibility or competitive-performance result is implied.
+
+All local Markdown file links in the changed documents resolved, and the deck still contained exactly six slide sections. The architecture note was checked against the current source, the approved plan and the owners' briefs. Its Mermaid source is a conceptual diagram; no rendered-diagram visual inspection is claimed.
+
 ## Required screenshot
 
 **Pending. No screenshot is supplied or implied.**

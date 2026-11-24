@@ -2,7 +2,7 @@
 
 **For Hemanth's first review.** Prepared 24 November 2026, Dubai time. This is the deck text and diagram specification requested in the brief, not the final PowerPoint submission. The slide sequence follows [the Phase 1 outline](../PHASE1_DECK_OUTLINE.md). Convert only the six numbered slide sections into slides; preparation notes and evidence are not extra slides.
 
-**Evidence baseline:** repository `723523c91b2cdcf26b8b9cbdf98e4facfc160df5`. Implementation and executed tests take precedence over the build plan or earlier report. See [validation](VALIDATION.md), [report corrections](RESEARCH_AUDIT.md) and [shared-code requests](HANDOVER.md).
+**Evidence baseline:** repository `723523c91b2cdcf26b8b9cbdf98e4facfc160df5`. Implementation and executed tests take precedence over the build plan or earlier report. See [validation](VALIDATION.md), [report corrections](RESEARCH_AUDIT.md), [Nihal architecture alignment](NIHAL_ALIGNMENT.md) and [shared-code requests](HANDOVER.md).
 
 **Review blockers:** slide 1 still needs an actual Check screenshot. Local browser launch failed, and the cloud browser could not access the local app. No screenshot, Lab score, usability result or accessibility result has been fabricated. Strict three-key export remains a design target until the citation exception is resolved and the completed export journey is tested.
 
