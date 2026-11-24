@@ -1,8 +1,11 @@
 # Research report accuracy audit
 
-**Reviewed:** 24 November 2026, Asia/Dubai.  
-**Report:** *Paper Trail — Deep Research and Competitive Strategy Report*.  
-**Code baseline inspected:** `723523c91b2cdcf26b8b9cbdf98e4facfc160df5`.  
+**Reviewed:** 24 November 2026, Asia/Dubai.
+
+**Report:** *Paper Trail — Deep Research and Competitive Strategy Report*.
+
+**Code baseline inspected:** `723523c91b2cdcf26b8b9cbdf98e4facfc160df5`.
+
 **Scope:** the recovered report text, relevant repository code, and the primary sources linked below. This is a source and code audit; it is not a live comparative product benchmark or an independent replication of the cited research studies. Test outcomes belong in the implementation handover, not in this document unless an actual run is recorded.
 
 ## Decision

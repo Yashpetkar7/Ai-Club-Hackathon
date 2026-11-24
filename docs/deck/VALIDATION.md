@@ -42,6 +42,12 @@ npm ci --no-audit --no-fund --onnxruntime-node-install=skip
 
 No declared dependency or lockfile changed. The project's `prepare` script ran and installed its normal hook path. No hook was disabled. GPU/native inference was not validated. The option is documented in the installed `node_modules/onnxruntime-node/script/install.js` and [official package README](https://github.com/microsoft/onnxruntime/blob/main/js/node/README.md).
 
+## Git hook limitation discovered at commit
+
+The first commit reported that `.githooks/pre-commit` was ignored because it was not executable. Both tracked hooks have mode `100644`, so installing the hook path did not make automatic execution work. The first committed patch was applied to the index of a disposable checkout at the audited base; running the unchanged pre-commit hook explicitly with `sh .githooks/pre-commit` passed. The patch also applied cleanly to that base. The disposable checkout was then removed.
+
+The documentation follow-up is checked with the same hook explicitly before its commit. The pre-push hook must likewise be executed explicitly against the intended own-branch update before the push. These checks do not fix automatic hook execution for future contributors. The tracked permission fix belongs to Yash; Hemanth has not edited the hooks or their modes, and no `--no-verify` or bypass variable is used.
+
 ## Full repository gate
 
 `npm run verify` completed with exit code **0**. Its test stage started at **22:30:14 Dubai, 24 November 2026**.

@@ -1,7 +1,9 @@
 # Ideas for the team to discuss
 
-**Prepared:** 24 November 2026, Asia/Dubai.  
-**Status:** proposals and owner requests; not claims that these features are built.  
+**Prepared:** 24 November 2026, Asia/Dubai.
+
+**Status:** proposals and owner requests; not claims that these features are built.
+
 **Basis:** [research and code audit](RESEARCH_AUDIT.md), [Hemanth brief](../team/HEMANTH.md), and [ownership rules](../../CLAUDE.md).
 
 ## Recommendation

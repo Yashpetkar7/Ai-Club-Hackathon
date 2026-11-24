@@ -1,8 +1,11 @@
 # Hemanth handover: deck review checkpoint
 
-**Branch:** `hemanth/lab-governance`  
-**Baseline:** `723523c91b2cdcf26b8b9cbdf98e4facfc160df5`  
-**Prepared:** 24 November 2026, Dubai time  
+**Branch:** `hemanth/lab-governance`
+
+**Baseline:** `723523c91b2cdcf26b8b9cbdf98e4facfc160df5`
+
+**Prepared:** 24 November 2026, Dubai time
+
 **Stage:** first deck draft and research audit, awaiting Hemanth's required review. Tasks 2–6 are not complete.
 
 ## What works / what was produced
@@ -35,6 +38,7 @@ The full `npm run verify` gate also passed: typecheck, **49 passed / 1 skipped**
 
 | Priority | Request and evidence | Acceptance before a stronger deck claim |
 |---|---|---|
+| First | **Make automatic Git hooks work.** Both checked-in hooks have mode `100644`; the first commit reported that the non-executable pre-commit hook was ignored. The unchanged hook passed when explicitly run against this slice's staged patch. | Yash sets executable modes in the owned hook files and verifies normal commit/push invocation runs them. Installing `core.hooksPath` alone is insufficient. Hemanth does not change shared hook files or use a bypass. |
 | First | **Resolve the export exception.** `contracts.exportable` requires all keys; `store/actions.citable` also accepts approved items with a reason and an eligible origin/record. Export is unbuilt. | Agree strict export or explicitly disclosed exceptions. Test the actual exported output for every key combination and any exception. Hemanth must not silently decide this policy through page code. |
 | First | **Define partial-registry behavior.** After a Crossref match, failed OpenAlex enrichment can coexist with `confirmed` and an error trace. OpenAlex may contribute retraction metadata. | Decide whether missing enrichment blocks confirmation or is separately disclosed. Pin the agreed behavior with a regression test and update receipt wording. Preserve core ownership of verdicts. |
 | First | **Finish and validate AI enforcement.** The gateway checks a client-declared minimum level, has no successful task implementation, and does not reject all values outside the allowed set. | Validate task and level, enforce the agreed permission boundary, implement the task and test it. Do not claim tamper-resistant institutional authorization from a student-set browser value. |
