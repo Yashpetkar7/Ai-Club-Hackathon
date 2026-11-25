@@ -24,6 +24,9 @@ const crossrefYear = (m: Json): number | undefined => {
   return undefined;
 };
 
+/** The year of the issue, only when there is an issue to speak of. */
+const printYear = (m: Json): number | undefined => (m.volume ? Number(m['published-print']?.['date-parts']?.[0]?.[0]) || undefined : undefined);
+
 const isRetraction = (u: Json): boolean => /^(retraction|withdrawal|removal|retracted)$/i.test(String(u.type ?? u.label ?? ''));
 
 export function fromCrossref(m: Json): RegistryRecord {
@@ -41,6 +44,7 @@ export function fromCrossref(m: Json): RegistryRecord {
     title,
     authors: people.map((a): Author => drop({ family: stripTags(a.family ?? a.name ?? a.given ?? ''), given: clean(a.given) })).filter((a) => /\p{L}/u.test(a.family)),
     year: crossrefYear(m),
+    printYear: printYear(m),
     container: clean(m['container-title']?.[0]),
     volume: clean(m.volume),
     issue: clean(m.issue),

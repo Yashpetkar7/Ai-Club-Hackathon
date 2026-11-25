@@ -34,11 +34,13 @@ export function evaluateCase(row: LabRow): LabEvaluation {
   if (!isKnownVerdict(check.verdict)) return result('unresolved', 'Unrecognised checker result; unresolved', 'unknown-verdict');
 
   // A false acceptance remains a miss even when another lookup failed. Coverage must not hide it.
-  if (check.verdict === 'confirmed' && row.case.expected !== 'metadata-match') {
+  if ((check.verdict === 'confirmed' || check.verdict === 'one-registry') && row.case.expected !== 'metadata-match') {
     return result('missed', row.case.expected === 'retraction-flag' ? 'Missed the known retraction' : 'Missed: invented reference was confirmed', limitedCoverage ? (row.missingReplay?.length ? 'missing-replay' : 'partial-registry') : undefined);
   }
   if (row.missingReplay?.length) return result('could-not-check', 'Missing replay coverage; unresolved', 'missing-replay');
   if (check.verdict === 'could-not-check') return result('could-not-check', 'Could not check; unresolved');
+  // A clean match in one registry while the other was silent is neither a pass nor a false alarm.
+  if (check.verdict === 'one-registry') return result('unresolved', 'Incomplete registry coverage; not counted as a successful test', 'partial-registry');
   if (!['confirmed', 'details-differ', 'wrong-paper', 'retracted', 'not-found'].includes(check.verdict)) return result('unresolved', 'Unscored checker result; unresolved', 'unknown-verdict');
 
   if (row.case.expected === 'retraction-flag') {

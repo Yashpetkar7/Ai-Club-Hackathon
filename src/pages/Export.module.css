@@ -1,0 +1,27 @@
+.flight { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--line); background: var(--sheet); }
+.flight div { padding: 16px 18px; border-left: 1px solid var(--line); color: var(--soft); }
+.flight div:first-child { border-left: 0; }
+.flight strong { display: block; font-family: var(--display); font-weight: 400; font-size: 2rem; line-height: 1.1; color: var(--ink); }
+.flight [data-kind='ready'] strong { color: var(--ok); }
+.flight [data-kind='reason'] strong { color: var(--warn); }
+.blocked { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.blocked li { display: grid; gap: 2px; border-top: 1px solid var(--line); padding-top: 8px; overflow-wrap: anywhere; }
+.blocked span { color: var(--soft); font-size: 0.92rem; }
+.warn { background: var(--warn-bg); color: var(--warn); padding: 8px 12px; max-width: none; overflow-wrap: anywhere; }
+.tools { display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; }
+.tools label { display: inline-flex; gap: 8px; align-items: center; }
+.tools select { border: 1px solid var(--line); background: var(--sheet); padding: 8px; max-width: 100%; }
+.empty { padding: 24px; display: grid; gap: 10px; }
+.sheet { background: var(--sheet); border: 1px solid var(--line); padding: 34px 38px; display: grid; gap: 14px; min-width: 0; }
+.sheet > h2 { text-align: center; font-size: 1.3rem; }
+.entry { max-width: none; padding-left: 2.4em; text-indent: -2.4em; overflow-wrap: anywhere; line-height: 1.7; }
+.num { display: inline-block; min-width: 2.4em; text-indent: 0; }
+.notes { border-top: 1px solid var(--line); padding-top: 14px; display: grid; gap: 8px; font-size: 0.92rem; }
+.notes p { max-width: none; overflow-wrap: anywhere; }
+.plain { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
+@media (max-width: 620px) {
+  .flight { grid-template-columns: minmax(0, 1fr); }
+  .flight div { border-left: 0; border-top: 1px solid var(--line); display: flex; gap: 10px; align-items: baseline; }
+  .flight div:first-child { border-top: 0; }
+  .sheet { padding: 20px 18px; }
+}

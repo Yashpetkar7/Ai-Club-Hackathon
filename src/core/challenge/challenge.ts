@@ -31,8 +31,12 @@ export const isAim = (s: string): boolean =>
   /\b(this|the|our|present) (\w+ ){0,3}(study|paper|research|article|work|review|inquiry)\b[^.]{0,60}\b(investigat|examin|explor|aim|seek|evaluat|assess|analy[sz]|tries|attempt|stud(y|ies)|focus|review|identif)/i.test(s) ||
   /\b(aims?|purpose|objective|goal)s? (of|is|was|to)\b|\bwill (evaluate|examine|investigate|assess|explore)\b|\bwe (aim|seek|examine|investigate|explore|study)\b|\bthe question of\b|\b(whether|creating the question)\b/i.test(s) ||
   /^(purpose|objectives?|aims?|background)\b/i.test(s.trim()) ||
+  /\bwe report (on )?(the )?results of\b/i.test(s) ||
   /\bstud(y|ies) (investigated|examined|explored|assessed|evaluated)\b/i.test(s);
 
+/** Says what ought to be done, or that the answer depends. Neither side may claim it. */
+const ADVICE = /\b(must|should|need to|needs to|ought to) be\b|\bit is (important|recommended|suggested)\b|\bso that\b|\bgood idea\b|\brecommend(ed|ation|ations|s)?\b/i;
+const DEPENDS = /\bdepend(s|ed|ing)? (up)?on\b|\bvar(y|ies|ied) (by|across|with)\b|\bmixed (results|evidence|findings)\b|\binconclusive\b/i;
 const FINDING = /\b(results?|findings?|found|find|reveal(s|ed)?|show(s|ed|n)?|indicat(e|es|ed)|evidence|demonstrat(e|es|ed)|significant(ly)?|led to|conclude[sd]?|suggest(s|ed)?)\b/i;
 
 /** A past-tense result, a percentage or a reporting word. Without one, a sentence is background, not evidence. */
@@ -44,7 +48,8 @@ export interface SentenceAt { text: string; start: number; end: number }
 /** Cuts text into sentences and keeps where each one sits, so a quote is always an exact slice. */
 export function sentences(text: string): SentenceAt[] {
   const out: SentenceAt[] = [];
-  const re = /[^.!?]+(?:[.!?](?!\s+[\p{Lu}"\u201c(]|\s*$)[^.!?]*)*[.!?]*/gu;
+  // A sentence may end with a closing quote mark or bracket after its full stop.
+  const re = /[^.!?]+(?:[.!?](?!["\u201d\u2019)\]]*(?:\s+[\p{Lu}"\u201c(]|\s*$))[^.!?]*)*[.!?]*["\u201d\u2019)\]]*/gu;
   for (const m of text.matchAll(re)) {
     const lead = m[0].length - m[0].trimStart().length;
     const t = m[0].trim();
@@ -66,7 +71,7 @@ export function closestSentence(text: string, claim: string): (SentenceAt & { sc
     for (const w of want) if (have.has(w)) hit++;
     const score = hit / want.size;
     // A finding beats a statement of purpose, even when the purpose repeats more of the words.
-    const rank = score + (isFinding(s.text) ? 0.25 : 0) - (isAim(s.text) ? 0.5 : 0);
+    const rank = score + (isFinding(s.text) ? 0.25 : 0) + (isFinding(s.text) && /\d\s?%/.test(s.text) ? 0.1 : 0) - (isAim(s.text) ? 0.5 : 0);
     if (hit >= 2 && score >= 0.34 && (!best || rank > best.score)) best = { ...s, score: rank };
   }
   return best;
@@ -92,6 +97,8 @@ export function lean(s: string, near?: Set<string>): Lean {
     else if (d > 0) up++;
     else down++;
   });
+  // "A has no significant impact and B has a significant impact" says two things about two subjects.
+  if (NO_EFFECT.test(s) && /\b(has|have|had|having) (a |an )?((positive|negative|strong|direct) )*(and )?significant(ly)? ((positive|negative|direct) )*(effect|impact|influence)/i.test(s)) return 'mixed';
   // A null result beside a direction word is not support for either side.
   if (NULL_RESULT.test(s)) return up || down ? 'mixed' : 'none';
   if (up && down) return 'mixed';
@@ -140,7 +147,7 @@ export function sameSubject(claim: string, sentence: string): boolean {
 export type Side = 'same' | 'other' | 'unclear';
 
 export function side(claim: string, sentence: string): Side {
-  if (!isFinding(sentence) || !sameSubject(claim, sentence)) return 'unclear';
+  if (!isFinding(sentence) || ADVICE.test(sentence) || DEPENDS.test(sentence) || !sameSubject(claim, sentence)) return 'unclear';
   const a = lean(claim);
   const b = lean(sentence, outcomeWords(claim));
   if (a === 'mixed' || b === 'mixed') return 'unclear';

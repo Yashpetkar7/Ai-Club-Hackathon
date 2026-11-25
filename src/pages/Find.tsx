@@ -80,7 +80,7 @@ export function Find({ project }: StepProps) {
       while (next < list.length && runId.current === mine) {
         const h = list[next++]!;
         const rec = h.record;
-        const check = await checkReference({ raw: rec.title, title: rec.title, authors: rec.authors.slice(0, 6).map((a) => a.family), ...(rec.year ? { year: rec.year } : {}), ...(rec.doi ? { doi: rec.doi } : {}) }, registries);
+        const check = await checkReference({ raw: cleanTitle(rec.title), title: cleanTitle(rec.title), authors: rec.authors.slice(0, 6).map((a) => a.family), ...(rec.year ? { year: rec.year } : {}), ...(rec.doi ? { doi: rec.doi } : {}) }, registries);
         if (runId.current !== mine) return;
         setHits((cur) => cur.map((c) => (c.key === h.key ? { ...c, check: check.record ? { ...check, record: { ...check.record, abstract: check.record.abstract ?? rec.abstract } as RegistryRecord } : check } : c)));
       }

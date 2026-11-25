@@ -62,6 +62,8 @@ export interface RegistryRecord {
   title: string;
   authors: Author[];
   year?: number;
+  /** Year of the printed issue. A paper online in 2014 and in a 2015 issue is cited as 2015. */
+  printYear?: number;
   container?: string;
   volume?: string;
   issue?: string;
@@ -142,6 +144,8 @@ export interface Source {
   folder?: string;
   tags: string[];
   notes: string;
+  /** The title with its capitals corrected by the student. Only letter case may differ from the registry. */
+  citeTitle?: string;
   /** Plain text we are allowed to read: abstract, open full text, or the student's own PDF. */
   text?: string;
   textOrigin?: 'abstract' | 'fulltext' | 'pdf' | 'web';

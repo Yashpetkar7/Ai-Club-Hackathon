@@ -1,0 +1,424 @@
+{
+ "model": "Xenova/nli-deberta-v3-xsmall, q8, wasm, in Chrome",
+ "recordedAt": "2026-11-25T07:22:33.069Z",
+ "loadMs": 45945,
+ "perClaimMs": 281,
+ "scores": {
+  "Home working led to a 31% performance increase": {
+   "entails": 0.001,
+   "contradicts": 0.9933
+  },
+  "Home working led to a 13% performance decrease": {
+   "entails": 0.0003,
+   "contradicts": 0.9987
+  },
+  "Home working led to no performance increase": {
+   "entails": 0.0001,
+   "contradicts": 0.9996
+  },
+  "Home working always led to a 13% performance increase": {
+   "entails": 0.0048,
+   "contradicts": 0.0057
+  },
+  "Home working led to a 9% performance increase": {
+   "entails": 0.0175,
+   "contradicts": 0.972
+  },
+  "Home working led to a 22% performance increase": {
+   "entails": 0.0012,
+   "contradicts": 0.9896
+  },
+  "The study proves home working led to a 13% performance increase": {
+   "entails": 0.0545,
+   "contradicts": 0.0005
+  },
+  "Home workers reported worse work satisfaction": {
+   "entails": 0.0005,
+   "contradicts": 0.9972
+  },
+  "Home workers’ attrition rate doubled": {
+   "entails": 0.0002,
+   "contradicts": 0.9987
+  },
+  "Home workers’ promotion rate conditional on performance rose": {
+   "entails": 0.0009,
+   "contradicts": 0.9962
+  },
+  "Over half of all employees switched": {
+   "entails": 0.0061,
+   "contradicts": 0.0004
+  },
+  "Call center employees were assigned for nineteen months": {
+   "entails": 0.0036,
+   "contradicts": 0.9824
+  },
+  "Ctrip is a 160,000-employee travel agency": {
+   "entails": 0.0002,
+   "contradicts": 0.9981
+  },
+  "Microsoft rolled out the option to WFH to the whole firm": {
+   "entails": 0.0374,
+   "contradicts": 0.9345
+  },
+  "Gains from WFH fell to 22%": {
+   "entails": 0.0054,
+   "contradicts": 0.9858
+  },
+  "Gains from WFH almost doubled to 13%": {
+   "entails": 0.0011,
+   "contradicts": 0.992
+  },
+  "ChatGPT cut the average time taken by 18%": {
+   "entails": 0.4327,
+   "contradicts": 0.468
+  },
+  "ChatGPT raised output quality by 40%": {
+   "entails": 0.6616,
+   "contradicts": 0.0251
+  },
+  "The average time taken increased by 40%": {
+   "entails": 0.0008,
+   "contradicts": 0.9974
+  },
+  "Output quality fell by 18%": {
+   "entails": 0.0006,
+   "contradicts": 0.9971
+  },
+  "ChatGPT substantially lowered productivity": {
+   "entails": 0.0002,
+   "contradicts": 0.9991
+  },
+  "ChatGPT did not raise productivity": {
+   "entails": 0.0003,
+   "contradicts": 0.9918
+  },
+  "Inequality between workers increased": {
+   "entails": 0.0004,
+   "contradicts": 0.9988
+  },
+  "Concern and excitement about AI permanently fell": {
+   "entails": 0.0001,
+   "contradicts": 0.9993
+  },
+  "All professionals were exposed to ChatGPT": {
+   "entails": 0.0004,
+   "contradicts": 0.9896
+  },
+  "The experiment covered 4,530 college-educated professionals": {
+   "entails": 0.0007,
+   "contradicts": 0.9945
+  },
+  "Workers exposed to ChatGPT were 3 times as likely to report using it in their real job 2 weeks after": {
+   "entails": 0.0031,
+   "contradicts": 0.9859
+  },
+  "Workers exposed to ChatGPT were 2 times as likely to report using it 2 months after the experiment": {
+   "entails": 0.9819,
+   "contradicts": 0.0014
+  },
+  "Claude substantially raised productivity": {
+   "entails": 0.9408,
+   "contradicts": 0.0064
+  },
+  "All GPT-4 citations were real": {
+   "entails": 0.0005,
+   "contradicts": 0.9947
+  },
+  "55% of the GPT-4 citations are fabricated": {
+   "entails": 0.0047,
+   "contradicts": 0.9782
+  },
+  "18% of the GPT-3.5 citations are fabricated": {
+   "entails": 0.9014,
+   "contradicts": 0.0362
+  },
+  "43% of the GPT-3.5 citations are fabricated": {
+   "entails": 0.0098,
+   "contradicts": 0.9447
+  },
+  "24% of the real GPT-3.5 citations include substantive citation errors": {
+   "entails": 0.9488,
+   "contradicts": 0.019
+  },
+  "None of the GPT-4 citations are fabricated": {
+   "entails": 0.0194,
+   "contradicts": 0.9228
+  },
+  "GPT-4 is a major improvement over GPT-3.5 and no problems remain": {
+   "entails": 0.0013,
+   "contradicts": 0.9958
+  },
+  "GPT-3.5 is a major improvement over GPT-4": {
+   "entails": 0.0031,
+   "contradicts": 0.9943
+  },
+  "The authors found 636 bibliographic citations in 48 papers": {
+   "entails": 0.0046,
+   "contradicts": 0.9817
+  },
+  "ChatGPT-3.5 and ChatGPT-4 were used on 24 multidisciplinary topics": {
+   "entails": 0.0035,
+   "contradicts": 0.9928
+  },
+  "Chatbots never facilitate cost-effective text generation": {
+   "entails": 0.0001,
+   "contradicts": 0.9991
+  },
+  "People resist the dissolution of existing bonds under all conditions": {
+   "entails": 0.0043,
+   "contradicts": 0.0056
+  },
+  "Lack of attachments is not linked to ill effects on health": {
+   "entails": 0.0002,
+   "contradicts": 0.999
+  },
+  "Home working led to a 13% performance increase": {
+   "entails": 0.9923,
+   "contradicts": 0.0005
+  },
+  "Working from home increased performance by 13%": {
+   "entails": 0.9951,
+   "contradicts": 0.0004
+  },
+  "Home workers reported improved work satisfaction": {
+   "entails": 0.9908,
+   "contradicts": 0.0003
+  },
+  "Their attrition rate halved": {
+   "entails": 0.9422,
+   "contradicts": 0.0021
+  },
+  "The promotion rate of home workers conditional on performance fell": {
+   "entails": 0.9929,
+   "contradicts": 0.0005
+  },
+  "Gains from WFH almost doubled to 22%": {
+   "entails": 0.995,
+   "contradicts": 0.0003
+  },
+  "ChatGPT substantially raised productivity": {
+   "entails": 0.9899,
+   "contradicts": 0.0002
+  },
+  "The average time taken decreased by 40%": {
+   "entails": 0.6663,
+   "contradicts": 0.0014
+  },
+  "Output quality rose by 18%": {
+   "entails": 0.9791,
+   "contradicts": 0.0004
+  },
+  "Inequality between workers decreased": {
+   "entails": 0.9895,
+   "contradicts": 0.0006
+  },
+  "55% of the GPT-3.5 citations are fabricated": {
+   "entails": 0.091,
+   "contradicts": 0.8418
+  },
+  "18% of the GPT-4 citations are fabricated": {
+   "entails": 0.9917,
+   "contradicts": 0.0005
+  },
+  "GPT-4 is a major improvement over GPT-3.5": {
+   "entails": 0.9927,
+   "contradicts": 0.0003
+  },
+  "The authors found 636 bibliographic citations in the 84 papers": {
+   "entails": 0.7065,
+   "contradicts": 0.0125
+  },
+  "Thirty-six percent of original studies had statistically significant results": {
+   "entails": 0.008,
+   "contradicts": 0.9815
+  },
+  "Ninety-seven percent of replications had statistically significant results": {
+   "entails": 0.0007,
+   "contradicts": 0.997
+  },
+  "Replications of 1,000 studies were conducted": {
+   "entails": 0.0003,
+   "contradicts": 0.997
+  },
+  "Replication effects were twice the magnitude of original effects": {
+   "entails": 0.0014,
+   "contradicts": 0.9935
+  },
+  "Replication effects represented a substantial increase": {
+   "entails": 0.0004,
+   "contradicts": 0.9987
+  },
+  "39% of original effect sizes were in the 95% confidence interval of the replication effect size": {
+   "entails": 0.0347,
+   "contradicts": 0.9301
+  },
+  "Studies from five psychology journals were replicated": {
+   "entails": 0.003,
+   "contradicts": 0.9909
+  },
+  "Replication success was better predicted by characteristics of the teams than by the strength of original evidence": {
+   "entails": 0.001,
+   "contradicts": 0.9967
+  },
+  "All original studies had statistically significant results": {
+   "entails": 0.0006,
+   "contradicts": 0.9799
+  },
+  "68% of effects were subjectively rated to have replicated the original result": {
+   "entails": 0.0069,
+   "contradicts": 0.9735
+  },
+  "Reproducibility is not a defining feature of science": {
+   "entails": 0.0002,
+   "contradicts": 0.999
+  },
+  "The replications prove that psychology is unreliable": {
+   "entails": 0.0004,
+   "contradicts": 0.1879
+  },
+  "The model correctly discriminates between homosexual and heterosexual men in 95% of cases": {
+   "entails": 0.4746,
+   "contradicts": 0.4468
+  },
+  "The model discriminates between Democrat and Republican in 88% of cases": {
+   "entails": 0.534,
+   "contradicts": 0.295
+  },
+  "African Americans and Caucasian Americans are discriminated in 85% of cases": {
+   "entails": 0.2432,
+   "contradicts": 0.6677
+  },
+  "The dataset covers 5,800 volunteers": {
+   "entails": 0.0002,
+   "contradicts": 0.9991
+  },
+  "Twitter likes can accurately predict sensitive personal attributes": {
+   "entails": 0.0094,
+   "contradicts": 0.9583
+  },
+  "Facebook Likes cannot be used to predict personal attributes": {
+   "entails": 0.0001,
+   "contradicts": 0.9993
+  },
+  "Facebook Likes always predict personality perfectly": {
+   "entails": 0.0017,
+   "contradicts": 0.0041
+  },
+  "For the trait Openness, prediction accuracy is far from the test-retest accuracy of a standard personality test": {
+   "entails": 0.0003,
+   "contradicts": 0.9988
+  },
+  "Search engines cause lower intelligence": {
+   "entails": 0.0008,
+   "contradicts": 0.9705
+  },
+  "People have higher rates of recall of the information itself": {
+   "entails": 0.0054,
+   "contradicts": 0.9683
+  },
+  "People have lower recall for where to access information": {
+   "entails": 0.0068,
+   "contradicts": 0.9631
+  },
+  "The results of nine studies suggest people are primed to think about computers": {
+   "entails": 0.0003,
+   "contradicts": 0.9962
+  },
+  "The Internet is never a form of external memory": {
+   "entails": 0.0001,
+   "contradicts": 0.9994
+  },
+  "The Internet proves that memory is stored only outside ourselves": {
+   "entails": 0.0867,
+   "contradicts": 0.4804
+  },
+  "Truth diffused significantly farther, faster, deeper, and more broadly than falsehood": {
+   "entails": 0.0008,
+   "contradicts": 0.9978
+  },
+  "False news was less novel than true news": {
+   "entails": 0.0007,
+   "contradicts": 0.9972
+  },
+  "True news was more novel than false news": {
+   "entails": 0.0008,
+   "contradicts": 0.9972
+  },
+  "Robots accelerated the spread of false news more than true news": {
+   "entails": 0.0153,
+   "contradicts": 0.9215
+  },
+  "False stories inspired anticipation, sadness, joy, and trust": {
+   "entails": 0.0026,
+   "contradicts": 0.9922
+  },
+  "True stories inspired fear, disgust, and surprise": {
+   "entails": 0.0018,
+   "contradicts": 0.9948
+  },
+  "The data comprise 126 stories": {
+   "entails": 0.0033,
+   "contradicts": 0.9903
+  },
+  "Stories distributed on Facebook from 2006 to 2017 were investigated": {
+   "entails": 0.0042,
+   "contradicts": 0.9813
+  },
+  "Fact-checking organizations exhibited 59 to 89% agreement": {
+   "entails": 0.0009,
+   "contradicts": 0.9944
+  },
+  "Humans, not robots, are less likely to spread false news": {
+   "entails": 0.0031,
+   "contradicts": 0.9892
+  },
+  "The effects were less pronounced for false political news": {
+   "entails": 0.0005,
+   "contradicts": 0.9983
+  },
+  "The effects were more pronounced for false news about science than for false political news": {
+   "entails": 0.0008,
+   "contradicts": 0.9965
+  },
+  "Ninety-seven percent of original studies had statistically significant results": {
+   "entails": 0.9926,
+   "contradicts": 0.0006
+  },
+  "36% of replications had statistically significant results": {
+   "entails": 0.9348,
+   "contradicts": 0.013
+  },
+  "Replication effects were half the magnitude of original effects": {
+   "entails": 0.9725,
+   "contradicts": 0.0017
+  },
+  "The model correctly discriminates between homosexual and heterosexual men in 88% of cases": {
+   "entails": 0.9924,
+   "contradicts": 0.0005
+  },
+  "Easily accessible digital records of behavior, Facebook Likes, can be used to automatically and accurately predict a range of highly sensitive personal attributes": {
+   "entails": 0.9894,
+   "contradicts": 0.0004
+  },
+  "The Internet has become a primary form of external or transactive memory": {
+   "entails": 0.9898,
+   "contradicts": 0.0006
+  },
+  "False news was more novel than true news": {
+   "entails": 0.9834,
+   "contradicts": 0.0005
+  },
+  "Robots accelerated the spread of true and false news at the same rate": {
+   "entails": 0.9771,
+   "contradicts": 0.0007
+  },
+  "Falsehood diffused significantly farther, faster, deeper, and more broadly than the truth in all categories of information": {
+   "entails": 0.9921,
+   "contradicts": 0.0007
+  },
+  "The data comprise about 126,000 stories tweeted by about 3 million people": {
+   "entails": 0.9746,
+   "contradicts": 0.006
+  }
+ }
+}

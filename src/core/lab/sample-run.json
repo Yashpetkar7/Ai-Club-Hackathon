@@ -1,31 +1,31 @@
 {
-  "sha256": "77caf3ccc2c6138bdb3157cea124c5f39a1599d6740ea82e4d785cd3defb3ffe",
+  "sha256": "de9f3fb14e292dff78f58749752505b4f3e04d35268818c1852deae460a08cb5",
   "payload": {
     "kind": "recorded-replay",
-    "recordedAt": "2026-11-25T05:30:38.806Z",
+    "recordedAt": "2026-11-25T07:30:50.809Z",
     "registryCapturedAt": null,
     "timing": "simulated-retry-clock",
     "corpusHash": "a042f915a68edc7be4c6280396c4bc88cf4788bf744387796531f6eba77e4693",
     "sourceHashes": {
-      "src/core/verify/verdict.ts": "cd28f245749bf3e23971dfda6d5cedd6aa6e9443cb04ce5078f376b495943cfd",
+      "src/core/verify/verdict.ts": "f1a729249b8cecf46021ed04edf0470dface4f44738f538dfc213ba0e78679e6",
       "src/core/verify/compare.ts": "c1c0376aee4a50c80a6415022214229dee627491b832a9f42cb38089c81944bb",
       "src/core/verify/normalise.ts": "6afa01ef48a8e0dc4df197afc7eadaa18a7f932a5dafdc0d37c99e7a854644b8",
-      "src/core/registries/index.ts": "4ab906ccb78a126e4472e1900aa54be8bb108e23637bb1ad307405888fc1afd0",
-      "src/core/registries/http.ts": "bef21436ac89ea8f54c998a401303c10cec888cb0bbca54275c5b6a1b187bdca",
-      "src/core/registries/map.ts": "7fdb57c8fdde07937f5457ff6470c4fe873bbd28576fe0e96fe2434d3c83f8f2",
+      "src/core/registries/index.ts": "0efafa8436413c2e95685b50c798ab2a70e49c068d4e553d9864e499f80a7a18",
+      "src/core/registries/http.ts": "ee7a7612dcd9aafe03d471a05641cf4b398bc2f06a2a7b28e0988f92bb1b6853",
+      "src/core/registries/map.ts": "8d028d687db400978cdca93a4b57286fb9add8b9875def414d12ae002570c99a",
       "src/policy/policy.ts": "5da8783cc2f8291c9fdb5d975ac1f2e13b3d10148b6873ecdc815525a0cf3ecd",
       "src/core/lab/corpus.ts": "aedb00e07f8aa85b2bcd432b0ac0f6f95de3fa644754e68ee4befc7e0ad407c2",
       "src/core/lab/recorded-seeds.json": "2266b3f9ac03c5cd4072eaeccc92123a7a21a0d869cb29b8f595058d8c997d63",
-      "tests/unit/replay.ts": "c3c95c8a2652d45a23ec4ca8b34b2c83a990dba7ffeb0bbcd4de8321b4a58229",
+      "tests/unit/replay.ts": "65474a4ed19e2d19e689845e9500d28510690c34893490d38c194139abc081b3",
       "tests/unit/fixtures/registry.json": "31230615fc87ac024c8e8336b95c661d33ad573eb640a48f2dc4a4daf9f21c7a"
     },
     "run": {
-      "id": "recorded-replay-2026-11-25T05:30:38.781Z",
+      "id": "recorded-replay-2026-11-25T07:30:50.671Z",
       "mode": "sample",
       "corpusVersion": "1",
       "status": "completed",
-      "startedAt": "2026-11-25T05:30:38.781Z",
-      "finishedAt": "2026-11-25T05:30:38.806Z",
+      "startedAt": "2026-11-25T07:30:50.671Z",
+      "finishedAt": "2026-11-25T07:30:50.809Z",
       "rows": [
         {
           "case": {
@@ -58,8 +58,8 @@
             ]
           },
           "state": "completed",
-          "startedAt": "2026-11-25T05:30:38.782Z",
-          "finishedAt": "2026-11-25T05:30:38.787Z",
+          "startedAt": "2026-11-25T07:30:50.677Z",
+          "finishedAt": "2026-11-25T07:30:50.746Z",
           "check": {
             "verdict": "confirmed",
             "reasons": [],
@@ -98,7 +98,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-25T05:30:38.787Z",
+            "checkedAt": "2026-11-25T07:30:50.745Z",
             "record": {
               "registry": "crossref",
               "id": "10.1016/j.ijinfomgt.2023.102642",
@@ -399,6 +399,7 @@
                 }
               ],
               "year": 2023,
+              "printYear": 2023,
               "container": "International Journal of Information Management",
               "volume": "71",
               "pages": "102642",
@@ -443,8 +444,8 @@
             ]
           },
           "state": "completed",
-          "startedAt": "2026-11-25T05:30:38.787Z",
-          "finishedAt": "2026-11-25T05:30:38.789Z",
+          "startedAt": "2026-11-25T07:30:50.746Z",
+          "finishedAt": "2026-11-25T07:30:50.751Z",
           "check": {
             "verdict": "confirmed",
             "reasons": [],
@@ -483,7 +484,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-25T05:30:38.788Z",
+            "checkedAt": "2026-11-25T07:30:50.750Z",
             "record": {
               "registry": "crossref",
               "id": "10.1037/0033-2909.117.3.497",
@@ -544,8 +545,8 @@
             ]
           },
           "state": "completed",
-          "startedAt": "2026-11-25T05:30:38.789Z",
-          "finishedAt": "2026-11-25T05:30:38.789Z",
+          "startedAt": "2026-11-25T07:30:50.751Z",
+          "finishedAt": "2026-11-25T07:30:50.755Z",
           "check": {
             "verdict": "confirmed",
             "reasons": [],
@@ -584,7 +585,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-25T05:30:38.789Z",
+            "checkedAt": "2026-11-25T07:30:50.755Z",
             "record": {
               "registry": "crossref",
               "id": "10.1038/s41598-023-41032-5",
@@ -645,8 +646,8 @@
             ]
           },
           "state": "completed",
-          "startedAt": "2026-11-25T05:30:38.789Z",
-          "finishedAt": "2026-11-25T05:30:38.790Z",
+          "startedAt": "2026-11-25T07:30:50.755Z",
+          "finishedAt": "2026-11-25T07:30:50.758Z",
           "check": {
             "verdict": "confirmed",
             "reasons": [],
@@ -685,7 +686,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-25T05:30:38.789Z",
+            "checkedAt": "2026-11-25T07:30:50.758Z",
             "record": {
               "registry": "crossref",
               "id": "10.1086/261763",
@@ -698,6 +699,7 @@
                 }
               ],
               "year": 1991,
+              "printYear": 1991,
               "container": "Journal of Political Economy",
               "volume": "99",
               "issue": "3",
@@ -744,8 +746,8 @@
             ]
           },
           "state": "completed",
-          "startedAt": "2026-11-25T05:30:38.790Z",
-          "finishedAt": "2026-11-25T05:30:38.790Z",
+          "startedAt": "2026-11-25T07:30:50.758Z",
+          "finishedAt": "2026-11-25T07:30:50.760Z",
           "check": {
             "verdict": "confirmed",
             "reasons": [],
@@ -784,7 +786,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-25T05:30:38.790Z",
+            "checkedAt": "2026-11-25T07:30:50.760Z",
             "record": {
               "registry": "crossref",
               "id": "10.1093/qje/qju032",
@@ -809,6 +811,7 @@
                 }
               ],
               "year": 2014,
+              "printYear": 2015,
               "container": "The Quarterly Journal of Economics",
               "volume": "130",
               "issue": "1",
@@ -853,8 +856,8 @@
             ]
           },
           "state": "completed",
-          "startedAt": "2026-11-25T05:30:38.790Z",
-          "finishedAt": "2026-11-25T05:30:38.791Z",
+          "startedAt": "2026-11-25T07:30:50.760Z",
+          "finishedAt": "2026-11-25T07:30:50.762Z",
           "check": {
             "verdict": "retracted",
             "reasons": [
@@ -895,7 +898,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-25T05:30:38.791Z",
+            "checkedAt": "2026-11-25T07:30:50.762Z",
             "record": {
               "registry": "crossref",
               "id": "10.1108/jrit-01-2024-0017",
@@ -912,6 +915,7 @@
                 }
               ],
               "year": 2024,
+              "printYear": 2026,
               "container": "Journal of Research in Innovative Teaching & Learning",
               "volume": "19",
               "issue": "2",
@@ -958,8 +962,8 @@
             ]
           },
           "state": "completed",
-          "startedAt": "2026-11-25T05:30:38.791Z",
-          "finishedAt": "2026-11-25T05:30:38.791Z",
+          "startedAt": "2026-11-25T07:30:50.762Z",
+          "finishedAt": "2026-11-25T07:30:50.764Z",
           "check": {
             "verdict": "confirmed",
             "reasons": [],
@@ -998,7 +1002,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-25T05:30:38.791Z",
+            "checkedAt": "2026-11-25T07:30:50.763Z",
             "record": {
               "registry": "crossref",
               "id": "10.1126/science.adh2586",
@@ -1015,6 +1019,7 @@
                 }
               ],
               "year": 2023,
+              "printYear": 2023,
               "container": "Science",
               "volume": "381",
               "issue": "6654",
@@ -1060,8 +1065,8 @@
             ]
           },
           "state": "completed",
-          "startedAt": "2026-11-25T05:30:38.791Z",
-          "finishedAt": "2026-11-25T05:30:38.792Z",
+          "startedAt": "2026-11-25T07:30:50.764Z",
+          "finishedAt": "2026-11-25T07:30:50.766Z",
           "check": {
             "verdict": "confirmed",
             "reasons": [],
@@ -1100,7 +1105,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-25T05:30:38.792Z",
+            "checkedAt": "2026-11-25T07:30:50.766Z",
             "record": {
               "registry": "crossref",
               "id": "10.1257/aer.20160696",
@@ -1117,6 +1122,7 @@
                 }
               ],
               "year": 2018,
+              "printYear": 2018,
               "container": "American Economic Review",
               "volume": "108",
               "issue": "6",
@@ -1163,8 +1169,8 @@
             ]
           },
           "state": "completed",
-          "startedAt": "2026-11-25T05:30:38.792Z",
-          "finishedAt": "2026-11-25T05:30:38.793Z",
+          "startedAt": "2026-11-25T07:30:50.766Z",
+          "finishedAt": "2026-11-25T07:30:50.769Z",
           "check": {
             "verdict": "could-not-check",
             "reasons": [
@@ -1191,7 +1197,7 @@
                 "note": "network error"
               }
             ],
-            "checkedAt": "2026-11-25T05:30:38.793Z"
+            "checkedAt": "2026-11-25T07:30:50.769Z"
           },
           "missingReplay": [
             "https://api.crossref.org/works/10.1039/9781839167782-00159",
@@ -1228,8 +1234,8 @@
             ]
           },
           "state": "completed",
-          "startedAt": "2026-11-25T05:30:38.793Z",
-          "finishedAt": "2026-11-25T05:30:38.793Z",
+          "startedAt": "2026-11-25T07:30:50.769Z",
+          "finishedAt": "2026-11-25T07:30:50.771Z",
           "check": {
             "verdict": "could-not-check",
             "reasons": [
@@ -1256,7 +1262,7 @@
                 "note": "network error"
               }
             ],
-            "checkedAt": "2026-11-25T05:30:38.793Z"
+            "checkedAt": "2026-11-25T07:30:50.771Z"
           },
           "missingReplay": [
             "https://api.crossref.org/works/10.1080/13546783.2024.2402129",
@@ -1294,8 +1300,8 @@
             ]
           },
           "state": "completed",
-          "startedAt": "2026-11-25T05:30:38.793Z",
-          "finishedAt": "2026-11-25T05:30:38.793Z",
+          "startedAt": "2026-11-25T07:30:50.771Z",
+          "finishedAt": "2026-11-25T07:30:50.773Z",
           "check": {
             "verdict": "could-not-check",
             "reasons": [
@@ -1322,7 +1328,7 @@
                 "note": "network error"
               }
             ],
-            "checkedAt": "2026-11-25T05:30:38.793Z"
+            "checkedAt": "2026-11-25T07:30:50.773Z"
           },
           "missingReplay": [
             "https://api.crossref.org/works/10.15581/003.39.1.030",
@@ -1359,8 +1365,8 @@
             ]
           },
           "state": "completed",
-          "startedAt": "2026-11-25T05:30:38.793Z",
-          "finishedAt": "2026-11-25T05:30:38.793Z",
+          "startedAt": "2026-11-25T07:30:50.773Z",
+          "finishedAt": "2026-11-25T07:30:50.774Z",
           "check": {
             "verdict": "could-not-check",
             "reasons": [
@@ -1387,7 +1393,7 @@
                 "note": "network error"
               }
             ],
-            "checkedAt": "2026-11-25T05:30:38.793Z"
+            "checkedAt": "2026-11-25T07:30:50.774Z"
           },
           "missingReplay": [
             "https://api.crossref.org/works/10.21125/inted.2022.1033",
@@ -1434,8 +1440,8 @@
             }
           },
           "state": "completed",
-          "startedAt": "2026-11-25T05:30:38.793Z",
-          "finishedAt": "2026-11-25T05:30:38.794Z",
+          "startedAt": "2026-11-25T07:30:50.774Z",
+          "finishedAt": "2026-11-25T07:30:50.775Z",
           "check": {
             "verdict": "could-not-check",
             "reasons": [
@@ -1450,7 +1456,7 @@
                 "note": "network error"
               }
             ],
-            "checkedAt": "2026-11-25T05:30:38.794Z"
+            "checkedAt": "2026-11-25T07:30:50.775Z"
           },
           "missingReplay": [
             "https://api.crossref.org/works?rows=6&query.bibliographic=Counterfactual%20evidence%20ledgers%20for%20collaborative%20annotation%20in%20learning%20communities%20LabInventedAuthor1%202023"
@@ -1504,8 +1510,8 @@
             }
           },
           "state": "completed",
-          "startedAt": "2026-11-25T05:30:38.794Z",
-          "finishedAt": "2026-11-25T05:30:38.795Z",
+          "startedAt": "2026-11-25T07:30:50.775Z",
+          "finishedAt": "2026-11-25T07:30:50.781Z",
           "check": {
             "verdict": "details-differ",
             "reasons": [
@@ -1546,7 +1552,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-25T05:30:38.795Z",
+            "checkedAt": "2026-11-25T07:30:50.781Z",
             "record": {
               "registry": "crossref",
               "id": "10.1016/j.ijinfomgt.2023.102642",
@@ -1847,6 +1853,7 @@
                 }
               ],
               "year": 2023,
+              "printYear": 2023,
               "container": "International Journal of Information Management",
               "volume": "71",
               "pages": "102642",
@@ -1901,8 +1908,8 @@
             }
           },
           "state": "completed",
-          "startedAt": "2026-11-25T05:30:38.795Z",
-          "finishedAt": "2026-11-25T05:30:38.796Z",
+          "startedAt": "2026-11-25T07:30:50.781Z",
+          "finishedAt": "2026-11-25T07:30:50.783Z",
           "check": {
             "verdict": "details-differ",
             "reasons": [
@@ -1943,7 +1950,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-25T05:30:38.796Z",
+            "checkedAt": "2026-11-25T07:30:50.782Z",
             "record": {
               "registry": "crossref",
               "id": "10.1016/j.ijinfomgt.2023.102642",
@@ -2244,6 +2251,7 @@
                 }
               ],
               "year": 2023,
+              "printYear": 2023,
               "container": "International Journal of Information Management",
               "volume": "71",
               "pages": "102642",
@@ -2306,8 +2314,8 @@
             }
           },
           "state": "completed",
-          "startedAt": "2026-11-25T05:30:38.796Z",
-          "finishedAt": "2026-11-25T05:30:38.796Z",
+          "startedAt": "2026-11-25T07:30:50.783Z",
+          "finishedAt": "2026-11-25T07:30:50.784Z",
           "check": {
             "verdict": "wrong-paper",
             "reasons": [
@@ -2348,7 +2356,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-25T05:30:38.796Z",
+            "checkedAt": "2026-11-25T07:30:50.784Z",
             "record": {
               "registry": "crossref",
               "id": "10.1037/0033-2909.117.3.497",
@@ -2401,8 +2409,8 @@
             }
           },
           "state": "completed",
-          "startedAt": "2026-11-25T05:30:38.796Z",
-          "finishedAt": "2026-11-25T05:30:38.796Z",
+          "startedAt": "2026-11-25T07:30:50.784Z",
+          "finishedAt": "2026-11-25T07:30:50.784Z",
           "check": {
             "verdict": "not-found",
             "reasons": [
@@ -2410,7 +2418,7 @@
             ],
             "fields": [],
             "trace": [],
-            "checkedAt": "2026-11-25T05:30:38.796Z"
+            "checkedAt": "2026-11-25T07:30:50.784Z"
           },
           "missingReplay": []
         },
@@ -2454,8 +2462,8 @@
             }
           },
           "state": "completed",
-          "startedAt": "2026-11-25T05:30:38.796Z",
-          "finishedAt": "2026-11-25T05:30:38.796Z",
+          "startedAt": "2026-11-25T07:30:50.784Z",
+          "finishedAt": "2026-11-25T07:30:50.785Z",
           "check": {
             "verdict": "could-not-check",
             "reasons": [
@@ -2470,7 +2478,7 @@
                 "note": "network error"
               }
             ],
-            "checkedAt": "2026-11-25T05:30:38.796Z"
+            "checkedAt": "2026-11-25T07:30:50.785Z"
           },
           "missingReplay": [
             "https://api.crossref.org/works?rows=6&query.bibliographic=Opinion%20Paper%3A%20%E2%80%9CSo%20what%20if%20ChatGPT%20wrote%20it%3F%E2%80%9D%20Multidisciplinary%20perspectives%20on%20opportunities%2C%20challenges%20and%20implications%20of%20generative%20conversational%20AI%20for%20research%2C%20practice%20and%20policy%3A%20a%20replication%20across%20learning%20communities%20Dwivedi%20Kshetri%20Hughes%202023"
@@ -2515,8 +2523,8 @@
             }
           },
           "state": "completed",
-          "startedAt": "2026-11-25T05:30:38.796Z",
-          "finishedAt": "2026-11-25T05:30:38.797Z",
+          "startedAt": "2026-11-25T07:30:50.785Z",
+          "finishedAt": "2026-11-25T07:30:50.791Z",
           "check": {
             "verdict": "could-not-check",
             "reasons": [
@@ -2531,7 +2539,7 @@
                 "note": "network error"
               }
             ],
-            "checkedAt": "2026-11-25T05:30:38.797Z"
+            "checkedAt": "2026-11-25T07:30:50.791Z"
           },
           "missingReplay": [
             "https://api.crossref.org/works?rows=6&query.bibliographic=Imagined%20evidence%20ledgers%20for%20reflective%20notebooks%20in%20learning%20communities%20LabInventedAuthor2%201995"
@@ -2584,8 +2592,8 @@
             }
           },
           "state": "completed",
-          "startedAt": "2026-11-25T05:30:38.797Z",
-          "finishedAt": "2026-11-25T05:30:38.797Z",
+          "startedAt": "2026-11-25T07:30:50.791Z",
+          "finishedAt": "2026-11-25T07:30:50.792Z",
           "check": {
             "verdict": "details-differ",
             "reasons": [
@@ -2626,7 +2634,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-25T05:30:38.797Z",
+            "checkedAt": "2026-11-25T07:30:50.792Z",
             "record": {
               "registry": "crossref",
               "id": "10.1037/0033-2909.117.3.497",
@@ -2696,8 +2704,8 @@
             }
           },
           "state": "completed",
-          "startedAt": "2026-11-25T05:30:38.797Z",
-          "finishedAt": "2026-11-25T05:30:38.797Z",
+          "startedAt": "2026-11-25T07:30:50.792Z",
+          "finishedAt": "2026-11-25T07:30:50.793Z",
           "check": {
             "verdict": "details-differ",
             "reasons": [
@@ -2738,7 +2746,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-25T05:30:38.797Z",
+            "checkedAt": "2026-11-25T07:30:50.793Z",
             "record": {
               "registry": "crossref",
               "id": "10.1037/0033-2909.117.3.497",
@@ -2816,8 +2824,8 @@
             }
           },
           "state": "completed",
-          "startedAt": "2026-11-25T05:30:38.797Z",
-          "finishedAt": "2026-11-25T05:30:38.805Z",
+          "startedAt": "2026-11-25T07:30:50.793Z",
+          "finishedAt": "2026-11-25T07:30:50.806Z",
           "check": {
             "verdict": "wrong-paper",
             "reasons": [
@@ -2858,7 +2866,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-25T05:30:38.802Z",
+            "checkedAt": "2026-11-25T07:30:50.801Z",
             "record": {
               "registry": "crossref",
               "id": "10.1016/j.ijinfomgt.2023.102642",
@@ -3159,6 +3167,7 @@
                 }
               ],
               "year": 2023,
+              "printYear": 2023,
               "container": "International Journal of Information Management",
               "volume": "71",
               "pages": "102642",
@@ -3195,8 +3204,8 @@
             }
           },
           "state": "completed",
-          "startedAt": "2026-11-25T05:30:38.805Z",
-          "finishedAt": "2026-11-25T05:30:38.805Z",
+          "startedAt": "2026-11-25T07:30:50.806Z",
+          "finishedAt": "2026-11-25T07:30:50.807Z",
           "check": {
             "verdict": "not-found",
             "reasons": [
@@ -3204,7 +3213,7 @@
             ],
             "fields": [],
             "trace": [],
-            "checkedAt": "2026-11-25T05:30:38.805Z"
+            "checkedAt": "2026-11-25T07:30:50.806Z"
           },
           "missingReplay": []
         },
@@ -3247,8 +3256,8 @@
             }
           },
           "state": "completed",
-          "startedAt": "2026-11-25T05:30:38.805Z",
-          "finishedAt": "2026-11-25T05:30:38.806Z",
+          "startedAt": "2026-11-25T07:30:50.807Z",
+          "finishedAt": "2026-11-25T07:30:50.808Z",
           "check": {
             "verdict": "could-not-check",
             "reasons": [
@@ -3263,7 +3272,7 @@
                 "note": "network error"
               }
             ],
-            "checkedAt": "2026-11-25T05:30:38.806Z"
+            "checkedAt": "2026-11-25T07:30:50.808Z"
           },
           "missingReplay": [
             "https://api.crossref.org/works?rows=6&query.bibliographic=The%20need%20to%20belong%3A%20Desire%20for%20interpersonal%20attachments%20as%20a%20fundamental%20human%20motivation.%3A%20a%20comparison%20of%20classroom%20settings%20Baumeister%20Leary%201995"

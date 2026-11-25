@@ -23,6 +23,7 @@ interface Found {
   sentence: string;
   side: Side;
   numbers: boolean;
+  score: number;
   kept: boolean;
 }
 
@@ -66,7 +67,7 @@ export function Challenge({ project }: StepProps) {
       const key = record.doi ?? cleanTitle(record.title).toLowerCase();
       if (out.has(key) || record.retracted || !textOf) return;
       const s = closestSentence(textOf, text);
-      if (s && !findInstructions(s.text).length) out.set(key, { key, record, sentence: s.text, side: side(text, s.text), numbers: differentNumbers(text, s.text), kept: isKept, ...(check ? { check } : {}) });
+      if (s && !findInstructions(s.text).length) out.set(key, { key, record, sentence: s.text, side: side(text, s.text), numbers: differentNumbers(text, s.text), score: s.score, kept: isKept, ...(check ? { check } : {}) });
     };
     for (const s of kept ?? []) if (s.record) add(s.record, s.text ?? s.record.abstract, true, s.check);
     let failed = 0;
@@ -91,7 +92,7 @@ export function Challenge({ project }: StepProps) {
         const it = items[next++]!;
         if (it.check) continue;
         const rec = it.record;
-        const check = await checkReference({ raw: rec.title, title: rec.title, authors: rec.authors.slice(0, 6).map((a) => a.family), ...(rec.year ? { year: rec.year } : {}), ...(rec.doi ? { doi: rec.doi } : {}) }, registries);
+        const check = await checkReference({ raw: cleanTitle(rec.title), title: cleanTitle(rec.title), authors: rec.authors.slice(0, 6).map((a) => a.family), ...(rec.year ? { year: rec.year } : {}), ...(rec.doi ? { doi: rec.doi } : {}) }, registries);
         if (run.current === mine) setFound((c) => c?.map((x) => (x.key === it.key ? { ...x, check } : x)) ?? c);
       }
     };
@@ -157,7 +158,8 @@ export function Challenge({ project }: StepProps) {
           </p>
           <div className={css.cols}>
             {COLUMNS.map((col) => {
-              const items = shown.filter((f) => f.side === col.side);
+              // Closest and most concrete first.
+              const items = shown.filter((f) => f.side === col.side).sort((a, b) => b.score - a.score);
               return (
                 <section key={col.side} className={css.col} data-side={col.side}>
                   <h2>

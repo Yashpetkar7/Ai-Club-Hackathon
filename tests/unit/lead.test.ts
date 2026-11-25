@@ -96,6 +96,10 @@ describe('Challenger', () => {
     ['Remote work improves employee productivity', 'Work discipline has a positive and significant effect on employee productivity, which is 66.70%.', 'unclear'],
     ['ChatGPT improves student learning performance', 'The results show that activity-based learning improved students\u2019 performance.', 'unclear'],
     ['Remote work improves employee productivity', 'Telework significantly increased productivity.', 'same'],
+    ['Working from home improves employee performance', 'Findings reveal that the impact of the WFH model on employee productivity and performance depend on a host of factors, with a majority reporting a positive impact and few documenting no difference or a negative impact.', 'unclear'],
+    ['Working from home improves employee performance', 'The results show that several aspects must be considered when designing a workspace at home so that employees improve their performance.', 'unclear'],
+    ['Working from home improves employee performance', 'The result of the study may provide a positive recommendation to improve employee performance when working from home.', 'unclear'],
+    ['Remote working improves employee performance', 'This study shows that Transformational Leadership has no significant impact on Employee Performance, and Remote Working has a significant impact on Employee Performance.', 'unclear'],
     ['Remote work improves employee productivity', 'The evidence shows that remote work boosts productivity and engagement.', 'same'],
     ['Remote work improves employee productivity', 'Results show that remote work reduced employee productivity.', 'other'],
   ] as const)('real wording: %s / %s is %s', (c, s, want) => expect(side(c, s)).toBe(want));

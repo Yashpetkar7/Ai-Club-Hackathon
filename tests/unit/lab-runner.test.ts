@@ -121,11 +121,11 @@ describe('evaluation is separate from the actual checker verdict', () => {
     expect(evaluateCase(row(check)).outcome).toBe('could-not-check');
   });
 
-  it('exposes a secondary outage without replacing main’s returned Confirmed verdict', async () => {
+  it('a secondary outage is never Confirmed and never counted as a success', async () => {
     const check = await checkReference(full.reference, { ...recorded, openalexByDoi: async () => { throw new Error('Injected secondary outage'); } });
-    expect(check.verdict).toBe('confirmed');
+    expect(check.verdict).toBe('one-registry');
     expect(evaluateCase(row(check))).toMatchObject({ outcome: 'unresolved', reason: 'partial-registry' });
-    expect(check.verdict).toBe('confirmed');
+    expect(check.verdict).toBe('one-registry');
   });
 
   it('keeps a false acceptance visible as a miss even when the trace has an error', async () => {

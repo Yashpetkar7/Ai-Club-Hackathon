@@ -8,6 +8,8 @@ export default defineConfig({
   plugins: [react(), apiDevPlugin()],
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   server: { port: 5173, strictPort: false },
+  // Prepared up front, so opening a page for the first time never reloads the site.
+  optimizeDeps: { include: ['@huggingface/transformers', 'citeproc', 'docx', 'three'] },
   build: { target: 'es2022', sourcemap: false, chunkSizeWarningLimit: 900 },
   test: {
     environment: 'jsdom',

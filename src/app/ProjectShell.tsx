@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { lazy, Suspense, type ComponentType } from 'react';
-import type { AiLevel, Project } from '@/core/contracts';
+import { lazy, Suspense, useEffect, type ComponentType } from 'react';
+import type { AiLevel, CitationStyle, Project } from '@/core/contracts';
 import { AI_LEVELS } from '@/policy/policy';
 import { Find } from '@/pages/Find';
 import { Plan } from '@/pages/Plan';
@@ -13,13 +13,35 @@ export interface StepProps {
   project: Project;
 }
 
-const Library = lazy(() => import('@/pages/Library').then((m) => ({ default: m.Library })));
-const Evidence = lazy(() => import('@/pages/Evidence').then((m) => ({ default: m.Evidence })));
-const Challenge = lazy(() => import('@/pages/Challenge').then((m) => ({ default: m.Challenge })));
-const MapPage = lazy(() => import('@/pages/Map').then((m) => ({ default: m.MapPage })));
-const Ask = lazy(() => import('@/pages/Ask').then((m) => ({ default: m.Ask })));
-const Write = lazy(() => import('@/pages/Write').then((m) => ({ default: m.Write })));
-const Export = lazy(() => import('@/pages/Export').then((m) => ({ default: m.Export })));
+const load = {
+  library: () => import('@/pages/Library'),
+  evidence: () => import('@/pages/Evidence'),
+  challenge: () => import('@/pages/Challenge'),
+  map: () => import('@/pages/Map'),
+  ask: () => import('@/pages/Ask'),
+  write: () => import('@/pages/Write'),
+  export: () => import('@/pages/Export'),
+};
+const Library = lazy(() => load.library().then((m) => ({ default: m.Library })));
+const Evidence = lazy(() => load.evidence().then((m) => ({ default: m.Evidence })));
+const Challenge = lazy(() => load.challenge().then((m) => ({ default: m.Challenge })));
+const MapPage = lazy(() => load.map().then((m) => ({ default: m.MapPage })));
+const Ask = lazy(() => load.ask().then((m) => ({ default: m.Ask })));
+const Write = lazy(() => load.write().then((m) => ({ default: m.Write })));
+const Export = lazy(() => load.export().then((m) => ({ default: m.Export })));
+
+/** Fetches the other pages and the citation style while the student reads, so a dropped connection does not close the project. */
+let warmed = '';
+async function warm(style: CitationStyle): Promise<void> {
+  if (warmed === style) return;
+  warmed = style;
+  try {
+    await Promise.all(Object.values(load).map((f) => f()));
+    await (await import('@/core/cite/load')).loadStyle(style);
+  } catch {
+    warmed = '';
+  }
+}
 
 const STEPS: { key: string; label: string; gate?: string; Page: ComponentType<StepProps> }[] = [
   { key: 'plan', label: 'Plan', gate: 'You approve the plan', Page: Plan },
@@ -39,6 +61,13 @@ export function ProjectShell({ projectId, step }: { projectId: string; step: str
 
   const approved = useLiveQuery(() => db.sources.where('projectId').equals(projectId).filter((x) => x.keys.approved).count(), [projectId]) ?? 0;
   const decided = useLiveQuery(() => db.claims.where('projectId').equals(projectId).filter((c) => !!c.decision).count(), [projectId]) ?? 0;
+
+  const style = project?.style;
+  useEffect(() => {
+    if (!style) return;
+    const t = setTimeout(() => void warm(style), 1200);
+    return () => clearTimeout(t);
+  }, [style]);
 
   if (project === undefined) return <main className="wrap page" aria-busy="true"><p className="soft">Opening project…</p></main>;
   if (project === null)

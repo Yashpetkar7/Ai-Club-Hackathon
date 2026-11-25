@@ -28,14 +28,20 @@ async function takeTurn(lane: keyof typeof lanes | string): Promise<void> {
   if (at > now) await sleep(at - now);
 }
 
-let proxy: Promise<boolean> | null = null;
-/** True when our own server answers. Asked once per page load. */
-export function hasServer(): Promise<boolean> {
-  proxy ??= fetch('/api/health', { signal: AbortSignal.timeout(1500) })
-    .then(async (r) => r.ok && (await r.json()).ok === true)
-    .catch(() => false);
-  return proxy;
+let health: Promise<{ ok: boolean; noAi: boolean }> | null = null;
+/** Our own server's answer about itself. Asked once per page load. */
+function serverHealth(): Promise<{ ok: boolean; noAi: boolean }> {
+  health ??= fetch('/api/health', { signal: AbortSignal.timeout(1500) })
+    .then(async (r) => {
+      const j = r.ok ? await r.json() : {};
+      return { ok: j.ok === true, noAi: j.ok === true && j.ai === false };
+    })
+    .catch(() => ({ ok: false, noAi: false }));
+  return health;
 }
+export const hasServer = async (): Promise<boolean> => (await serverHealth()).ok;
+/** True only when the server has said it has no AI key. */
+export const hasNoAi = async (): Promise<boolean> => (await serverHealth()).noAi;
 
 async function once(url: string): Promise<Response> {
   if (await hasServer()) {

@@ -1,0 +1,8 @@
+.bar { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; }
+.group { padding: 18px 20px; display: grid; gap: 12px; min-width: 0; }
+.group blockquote { margin: 0; font-size: 1.06rem; line-height: 1.6; overflow-wrap: anywhere; }
+.group[data-choice='rejected'] { opacity: 0.7; }
+.who { font-size: 0.9rem; color: var(--soft); overflow-wrap: anywhere; }
+.notfound { background: var(--mute-bg); color: var(--mute); padding: 24px; display: grid; gap: 12px; justify-items: start; }
+.warn { background: var(--warn-bg); color: var(--warn); padding: 8px 12px; max-width: none; }
+@media (max-width: 520px) { .bar { grid-template-columns: minmax(0, 1fr); } }

@@ -1,0 +1,60 @@
+import type { RawReference, Source } from '@/core/contracts';
+import { registries } from '@/core/registries';
+import { findDoi } from '@/core/verify/normalise';
+import { parseBibtex, parseRis } from '@/core/verify/parse';
+import { checkReference, type Registries } from '@/core/verify/verdict';
+import { addSource } from '@/store/actions';
+
+export interface Added { source: Source; isNew: boolean }
+
+/** A DOI, a DOI link or a title. Always through the checker. */
+export function refFromLine(line: string): RawReference | null {
+  const t = line.trim();
+  const doi = findDoi(t);
+  if (doi) return { raw: t, doi };
+  return t.split(/\s+/).length >= 3 ? { raw: t, title: t } : null;
+}
+
+export function refsFromFile(text: string): { kind: 'bibtex' | 'ris'; refs: RawReference[] } | null {
+  if (/^\s*@\w+\s*\{/m.test(text)) return { kind: 'bibtex', refs: parseBibtex(text) };
+  if (/^TY\s{2}-/m.test(text)) return { kind: 'ris', refs: parseRis(text) };
+  return null;
+}
+
+export async function addChecked(projectId: string, origin: 'doi' | 'bibtex' | 'ris', ref: RawReference, reg: Registries = registries): Promise<Added> {
+  const check = await checkReference(ref, reg);
+  const started = new Date().toISOString();
+  const source = await addSource(projectId, origin, { raw: ref, check });
+  return { source, isNew: source.addedAt >= started };
+}
+
+export interface WebPage { url: string; title: string; author: string; year: string; site: string }
+
+export function webProblems(w: WebPage): string[] {
+  const out: string[] = [];
+  let ok = false;
+  try {
+    ok = /^https?:$/.test(new URL(w.url.trim()).protocol);
+  } catch {
+    ok = false;
+  }
+  if (!ok) out.push('Enter the full address, starting with https://');
+  if (w.title.trim().length < 3) out.push('Enter the page title.');
+  if (w.year.trim() && !/^(1[89]|20)\d{2}$/.test(w.year.trim())) out.push('Enter the year as four digits, or leave it empty.');
+  return out;
+}
+
+/** A web page has no registry record, so it holds no found or checked key and needs a written reason. */
+export async function addWebPage(projectId: string, w: WebPage): Promise<Source> {
+  const bad = webProblems(w);
+  if (bad.length) throw new Error(bad[0]);
+  const raw: RawReference = {
+    raw: [w.author, w.year, w.title, w.site, w.url].map((x) => x.trim()).filter(Boolean).join('. '),
+    title: w.title.trim(),
+    url: w.url.trim(),
+    ...(w.author.trim() ? { authors: w.author.split(';').map((x) => x.trim()).filter(Boolean) } : {}),
+    ...(w.year.trim() ? { year: Number(w.year) } : {}),
+    ...(w.site.trim() ? { container: w.site.trim() } : {}),
+  };
+  return addSource(projectId, 'web', { raw });
+}

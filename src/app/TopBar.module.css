@@ -10,3 +10,11 @@
 .lamp:hover { border-color: var(--accent); }
 :global(.skip) { position: absolute; left: -999px; top: 0; z-index: 50; background: var(--sheet); color: var(--ink); padding: 10px 16px; }
 :global(.skip:focus) { left: 10px; top: 10px; }
+@media (max-width: 860px) {
+  .in { gap: 6px 10px; }
+  .mark { flex: 1; }
+  .lamp kbd { display: none; }
+  .lamp { padding: 5px 10px; font-size: 0.86rem; }
+  .nav { order: 5; flex: 1 0 100%; flex-wrap: nowrap; overflow-x: auto; gap: 4px 20px; }
+  .nav a { white-space: nowrap; }
+}

@@ -11,7 +11,7 @@ const openAlexWorks = Object.entries(store)
 
 export async function mockRegistries(page: Page): Promise<string[]> {
   const unknown: string[] = [];
-  await page.route('**/api/health', (r) => r.fulfill({ json: { ok: true, ai: false, openalexKey: false } }));
+  await page.route('**/api/health', (r) => r.fulfill({ json: { ok: true, ai: true, openalexKey: false } }));
   await page.route('**/api/registry?*', (r) => {
     const url = new URL(r.request().url()).searchParams.get('url') ?? '';
     if (url.startsWith('https://api.openalex.org/works?')) return r.fulfill({ json: { results: openAlexWorks } });
