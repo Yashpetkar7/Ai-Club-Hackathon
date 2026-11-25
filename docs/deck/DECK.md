@@ -1,18 +1,20 @@
 # Paper Trail: six-slide deck draft
 
-**For Hemanth's first review.** Prepared 24 November 2026, Dubai time. This is the deck text and diagram specification requested in the brief, not the final PowerPoint submission. The slide sequence follows [the Phase 1 outline](../PHASE1_DECK_OUTLINE.md). Convert only the six numbered slide sections into slides; preparation notes and evidence are not extra slides.
+**For Hemanth's review.** Updated 25 November 2026, Dubai time. This is the text and diagram specification, not the final PowerPoint. Follow [the Phase 1 outline](../PHASE1_DECK_OUTLINE.md): convert only the six slide sections below into slides. Preparation notes and evidence are not extra slides.
 
-**Evidence baseline:** repository `723523c91b2cdcf26b8b9cbdf98e4facfc160df5`. Implementation and executed tests take precedence over the build plan or earlier report. See [validation](VALIDATION.md), [report corrections](RESEARCH_AUDIT.md), [Nihal architecture alignment](NIHAL_ALIGNMENT.md) and [shared-code requests](HANDOVER.md).
+**Runtime basis:** main `7b0391ff0ec90e8b8f9fd2a030845cc42d3a753d`. The new Challenger, Map, local PDF import, evidence report, tour and command palette are present in that revision. Successful AI-provider tasks, the claim journey and citation exports are not. Code presence and unit verification do not establish that every feature has been exercised end to end. See [validation](VALIDATION.md), [research corrections](RESEARCH_AUDIT.md), [architecture alignment](NIHAL_ALIGNMENT.md) and [handover](HANDOVER.md).
 
-**Review blockers:** slide 1 still needs an actual Check screenshot. Local browser launch failed, and the cloud browser could not access the local app. No screenshot, Lab score, usability result or accessibility result has been fabricated. Strict three-key export remains a design target until the citation exception is resolved and the completed export journey is tested.
+**Separate candidate:** integration `59a876d6acf9fbdc6ea2a71697a0f6f16e16dcd5` has additional changes. They are not included in the slides' **Built** claims. Main verification at 08:29:55 Dubai on 25 November recorded 91 passed, 1 skipped across four unit-test files, with typecheck and build passing. The candidate's separate run at 08:30:31 recorded 126 passed, 1 skipped across six files, with typecheck and build passing. Both skipped the final no-stub-page check; neither result is an accuracy benchmark or completion certificate. [Run records](VALIDATION.md).
+
+**Review blockers:** a genuine Check screenshot is still missing. The final citation-export behavior must resolve the strict three-key helper and the separate reason-based eligibility path. No Lab score, screenshot, usability measurement or accessibility result is supplied by this document.
 
 ## Preparation rules
 
-- Use Marcellus headings, Public Sans body text and the existing values in `src/ui/tokens.css`. Use square corners and thin straight borders. Reserve `--ok` green for an observed successful check.
-- Use solid connectors for built paths and dashed connectors for planned paths, with a visible legend. Keep **Built** and **Planned** beside the relevant content.
-- **Exact slide words** is the visible copy, including table labels and source footers. The diagram specification gives placement and arrow labels. It is an alternative visual arrangement of the same content, not a second block of duplicate prose.
-- Keep the composed slides readable without narration. A timed human reading of each composed slide is still pending; the 60-second requirement has not been measured.
-- **Points targeted** means rubric coverage, not points already awarded. The weights come from the team's extraction in `docs/PROBLEM_STATEMENT.md`; check the organisers' original rubric before submission.
+- Use Marcellus headings, Public Sans body text and existing tokens from `src/ui/tokens.css`; square corners and thin straight borders. Green means an observed successful check.
+- Use solid connectors for built paths and dashed connectors for planned paths. Label mixed components at the subcomponent level. A stub or successful mock response is not a working service.
+- **Exact slide words** is the visible copy, including source footers. The diagram arranges that copy; do not duplicate the whole text beside it. Diagram labels are also visible.
+- Aim for a silent reading of each composed slide within 60 seconds. That timing is a design target, not a measured usability result; conduct the reading before submission.
+- **Points targeted** means rubric coverage, not points awarded. Weights come from the team extraction and Phase 1 outline; verify against the organisers' original rubric.
 
 ## Slide 1: The problem and our rule
 
@@ -20,33 +22,33 @@
 
 ### Exact slide words
 
-Students answer for the sources they submit. A polished citation can contain the wrong title, author, year or identifier. A real paper can also fail to support the claim attached to it.
+A polished citation can name the wrong paper. A real paper can still fail to support a claim. The student answers for both.
 
 **Paper Trail's rule:** registry found, code checked, student approved. AI holds no key.
 
-**Built:** reference checks and inspectable receipts. **Planned:** the complete research-to-export journey, with the three-key rule enforced at export.
+**Built:** reference checks and receipts. Normal citation eligibility requires all keys and current rules; a separate approved-with-reason exception exists. **Planned:** complete citation exports with explicit exception handling.
 
-**Observed in this checkout:** all **3 of 3** simulated total-registry-outage tests returned **Could not check**. This is a controlled unit-test result, not an accuracy estimate or a live Lab score.
+**Measured:** main verification passed **91 unit tests; 1 was skipped**. Typecheck and build passed. The final no-stub-page check was skipped. These are software checks, not a citation-accuracy score.
 
-**Source:** `tests/unit/verify.test.ts`, run 24 November 2026, 22:24 Dubai; [validation record](VALIDATION.md).
+**Source:** main `7b0391f`, 25 November 2026, 08:29:55 Dubai; [validation](VALIDATION.md).
 
-**Screenshot slot:** actual Check result and receipt. Capture and label its real mode and check time before submission.
+**Screenshot slot:** actual Check result and receipt, labelled with mode, check time and completion status.
 
 ### Diagram and screenshot specification
 
-| Box / area | Exact label or content | Connector |
+| Box / area | Exact label | Connector |
 |---|---|---|
-| Registry box | Registry found | To code: `Metadata record` |
-| Code box | Code checked | To student: `Verdict and receipt` |
-| Student box | Student approved | To export: `Approved source` |
-| Export box, dashed | Planned export gate | No outgoing arrow |
-| Screenshot area | Actual Check interface with its selected receipt visible | Caption states live versus SAMPLE, time and completion status |
+| Registry | Registry found | To code: `Metadata` |
+| Code | Code checked | To student: `Verdict and receipt` |
+| Student | Student approved | To export: `Decision and any reason` |
+| Dashed export box | Planned citation export | No outgoing arrow |
+| Screenshot | Actual Check result and receipt | Caption states actual mode, check time and completion status |
 
-Use one row of four boxes. Do not insert a recreated UI, generated screenshot, simulated success or invented citation. The source image is **not yet available**. The capture procedure is in [VALIDATION.md](VALIDATION.md#required-screenshot).
+Keep the four boxes in one row. The screenshot must come from the running app; do not recreate a success or invent its data. The image is **not yet available**. Use the [capture procedure](VALIDATION.md#required-screenshot).
 
-**Points targeted:** frames all five assessed areas; no additional scoring category.
+**Points targeted:** frames the five assessed areas; no additional scoring category.
 
-**Composer caveat:** `src/core/contracts.ts:exportable` requires all keys, but `src/store/actions.ts:citable` also permits an approved item kept with a reason. Export is a stub. Retain **Planned** until that conflict is resolved and tested.
+**Composer caveat:** `exportable()` in `src/core/contracts.ts` requires all three keys. `citable()` in `src/store/actions.ts` also permits an approved item with a saved reason when it has a record or a web/manual origin. `approveSource()` enforces the configured reason length for an unclean source; the reason does not turn its checked key on. Citation Export is still a stub. Do not promise strict exclusion until the team settles and tests the output boundary.
 
 ## Slide 2: Workflow
 
@@ -56,36 +58,38 @@ Use one row of four boxes. Do not insert a recreated UI, generated screenshot, s
 
 | Role, in order | Work and student control |
 |---|---|
-| Planner | Planned AI search suggestions. Built today: editable keyword plan. **Gate 1: approve the plan.** |
-| Scout | Built: retrieve records from scholarly registries. |
-| Checker | Built: compare metadata and show the receipt. **Gate 2: keep or skip each source.** |
-| Reader | Planned: connect claims to exact passages. Quote guard checks the text. |
-| Challenger | Planned: seek conflicting evidence and flag overclaims. **Gate 3: accept, rewrite or reject each claim.** |
-| Clerk | Planned: format citations, check export eligibility and assemble disclosure from recorded activity. |
+| Planner | **Built:** editable searches and code fallback; AI client wired, service unfinished. **Gate 1: approve plan.** |
+| Scout | **Built:** retrieve registry records. |
+| Checker | **Built:** compare metadata and show receipts. **Gate 2: keep or skip.** |
+| Reader | **Planned:** claims linked to passages, with quote and support checks. |
+| Challenger | **Built:** opposing searches, exact text slices and heuristic warnings. **Gate 3, planned: accept, rewrite or reject claims.** |
+| Clerk | **Built:** HTML evidence report. **Planned:** citation files and log-derived AI-use statement. |
 
-The student organises sources and writes the assignment. Library, Evidence, Write and Export are still planned in this checkout.
+Map and local PDF import support the journey. Library, Evidence, Ask, Write and citation Export remain unfinished. The student writes the assignment.
 
-**Source:** `src/pages/Plan.tsx`, `Find.tsx`, `src/policy/policy.ts`, `docs/BUILD_PLAN.md`.
+**Sources:** `src/pages/`, `src/core/challenge/`, `src/core/report/`, `server/handlers/ai.mjs`; `docs/BUILD_PLAN.md`.
 
 ### Diagram specification
 
-Create one diagram across three rows, with at most four boxes side by side. Keep the six role names in the order above. Quote guard is a sublabel inside Reader, not an additional principal role.
+Arrange the six named roles in the stated order across three rows. Use these boxes and arrow labels; put Quote guard inside the planned Reader box.
 
 | From | Arrow label | To |
 |---|---|---|
-| Student question | `Question and assessment permission` | Planner |
-| Planner | `Editable plan` | Gate 1: approve the plan |
+| Student question | `Question and declared AI level` | Planner |
+| Planner | `Editable searches` | Gate 1: approve plan |
 | Gate 1 | `Approved searches` | Scout |
-| Scout | `Registry candidates` | Checker |
+| Scout | `Registry records` | Checker |
 | Checker | `Verdict and receipt` | Gate 2: keep or skip |
-| Gate 2 | `Kept source passages` | Reader |
-| Reader | `Claims and passages` | Challenger |
-| Challenger | `Evidence and objections` | Gate 3: accept, rewrite or reject |
-| Gate 3 | `Student decisions and writing` | Clerk |
+| Gate 2 | `Kept source text — planned` | Reader |
+| Reader | `Claims and passages — planned` | Challenger |
+| Student claim | `Claim to challenge — built` | Challenger |
+| Challenger | `Pointers and warnings — planned handoff` | Gate 3: accept, rewrite or reject |
+| Gate 3 | `Student decisions — planned` | Clerk |
+| Saved project | `Current records and log — built` | Clerk: evidence report |
 
-Solid paths end at Gate 2. The AI part of Planner, Reader, Challenger, Gate 3 and Clerk have dashed borders/connectors and explicit **Planned** labels. Show student organising and writing alongside the path.
+Keep normal paths through Gate 2 solid. Reader, Gate 3, their connecting paths, and the citation/statement part of Clerk are dashed. Challenger is a built standalone route; its connection to a completed claim-decision journey is planned. The built HTML report must not appear as a completed citation exporter. Map and PDF import are small supporting labels, not additional principal roles.
 
-**Points targeted:** workflow, **8**. Includes six roles, three gates and deterministic checking. Weight source: `docs/PHASE1_DECK_OUTLINE.md`.
+**Points targeted:** workflow, **8**. Six roles, three gates and checking are visible. Weight source: `docs/PHASE1_DECK_OUTLINE.md`.
 
 ## Slide 3: Architecture
 
@@ -93,48 +97,51 @@ Solid paths end at Gate 2. The AI part of Planner, Reader, Challenger, Gate 3 an
 
 ### Exact slide words
 
-**Browser, built:** Check, editable Plan, Find, metadata comparison and receipts. Project records and selected activity events stay in IndexedDB.
+**Browser, built:** checks, receipts, editable planning, search, heuristic Challenger, Map, PDF text extraction and HTML report. Project data is stored in IndexedDB.
 
-**Registry handler, built:** allow-listed proxy and cache. The browser checker selects Crossref, OpenAlex, DataCite or doi.org as needed. A separate health route reports availability.
+**Registry handler, built:** allow-listed proxy and cache for Crossref, OpenAlex, DataCite and doi.org. Direct lookup fallback also exists.
 
-**AI handler, scaffold:** minimum-level checks exist. Successful AI responses are not implemented.
+**AI handler, scaffold:** checks a declared permission level; successful provider tasks are unfinished. AI clients exist, with code fallbacks.
 
-**Planned:** passage and claim checks, on-device inference, citation formatting and export. Approved AI requests would send selected input to an external provider.
+**Planned:** Reader, on-device inference, claim decisions, citation exports and AI-use statement. The implementation has no PostgreSQL, vector index or publication monitor.
 
-**Day-of adaptation:** use the **90-minute** window to revise the shared policy, then rerun verification and the affected journey. Extra requirements arrive at **13:15 on 26 November**.
+**Adaptation:** revise policy and affected behavior, then rerun verification and the journey during the **90-minute** window announced at **13:15 on 26 November**.
 
-**Sources:** `server/router.mjs`, `server/handlers/`, `src/core/registries/`, `src/store/db.ts`; `docs/PROBLEM_STATEMENT.md` for event timing.
+**Sources:** `src/core/`, `src/store/db.ts`, `server/router.mjs`, `server/handlers/`; event timing: `docs/PROBLEM_STATEMENT.md`.
 
 ### Diagram specification
 
-| Box | Contents / status |
+| Box | Contents and status |
 |---|---|
-| Browser workspace | Check, Plan, Find, deterministic checker, receipts — built |
-| Local storage | IndexedDB: projects, sources, claims, drafts, log — schema built; some consumers planned |
+| Browser workspace | Check, Plan, Find, Challenger, Map, PDF reader, receipts — built |
+| Browser storage | IndexedDB: project data and log — built; some consumers planned |
+| HTML report | Download from current project data — built |
 | Registry handler | `/api/registry`: allow-list and cache — built |
-| AI handler | `/api/ai`: permission scaffold — successful tasks planned |
+| AI handler | `/api/ai`: declared-level checks — scaffold |
 | Registry services | Crossref, OpenAlex, DataCite, doi.org — external metadata |
-| On-device inference | Planned browser worker |
-| External AI service | Planned optional service |
+| On-device inference | Browser worker — planned |
+| External AI service | Provider task execution — planned |
 
 | From | Arrow label | To |
 |---|---|---|
-| Browser workspace | `Save and read project data` | Local storage |
+| Browser workspace | `Read and save` | Browser storage |
+| Browser storage | `Current records and log` | HTML report |
 | Browser workspace | `DOI or search fields` | Registry handler |
-| Registry handler | `Lookup requests` | Registry services |
+| Registry handler | `Lookups` | Registry services |
 | Registry services | `Metadata or failure` | Registry handler |
 | Registry handler | `Records and status` | Browser workspace |
-| Browser workspace | `Selected input and declared AI level — planned` | AI handler |
-| AI handler | `Approved task input — planned` | External AI service |
+| Browser workspace | `Direct lookup fallback` | Registry services |
+| Browser workspace | `Task input and declared level — client built` | AI handler |
+| AI handler | `Selected task input — planned` | External AI service |
 | External AI service | `Candidate response — planned` | AI handler |
 | AI handler | `Candidate response — planned` | Browser workspace |
 | Browser workspace | `Local passage processing — planned` | On-device inference |
 
-Put both service handlers inside a server boundary. Add `/api/health` as a supporting route. Put on-device inference inside the browser boundary. The client can also call registries directly when the server is unavailable: label that secondary built path `Direct lookup fallback`. This is a data-flow diagram, not a deployment claim.
+Put the two handlers inside a server boundary, with `/api/health` as a supporting route. Keep storage, PDF extraction, report generation and planned on-device inference inside the browser boundary. Use at most four boxes across. This shows data flow, not deployment or universal offline operation.
 
-**Points targeted:** architecture, **6**. Includes browser, two service handlers, registries, planned on-device AI, storage, data flow and adaptation. Weight source: `docs/PHASE1_DECK_OUTLINE.md`.
+**Points targeted:** architecture, **6**. Browser, two handlers, registries, planned on-device AI, storage, arrows and adaptation. Weight source: `docs/PHASE1_DECK_OUTLINE.md`.
 
-**Composer caveat:** the build plan's later schedule has an inconsistent adaptation start. Use the explicit **13:15** announcement and **90-minute** window from the problem statement, not the predicted timetable.
+**Composer caveat:** follow the explicit 13:15 announcement and 90-minute window in the problem statement, not the build plan's inconsistent predicted timetable. The supplied future architecture image is not evidence of deployed database, vector or monitoring services.
 
 ## Slide 4: Guardrails
 
@@ -142,27 +149,27 @@ Put both service handlers inside a server boundary. Add `/api/health` as a suppo
 
 ### Exact slide words
 
-| Failure | Mechanism | Student sees |
-|---|---|---|
-| No matching reference | Built: identifier lookup and search | Not found and search trace |
-| Real DOI, different paper | Built: compare supplied title | Wrong paper when the mismatch meets that rule |
-| Wrong author or year | Built: field comparison | Details differ and registry values |
-| Retraction flag | Built: available registry notices | Retracted; coverage is incomplete |
-| Total registry outage in tested cases | Built: preserve lookup errors | Could not check |
-| Invented quote or unsupported claim | Planned: exact-quote and support checks | Planned claim labels and source passage |
-| Guess presented as evidence | Planned: separate AI reasoning | No verified label without required checks |
+| Failure | Mechanism and visible outcome |
+|---|---|
+| Missing reference or identifier | **Built:** lookup and search; Not found with a trace |
+| Real DOI, wrong paper | **Built:** title comparison; Wrong paper when its rule triggers |
+| Wrong author or year | **Built:** field comparison; Details differ |
+| Retraction | **Built:** available registry flags; Retracted, with incomplete coverage |
+| Required lookups unavailable | **Built:** preserve errors; Could not check in tested outage cases |
+| Invented quotation or unsupported claim | **Planned:** quote/support checks and claim labels |
+| Guess presented as evidence | **Planned:** separate AI reasoning from supported claims |
 
-A secondary registry can fail after another provides a match. Inspect the receipt: **Confirmed is a metadata result, not proof of claim support or complete retraction coverage.**
+**Built Challenger:** exact text slices and word-based warnings are reading aids, not proof of support. **Confirmed** concerns metadata; optional enrichment can fail while main still confirms.
 
-**Sources:** `src/core/verify/verdict.ts`, `src/core/registries/map.ts`, `src/core/contracts.ts`, `tests/unit/verify.test.ts`, `docs/BUILD_PLAN.md`.
+**Sources:** `src/core/verify/verdict.ts`, `src/core/challenge/challenge.ts`, `tests/unit/verify.test.ts`, `docs/BUILD_PLAN.md`.
 
 ### Diagram specification
 
-Use the table as the main visual. Beneath it place `Submitted fields`, `Checker`, `Receipt`. Label the arrows `Compare with returned metadata` and `Verdict, reasons and registry trace`. Add a dashed path from `Claim and passage` to `Planned claim checks`, labelled `Text and support evidence`.
+Use the table as the main visual. Under it place `Submitted fields` → `Checker` → `Receipt`, with arrow labels `Compare returned metadata` and `Verdict, reasons, trace`. A second, dashed path runs `Claim and passage` → `Planned claim checks`, labelled `Quotation and support`. A separate built `Challenger` box receives `Claim and available text` and outputs `Reading pointers, not claim verdicts`.
 
-**Points targeted:** guardrails, **6**. Covers reference, quotation and unsupported-claim failures with status and observable outcomes. Weight source: `docs/PHASE1_DECK_OUTLINE.md`.
+**Points targeted:** guardrails, **6**. Each brief failure has a mechanism, visible outcome and status. Weight source: `docs/PHASE1_DECK_OUTLINE.md`.
 
-**Evidence caveat:** slide 1 covers total outages, not every partial failure. The checker currently confirms an otherwise matching Crossref record when OpenAlex enrichment fails. Do not promise a different behavior.
+**Evidence caveat:** main can confirm a matching Crossref record after OpenAlex fails or returns no record. The separate integration candidate distinguishes some secondary-service failures but still does not require two agreeing records. Do not import that candidate's behavior into a main-based slide or call registry overlap independent proof.
 
 ## Slide 5: Ethical considerations
 
@@ -172,22 +179,24 @@ Use the table as the main visual. Beneath it place `Submitted fields`, `Checker`
 
 | Risk | Response and current status |
 |---|---|
-| Invention | Built: compare registry metadata. Planned: publish Lab misses and false alarms. |
-| Plagiarism | The student writes. Planned: link quotations to passages and disclose recorded AI assistance. |
-| Privacy | Built: browser storage. Lookup fields leave the device; external fonts also load. Planned: explain AI data flows and confirm deletion. |
-| Bias | Registry coverage can exclude real work. Planned: disclose coverage gaps and seek contrary evidence. |
-| Over-reliance | Built: plan and source decisions. Planned: claim approval and a list of unchecked work. |
-| False accusation | Not found describes our search. It does not establish fabrication or misconduct. |
+| Invention | **Built:** metadata comparison. **Planned:** fixed Lab corpus with visible misses and false alarms. |
+| Plagiarism | Student authorship remains the goal; this is not a plagiarism detector. **Planned:** passage-linked claims and disclosure. |
+| Privacy | **Built:** browser storage and local PDF extraction. Lookup fields leave the device; external fonts load. **Planned:** deletion confirmation. |
+| Bias | **Built:** opposing searches and source-balance counts. Neither measures all coverage or viewpoint bias. |
+| Over-reliance | **Built:** plan/source decisions and report limitations. **Planned:** claim approval. |
+| False accusation | Not found reports a search outcome; it does not establish fabrication or misconduct. |
 
-The Lab will keep a fixed corpus and show every miss. Results will describe that corpus, not universal accuracy.
+The planned Lab will retain every declared case and publish every miss. Its results describe its corpus.
 
-**Sources:** `src/core/contracts.ts`, `src/store/db.ts`, `src/core/registries/http.ts`, `index.html`, `docs/team/HEMANTH.md`.
+**Sources:** `src/core/report/`, `src/core/pdf/`, `src/pages/Challenge.tsx`, `src/store/db.ts`, `index.html`, `docs/team/HEMANTH.md`.
 
 ### Diagram specification
 
-Use the six-row table, without decorative icons. Under it place two dashed boxes, `Fixed Lab corpus` and `Published outcomes`, connected by `Run the actual checker`. The second box contains `Caught, missed, false alarm, could not check`. Mark the whole Lab diagram **Planned** until tasks 2 and 3 pass verification.
+Use the six-row risk table without decorative icons. Beneath it, dashed `Fixed Lab corpus` → `Published outcomes`, with the arrow `Run the actual checker`. The outcomes box lists `Caught, missed, false alarm, could not check`. Label the whole Lab path **Planned** until corpus and page verification are complete.
 
-**Points targeted:** ethical considerations, **5**. Covers invention, plagiarism, privacy, bias, over-reliance and false accusation. Weight source: `docs/PHASE1_DECK_OUTLINE.md`.
+**Points targeted:** ethical considerations, **5**. Invention, plagiarism, privacy, bias, over-reliance and false accusation. Weight source: `docs/PHASE1_DECK_OUTLINE.md`.
+
+**Composer caveat:** PDF text extraction is bounded and has no OCR. Do not promise full-document reading, complete injection protection, comprehensive literature coverage or scientific truth. The present file path does not upload PDF bytes; it does send metadata for checks.
 
 ## Slide 6: Governance
 
@@ -195,29 +204,29 @@ Use the six-row table, without decorative icons. Under it place two dashed boxes
 
 ### Exact slide words
 
-**Student:** follows assessment permission, checks source use and approves decisions. **Team:** owns implementation, testing and disclosed limitations. **Faculty:** sets assessment conditions and evaluates submitted work. AI approves nothing.
+**Student:** follows assessment permission and owns source use. **Team:** owns implementation, tests and limitations. **Faculty:** sets conditions and evaluates work. AI grants no approval.
 
-**AI levels:** 0 No AI; 1 search terms; 2 passages and summaries; 3 challenge. The policy model exists. Successful AI tasks and complete enforcement remain planned.
+**AI levels:** 0 none; 1 search terms; 2 passages/summaries; 3 challenge. Declared-level checks exist; successful AI tasks remain unfinished. A selected level does not prove institutional permission.
 
 | SP Jain clause | Product response |
 |---|---|
-| 3(a)(ii), 3(b)(iv), 10(h)(vii) | Assessment permission governs AI use |
-| 10(h)(vi) | Planned APA citation output |
-| 10(h)(viii) | Planned statement from recorded activity |
-| 10(h)(ix) | Built checker; planned Integrity Lab |
-| 10(g)(vi) | Planned evidence for faculty inspection |
+| 3(a)(ii), 3(b)(iv), 10(h)(vii) | Assessment authorization governs AI use |
+| 10(h)(vi) | Planned citation output |
+| 10(h)(viii) | Planned log-derived statement |
+| 10(h)(ix) | Built checker; planned Lab |
+| 10(g)(vi) | Built HTML evidence report for inspection |
 
-The local log checks chain consistency: **tamper-evident, not tamper-proof**. It cannot prove the history is complete. APA statement requirements await Hemanth's review.
+The report checks local log consistency: **tamper-evident, not tamper-proof**. It cannot prove complete history. APA statement requirements await Hemanth's review.
 
-**Sources:** [SP Jain Academic Integrity Policy v2, 24 February 2026](https://www.spjain.org/hubfs/policies-pdf/Academic-Integrity-Policy-and-Procedures.pdf), `src/policy/policy.ts`, `src/log/log.ts`, `server/handlers/ai.mjs`.
+**Sources:** [SP Jain policy v2, 24 February 2026](https://www.spjain.org/hubfs/policies-pdf/Academic-Integrity-Policy-and-Procedures.pdf), `src/policy/policy.ts`, `src/core/report/report.ts`, `src/log/log.ts`.
 
 ### Diagram specification
 
-Use responsibility boxes `Student`, `Paper Trail team`, `Faculty` above the clause map. Connect Faculty to Student with `Assessment conditions`. Connect Student to a dashed `Disclosure and evidence` box with `Recorded decisions`, and that box to Faculty with `Material for review`. Connect Paper Trail team to the evidence box with `Tests and limitations`. The software does not decide misconduct, and a student-selected level does not prove institutional authorisation.
+Place `Student`, `Paper Trail team` and `Faculty` above the clause map. Connect Faculty → Student with `Assessment conditions`; Student → `HTML evidence report — built` with `Available recorded activity`; report → Faculty with `Material for inspection`; Team → report with `Tests and limitations`. Add dashed `AI-use statement — planned` fed from `Available log`, labelled `Disclose only recorded evidence`. Software does not decide misconduct.
 
-**Points targeted:** governance, **5**. Names accountable people, policy constraints, AI levels and disclosure. Weight source: `docs/PHASE1_DECK_OUTLINE.md`.
+**Points targeted:** governance, **5**. Accountable people, permission levels, disclosure and policy clauses. Weight source: `docs/PHASE1_DECK_OUTLINE.md`.
 
-**Marked APA slot, outside the submitted slide:** `[Hemanth to supply the guide's confirmed required items and date reviewed.]` Do not fill from memory. The statement must disclose recorded activities only and distinguish missing evidence from a confirmed absence of AI use.
+**Marked APA slot, outside the submitted slide:** `[Hemanth to supply the guide's confirmed required items and date reviewed.]` Do not infer them. Missing log evidence is not proof that no AI was used. The report is available; the standalone AI-use statement and its review workflow remain planned.
 
 ## Coverage and release review
 
@@ -232,4 +241,4 @@ Use responsibility boxes `Student`, `Paper Trail team`, `Faculty` above the clau
 
 Weights total **30**, from `docs/PHASE1_DECK_OUTLINE.md`. No score is promised.
 
-Before submission: insert the genuine screenshot; resolve shared-code gaps or retain their qualifications; update status only after verification; check source footers and original rubric; time a silent reading of each composed slide. Preserve six slides and the uncertainty labels. Hemanth's review stop is here, before Lab implementation.
+Before submission: insert the genuine screenshot; keep main and candidate evidence separate; retain planned labels until completion is verified; settle citation exceptions; check source footers and the original rubric; time each composed slide's silent reading. Preserve six slides. The existing review stop after the deck draft remains in force before Lab implementation.

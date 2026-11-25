@@ -1,8 +1,24 @@
 # Deck evidence and validation
 
-Prepared 24 November 2026, Dubai time. This record distinguishes executed checks from source inspection and pending work. It is supporting evidence, not an extra slide.
+Maintained 25 November 2026, Dubai time. This record distinguishes executed checks from source inspection and pending work. Earlier runs retain their dates. It is supporting evidence, not an extra slide.
 
-## Baseline and scope
+## 25 November branch verification
+
+The session fetched origin, switched to `hemanth/lab-governance`, and merged main `7b0391ff0ec90e8b8f9fd2a030845cc42d3a753d` without conflicts. Integration `59a876d6acf9fbdc6ea2a71697a0f6f16e16dcd5` was checked out in a separate detached worktree for read-only source review and verification; it was not merged into Hemanth's branch.
+
+| Execution | Test stage began, Dubai | Typecheck | Unit tests | Production build |
+|---|---|---|---|---|
+| `npm run verify` on the main-based Hemanth checkout | 25 November, 08:29:55 | Passed | 4 files passed; **91 tests passed, 1 skipped**, 92 total | Passed |
+| `npm run verify` on isolated integration | 25 November, 08:30:31 | Passed | 6 files passed; **126 tests passed, 1 skipped**, 127 total | Passed |
+| Final `npm run verify` on the main-based Hemanth checkout | 25 November, 08:37:46 | Passed | 4 files passed; **91 tests passed, 1 skipped**, 92 total | Passed |
+
+All commands exited **0**. Each skipped the existing `no page is still a stub` test because `FINAL=1` was not enabled. The code still contains stubs, so passing this normal gate is not final-completion evidence. The two branches contain different test suites; do not turn their counts into a comparative accuracy chart.
+
+`package.json` and `package-lock.json` were identical between the two snapshots. The isolated worktree reused the existing installation through an ignored `node_modules` symlink. No dependency was added, and no package or lockfile was edited. No new application browser journey, live registry benchmark, manual keyboard/375 px inspection or axe result was executed in this update.
+
+The private HTML guide is a separate learning artifact outside the repository. Its diagrams and illustrative scenarios do not count as application screenshots, live results or proof that a planned feature works.
+
+## Original 24 November baseline and scope
 
 - Branch: `hemanth/lab-governance`.
 - Audited source commit: `723523c91b2cdcf26b8b9cbdf98e4facfc160df5`.

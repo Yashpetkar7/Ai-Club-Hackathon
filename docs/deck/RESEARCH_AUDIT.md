@@ -1,5 +1,25 @@
 # Research report accuracy audit
 
+## Current code overlay: 25 November 2026
+
+The original report/source audit below records the **24 November** baseline. Some implementation gaps have since changed. Use [the dated repository update](REPO_UPDATE_2026-11-25.md) and [architecture alignment](NIHAL_ALIGNMENT.md) for current status. Main is `7b0391ff0ec90e8b8f9fd2a030845cc42d3a753d`; the separately inspected integration branch is `59a876d6acf9fbdc6ea2a71697a0f6f16e16dcd5`.
+
+| Earlier finding | Current main | Integration-only development / remaining limit |
+|---|---|---|
+| Planner is only a deterministic UI | AI request/fallback code now exists, alongside editable deterministic suggestions | Successful AI tasks still end at the unimplemented provider handler |
+| Challenger, map, PDF and report are planned | Heuristic Challenger, citation map/table, local PDF extraction and a downloadable HTML evidence report now exist | Challenger gains subject/outcome heuristics. These remain reading aids, not verified claim labels |
+| Optional registry failure can accompany confirmation | Still true on main | A silent secondary lookup now yields neutral `one-registry`, but an answered not-found lookup can still yield `confirmed`. This is not two-record agreement |
+| Out-of-range AI levels can pass the minimum-level test | Main still uses the original handler | Integration adds integer-range/request checks and address throttling. The level remains self-declared; successful AI calls and authoritative assessment permission are not established |
+| Source edits and Skip lack events | Still true on main | Integration records edits/Skip and structured Planner decisions, but Planner writes an empty changed list; complete and accurate decision accounting is not yet established |
+| Automatic Git hooks are not executable | Still true on main | Tracked executable modes are fixed in integration |
+| Strict export is not established end to end | Still unresolved; `citable` also checks current policy and permits reasoned exceptions | Citation Export remains a stub. The separate HTML report does not complete that journey |
+
+Sources: main [AI client](../../src/core/aiClient.ts), [Challenger](../../src/pages/Challenge.tsx), [map](../../src/pages/Map.tsx), [PDF reader](../../src/core/pdf/read.ts), [report](../../src/core/report/report.ts), [verifier](../../src/core/verify/verdict.ts), [actions](../../src/store/actions.ts); integration links and exact observed test results are in the dated repository update. No new competitor benchmark or Lab accuracy result is claimed.
+
+The organiser's supplied two-page problem statement was also read directly during this update. It confirms the find/organise/cite goal, reference and claim traceability, student decisions, the AI research-assistant role, and the 26 November 09:00 deck / 13:15 adaptation timings. The numerical rubric below the team's extraction still needs the separate original rubric for independent cross-checking. The official SP Jain policy was reopened on 25 November and still displayed 24 February 2026 as the latest amendment.
+
+## Original research audit: 24 November 2026
+
 **Reviewed:** 24 November 2026, Asia/Dubai.
 
 **Report:** *Paper Trail — Deep Research and Competitive Strategy Report*.

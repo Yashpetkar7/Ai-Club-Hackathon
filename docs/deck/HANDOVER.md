@@ -1,4 +1,54 @@
-# Hemanth handover: deck review checkpoint
+# Hemanth handover
+
+## Current update: 25 November 2026
+
+**Branch:** `hemanth/lab-governance`. Only this branch is authorised for Hemanth's push.
+
+**Snapshots inspected:** main `7b0391ff0ec90e8b8f9fd2a030845cc42d3a753d`; Yash integration `59a876d6acf9fbdc6ea2a71697a0f6f16e16dcd5`. The session fetched origin, switched to Hemanth's branch and merged main without a conflict. Integration was inspected and tested in a detached worktree; its additional changes were not merged into Hemanth's branch.
+
+### What works and what changed
+
+Main now contains code for the Planner request/fallback, heuristic Challenger, citation map with a table equivalent, local PDF text extraction, downloadable HTML evidence report, tour, command palette and source-policy checks. This is a source-inspection finding supported by the executed unit/build gate; it is not a new live-browser demonstration of every feature. Successful AI provider calls remain unimplemented. Library, Evidence, Ask, Write, citation Export, Lab and the dedicated AI-use statement still have stubs. Rules remains the initial policy table. See [current repository review](REPO_UPDATE_2026-11-25.md).
+
+The six-slide [deck](DECK.md), [architecture alignment](NIHAL_ALIGNMENT.md), [team ideas](TEAM_IDEAS.md), [research audit](RESEARCH_AUDIT.md) and [validation record](VALIDATION.md) now distinguish main from integration-only changes. The new comparison also records remaining gaps instead of describing all safeguards as complete.
+
+The requested personal HTML teaching guide is prepared outside the repository and delivered separately in chat. It is not the official six-slide submission and is excluded from the commit and push.
+
+### Tests actually executed
+
+| Checkout | Command and Dubai test-stage time, 25 November | Observed result |
+|---|---|---|
+| Hemanth after merging main | `npm run verify`, 08:29:55 | Typecheck passed; **91 passed, 1 skipped** in 4 test files; build passed |
+| Detached integration `59a876d` | `npm run verify`, 08:30:31 | Typecheck passed; **126 passed, 1 skipped** in 6 test files; build passed |
+| Final main-based Hemanth verification | `npm run verify`, 08:37:46 | Typecheck passed; **91 passed, 1 skipped** in 4 test files; build passed |
+
+All runs skip the existing `FINAL=1` no-stubs check. The branches' suites differ; their counts are not an accuracy comparison or a Lab result. No new application e2e, live-registry, 375 px, keyboard or axe outcome is claimed here. The private guide's own validation is separate from product validation.
+
+### Architecture decision and shared-code requests
+
+Nihal's logical separation is useful, but the screenshot is not the current deployment diagram. Replace PostgreSQL/server PDF/vector storage with browser IndexedDB and local document processing. Split AI search suggestions from code retrieval, keep assignment writing with the student, and describe on-demand retraction metadata rather than continuous publication monitoring. [Full mapping](NIHAL_ALIGNMENT.md).
+
+| Owner | Request | Why it remains open |
+|---|---|---|
+| Yash | Review and integrate the new safeguards through the team's normal process | The executable hook fix, new neutral verdict, request guard, decision events and search fallback are in integration, not yet main |
+| Yash | Define precise registry-coverage wording and tests | Integration returns `one-registry` on a silent secondary lookup, but a secondary not-found response can still yield `confirmed`; fields are not independently corroborated by two matching records |
+| Yash and Siddal | Reconcile the strict three-key narrative with the reasoned-exception path | `exportable` is strict; `citable` permits an approved eligible exception. The completed citation export boundary still needs testing |
+| Yash and Nihal | Complete provider execution and accurate decision accounting | The gateway still returns unavailable/not-built; integration's Planner decision log writes `changed: []` and can classify edits or trimmed suggestions as rejected |
+| Yash | Correct PDF extraction coverage and tutorial narration | Extraction stops after 80 pages while the UI can report the document's total page count; tour narration contains fixed result wording |
+| Yash | Describe policy switches by the evidence they use | Journal/conference type is not proof of peer review; the retraction switch is not fully wired into the checked policy path |
+| Hemanth, with owners supplying event contracts | Keep disclosure limited to available events | Failed requests can be unrecorded; a valid hash chain does not prove complete history; missing decision categories stay unknown |
+
+No message was sent to another teammate. These requests are recorded for Hemanth to discuss with the team.
+
+### Scope and delivery
+
+Manual edits in this update are confined to `docs/deck/**` and `docs/prompts/HEMANTH.md`. Shared application changes arrived through the required merge from main, not edits by Hemanth. The private presentation is outside Git. No pull request, deployment, dependency addition, force-push or branch deletion is part of this work. The final delivery response records the actual pushed commit after GitHub confirms it.
+
+The original review after the deck draft remains the implementation checkpoint. This update and private teaching guide do not mark tasks 2–6 complete. The genuine Check screenshot and final PowerPoint composition remain pending, along with Hemanth's APA-guide input.
+
+## Archived deck-review handover: 24 November 2026
+
+The remainder records the earlier delivery and its then-current findings. Use the update above and the dated repository review for current implementation status.
 
 **Branch:** `hemanth/lab-governance`
 
