@@ -16,6 +16,14 @@ The screenshot's separation of research assistance, integrity checks, student de
 
 Use the diagram as a map of responsibilities. It is not a collection of independently deployed services. Preserve the six agreed roles—Planner, Scout, Checker, Reader, Challenger and Clerk—and distinguish implemented code from optional AI tasks whose server handler still returns an unavailable/not-built response. Sources: [repository rules](../../CLAUDE.md), [build plan](../BUILD_PLAN.md), [roles](../../src/policy/policy.ts), [AI handler](../../server/handlers/ai.mjs).
 
+### User-experience overlay and Hemanth's branch
+
+The [new experience ledger](USER_EXPERIENCE_RESEARCH.md) strengthens the case for diagnostic errors, preserved evidence, predictable navigation and explicit data-transfer limits. It does not establish a unique integrity service or a reliability ranking. The screenshot should show the student gates and evidence handoffs, including failure and recovery paths, rather than implying that each named service is independently deployed or complete.
+
+The owned Lab implementation is an additional browser inspection route on `hemanth/lab-governance`. It reuses the shared checker and registry client; it does not introduce a new verifier, database or AI service. [Measured recorded results](LAB_RESULTS.md) and [validation](VALIDATION.md) distinguish its execution evidence from live/browser checks still required. The component table below continues to describe the separately identified main snapshot.
+
+Two implementation limits belong beside the live-check arrow: the client can reuse in-memory responses, and the shared checker cannot abort a request on a caller's signal. The Lab stops scheduling and ignores late responses; retrieval freshness and actual transport cancellation need Yash's shared-code support. [Registry transport](../../src/core/registries/http.ts), [checker signature](../../src/core/verify/verdict.ts), [Lab runner](../../src/core/lab/runner.ts).
+
 ## Component-by-component mapping
 
 Unless a row explicitly says **integration only**, its implementation status refers to current main.

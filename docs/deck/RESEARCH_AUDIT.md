@@ -1,5 +1,17 @@
 # Research report accuracy audit
 
+## User-experience and competitive correction: 25 November 2026
+
+The preceding competitive audit primarily checked published capabilities. It did **not** constitute systematic research into users' experiences. The new [user-experience ledger](USER_EXPERIENCE_RESEARCH.md) adds original reports, strengths, friction, subsequent corrections, source limits and testable responses. It is a purposive public sample, not representative survey evidence. No paid-product comparison or observed user-task study was performed.
+
+One material update affects the proposed positioning: SciSpace's **7 October 2026** [Citation Verifier announcement](https://scispace.com/guides/introducing-scispace-citation-verifier-do-your-sources-support-your-claims) documents reference and claim checks, evidence-backed outcomes and an unavailable-source state. These are vendor-described capabilities, not independently benchmarked performance. They overlap proposed Paper Trail features; verification and visible uncertainty alone are not defensible uniqueness claims.
+
+Current [Consensus documentation](https://help.consensus.app/en/articles/18498489-how-to-use-extract-data-in-consensus) describes evidence inspection, text-coverage distinctions and exports. [Elicit's review documentation](https://support.elicit.com/en/articles/14759154-systematic-reviews-in-elicit) already describes human decisions and supporting evidence. Keep historical complaints separate from current feature availability and from independently reproduced defects.
+
+The proposed advantage is the quality of one student-controlled journey: reference check, passage inspection, explicit decision, qualified output and disclosure. It must be demonstrated through equivalent tasks and failure cases. The [team recommendations](TEAM_IDEAS.md) map that goal to owners and acceptance behavior. The private teaching guide includes the dated experiences, recovery scenarios and a proposed fair-comparison protocol; it is not pushed to Git.
+
+The [Lab results](LAB_RESULTS.md) now provide a small, fixed metadata-checker measurement on Hemanth's branch. They retain replay gaps and do not establish whole-product accuracy or a competitive advantage.
+
 ## Current code overlay: 25 November 2026
 
 The original report/source audit below records the **24 November** baseline. Some implementation gaps have since changed. Use [the dated repository update](REPO_UPDATE_2026-11-25.md) and [architecture alignment](NIHAL_ALIGNMENT.md) for current status. Main is `7b0391ff0ec90e8b8f9fd2a030845cc42d3a753d`; the separately inspected integration branch is `59a876d6acf9fbdc6ea2a71697a0f6f16e16dcd5`.

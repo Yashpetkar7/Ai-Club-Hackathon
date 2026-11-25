@@ -2,11 +2,11 @@
 
 **For Hemanth's review.** Updated 25 November 2026, Dubai time. This is the text and diagram specification, not the final PowerPoint. Follow [the Phase 1 outline](../PHASE1_DECK_OUTLINE.md): convert only the six slide sections below into slides. Preparation notes and evidence are not extra slides.
 
-**Runtime basis:** main `7b0391ff0ec90e8b8f9fd2a030845cc42d3a753d`. The new Challenger, Map, local PDF import, evidence report, tour and command palette are present in that revision. Successful AI-provider tasks, the claim journey and citation exports are not. Code presence and unit verification do not establish that every feature has been exercised end to end. See [validation](VALIDATION.md), [research corrections](RESEARCH_AUDIT.md), [architecture alignment](NIHAL_ALIGNMENT.md) and [handover](HANDOVER.md).
+**Runtime basis:** main `7b0391ff0ec90e8b8f9fd2a030845cc42d3a753d`, plus Hemanth's owned Lab implementation on `hemanth/lab-governance`. The Lab is not asserted to be merged into main or deployed; label it **Hemanth branch; integration pending** until Yash integrates and verifies it. The new Challenger, Map, local PDF import, evidence report, tour and command palette are present in that revision. Successful AI-provider tasks, the claim journey and citation exports are not. Code presence and unit verification do not establish that every feature has been exercised end to end. See [validation](VALIDATION.md), [research corrections](RESEARCH_AUDIT.md), [architecture alignment](NIHAL_ALIGNMENT.md) and [handover](HANDOVER.md).
 
 **Separate candidate:** integration `59a876d6acf9fbdc6ea2a71697a0f6f16e16dcd5` has additional changes. They are not included in the slides' **Built** claims. Main verification at 08:29:55 Dubai on 25 November recorded 91 passed, 1 skipped across four unit-test files, with typecheck and build passing. The candidate's separate run at 08:30:31 recorded 126 passed, 1 skipped across six files, with typecheck and build passing. Both skipped the final no-stub-page check; neither result is an accuracy benchmark or completion certificate. [Run records](VALIDATION.md).
 
-**Review blockers:** a genuine Check screenshot is still missing. The final citation-export behavior must resolve the strict three-key helper and the separate reason-based eligibility path. No Lab score, screenshot, usability measurement or accessibility result is supplied by this document.
+**Review blockers:** a genuine Check screenshot is still missing. The final citation-export behavior must resolve the strict three-key helper and the separate reason-based eligibility path. The Lab evidence is a labelled recorded-response run, not a live or competitive benchmark. No genuine screenshot, browser usability measurement or complete accessibility result is supplied by this document. The private teaching guide and [user-experience ledger](USER_EXPERIENCE_RESEARCH.md) explain improvement proposals; they are separate from these six assessed slides.
 
 ## Preparation rules
 
@@ -28,9 +28,9 @@ A polished citation can name the wrong paper. A real paper can still fail to sup
 
 **Built:** reference checks and receipts. Normal citation eligibility requires all keys and current rules; a separate approved-with-reason exception exists. **Planned:** complete citation exports with explicit exception handling.
 
-**Measured:** main verification passed **91 unit tests; 1 was skipped**. Typecheck and build passed. The final no-stub-page check was skipped. These are software checks, not a citation-accuracy score.
+**Measured SAMPLE, Hemanth branch:** the real checker ran on **24 fixed Lab cases**. **Eight** lack recorded requests and remain unresolved. These are corpus results, not a platform-accuracy score. Integration is pending.
 
-**Source:** main `7b0391f`, 25 November 2026, 08:29:55 Dubai; [validation](VALIDATION.md).
+**Source:** recorded replay, 25 November 2026, 09:30:38 Dubai; [Lab results](LAB_RESULTS.md), [validation](VALIDATION.md).
 
 **Screenshot slot:** actual Check result and receipt, labelled with mode, check time and completion status.
 
@@ -97,15 +97,15 @@ Keep normal paths through Gate 2 solid. Reader, Gate 3, their connecting paths, 
 
 ### Exact slide words
 
-**Browser, built:** checks, receipts, editable planning, search, heuristic Challenger, Map, PDF text extraction and HTML report. Project data is stored in IndexedDB.
+**Browser, built:** Check, planning, search, Challenger, Map and local PDF extraction. IndexedDB stores project data; the HTML report is downloadable.
 
 **Registry handler, built:** allow-listed proxy and cache for Crossref, OpenAlex, DataCite and doi.org. Direct lookup fallback also exists.
 
-**AI handler, scaffold:** checks a declared permission level; successful provider tasks are unfinished. AI clients exist, with code fallbacks.
+**AI handler, scaffold:** checks declared permission; provider tasks remain unfinished.
 
-**Planned:** Reader, on-device inference, claim decisions, citation exports and AI-use statement. The implementation has no PostgreSQL, vector index or publication monitor.
+**Planned:** Reader, on-device inference, claim review, citation exports and statement. No PostgreSQL, vector index or publication monitor.
 
-**Adaptation:** revise policy and affected behavior, then rerun verification and the journey during the **90-minute** window announced at **13:15 on 26 November**.
+**Adaptation:** update policy, verify behavior and rerun the journey in the **90-minute** window announced at **13:15 on 26 November**.
 
 **Sources:** `src/core/`, `src/store/db.ts`, `server/router.mjs`, `server/handlers/`; event timing: `docs/PROBLEM_STATEMENT.md`.
 
@@ -179,20 +179,22 @@ Use the table as the main visual. Under it place `Submitted fields` → `Checker
 
 | Risk | Response and current status |
 |---|---|
-| Invention | **Built:** metadata comparison. **Planned:** fixed Lab corpus with visible misses and false alarms. |
+| Invention | **Built:** metadata comparison. **Hemanth branch:** fixed Lab, visible misses, false alarms and unresolved cases; integration pending. |
 | Plagiarism | Student authorship remains the goal; this is not a plagiarism detector. **Planned:** passage-linked claims and disclosure. |
 | Privacy | **Built:** browser storage and local PDF extraction. Lookup fields leave the device; external fonts load. **Planned:** deletion confirmation. |
 | Bias | **Built:** opposing searches and source-balance counts. Neither measures all coverage or viewpoint bias. |
 | Over-reliance | **Built:** plan/source decisions and report limitations. **Planned:** claim approval. |
 | False accusation | Not found reports a search outcome; it does not establish fabrication or misconduct. |
 
-The planned Lab will retain every declared case and publish every miss. Its results describe its corpus.
+The Lab retains every declared case. Its SAMPLE has **12 real controls and 12 generated exercises**; **8 checks are unresolved** because replay requests are missing. This is not a live benchmark.
+
+**Lab source:** [recorded results](LAB_RESULTS.md), 25 November 2026, 09:30:38 Dubai.
 
 **Sources:** `src/core/report/`, `src/core/pdf/`, `src/pages/Challenge.tsx`, `src/store/db.ts`, `index.html`, `docs/team/HEMANTH.md`.
 
 ### Diagram specification
 
-Use the six-row risk table without decorative icons. Beneath it, dashed `Fixed Lab corpus` → `Published outcomes`, with the arrow `Run the actual checker`. The outcomes box lists `Caught, missed, false alarm, could not check`. Label the whole Lab path **Planned** until corpus and page verification are complete.
+Use the six-row risk table without decorative icons. Beneath it, solid `Fixed Lab corpus` → `Visible outcomes`, with the arrow `Run the actual checker`. The outcomes box lists `Caught, missed, false alarm, could not check`. Label the Lab path **Hemanth branch; integration pending**. Show **SAMPLE** beside recorded results. Do not imply a live network measurement, deployment or a completed main-branch integration.
 
 **Points targeted:** ethical considerations, **5**. Invention, plagiarism, privacy, bias, over-reliance and false accusation. Weight source: `docs/PHASE1_DECK_OUTLINE.md`.
 
@@ -213,7 +215,7 @@ Use the six-row risk table without decorative icons. Beneath it, dashed `Fixed L
 | 3(a)(ii), 3(b)(iv), 10(h)(vii) | Assessment authorization governs AI use |
 | 10(h)(vi) | Planned citation output |
 | 10(h)(viii) | Planned log-derived statement |
-| 10(h)(ix) | Built checker; planned Lab |
+| 10(h)(ix) | Built checker; Lab on Hemanth branch, integration pending |
 | 10(g)(vi) | Built HTML evidence report for inspection |
 
 The report checks local log consistency: **tamper-evident, not tamper-proof**. It cannot prove complete history. APA statement requirements await Hemanth's review.
@@ -241,4 +243,4 @@ Place `Student`, `Paper Trail team` and `Faculty` above the clause map. Connect 
 
 Weights total **30**, from `docs/PHASE1_DECK_OUTLINE.md`. No score is promised.
 
-Before submission: insert the genuine screenshot; keep main and candidate evidence separate; retain planned labels until completion is verified; settle citation exceptions; check source footers and the original rubric; time each composed slide's silent reading. Preserve six slides. The existing review stop after the deck draft remains in force before Lab implementation.
+Before submission: insert the genuine screenshot; keep main and candidate evidence separate; retain planned labels until completion is verified; settle citation exceptions; check source footers and the original rubric; time each composed slide's silent reading. Preserve six slides. The latest follow-up continued the engineering work. The next required stop is Hemanth's Task 3 review with the [Lab results table](LAB_RESULTS.md). Before final composition, check the deployed revision against every Built label; an own-branch implementation is not automatically the judges' website.

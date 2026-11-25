@@ -2,6 +2,39 @@
 
 Maintained 25 November 2026, Dubai time. This record distinguishes executed checks from source inspection and pending work. Earlier runs retain their dates. It is supporting evidence, not an extra slide.
 
+## Task 3 Lab and research update, 25 November 2026
+
+The final implementation gate's test stage began **09:36:47 Dubai**. `npm run verify` exited **0**: TypeScript passed; **165 tests passed / 1 skipped in nine files**; production build passed. The existing `FINAL=1` no-stubs check remains skipped and unchanged. Other unfinished routes still prevent claiming that the entire product is complete.
+
+| Lab test file | Passing tests | Evidence exercised |
+|---|---:|---|
+| `lab-corpus.test.ts` | 42 | Fixed distinct real controls, all requested generated families, provenance and actual replay outcomes |
+| `lab-runner.test.ts` | 11 | Real-checker default, controlled outage, immutable inputs, cancellation, late results and honest evaluation |
+| `lab-recording.test.ts` | 1 | Actual checker/replay reproduction agrees with the stored sample, excluding execution timestamps and simulated timings |
+| `lab-sample.test.ts` | 4 | Content integrity, corpus identity, mode and provenance checks |
+| `lab-page.test.ts` | 16 | Controlled interface actions, sample/live distinction, partial-result restoration, unknown/error/miss visibility, compared fields, focus and structural axe |
+| **Lab total** | **74** | These tests do not supply a product-accuracy percentage |
+
+Page tests were written first. Failing-first runs were also observed for subsequent corrections before the implementation changed. The code continues to use the shared checker and clients; no dependency or shared file was modified. [Actual case-level evidence](LAB_RESULTS.md).
+
+### Accessibility and interaction scope
+
+The Lab axe test inspected the recorded-results state with evidence details expanded and reported **no structural violations**. `color-contrast` was explicitly disabled because jsdom does not supply a trustworthy rendered contrast/layout check. Keyboard activation, focus restoration, sample switching, stale-response protection and offline controls were tested in the simulated DOM. Native-browser focus, screen-reader behavior, visual contrast, the 375 px layout and print rendering were **not** established by these tests.
+
+The private thirty-nine-slide HTML guide separately passed structural checks, internal-anchor and script checks, and simulated navigation/search/source-jump/read-all/comparison/print-handler checks. Its structural axe run returned no violations, with contrast excluded and incomplete rules recorded. Diagram geometry was previously inspected through native SVG previews; the added slides use semantic HTML. Full browser/mobile/print layout remains unverified because browser rendering was unavailable. The guide is outside Git and does not count as application verification.
+
+### Live-network and recording limits
+
+One normal direct public Crossref reachability probe for the existing Noy/Zhang DOI timed out at five seconds. It did not run the Lab, diagnose a registry outage, or establish live performance. No successful live-registry Lab run is claimed. Unit tests use recorded responses or clearly controlled failures.
+
+The recorded SAMPLE was executed at **09:30:38 Dubai**, with original capture time unknown. It retains eight missing-request gaps. Its content SHA-256 is `77caf3ccc2c6138bdb3157cea124c5f39a1599d6740ea82e4d785cd3defb3ffe`. Generation used actual wall timestamps while advancing retry waits with fake timers; stored `ms` values are not shown as live latency. The original shared fixture is unchanged.
+
+The page discloses in-memory cache reuse, incomplete secondary coverage and cancellation that stops scheduling without aborting existing requests. These shared-code limits are requests in [HANDOVER.md](HANDOVER.md), not silently patched or hidden by page verdicts.
+
+### Documentation and research checks
+
+The official deck still has six slide sections and all five rubric areas. Numeric Lab claims match the saved payload. Its architecture copy was shortened after a reading-load review; a timed composed-slide reading and genuine screenshot remain pending. The [new ledger](USER_EXPERIENCE_RESEARCH.md) separates original experiences, current documentation, source-code findings and proposals, retains resolved reports, and makes no unrun comparison claim. Changed local Markdown links resolve and edits stay within the allowed paths.
+
 ## Task 2 corpus verification, 25 November 2026
 
 After the user's follow-up about missing implementation, the session fetched origin, stayed on `hemanth/lab-governance`, and merged `origin/main`; Git reported `Already up to date`. Main and integration remained at the snapshots below. No integration-only code was imported.

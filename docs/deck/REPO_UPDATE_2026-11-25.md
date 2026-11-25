@@ -1,5 +1,7 @@
 # Repository update and implementation audit — 25 November 2026
 
+> **Later Hemanth slice:** this audit's main/integration snapshots remain unchanged. Hemanth subsequently implemented the owned corpus and Lab route on `hemanth/lab-governance`; see [Lab results](LAB_RESULTS.md), [current handover](HANDOVER.md) and [validation](VALIDATION.md). The route statuses below are historical findings about the named main/integration commits, not a claim that Hemanth's branch still has a Lab stub. User-experience evidence and improvement tests are in the [new ledger](USER_EXPERIENCE_RESEARCH.md).
+
 ## Scope and baselines
 
 This note separates what is present on main from newer work on Yash's integration branch. It updates the implementation picture behind Hemanth's deck and governance work. It does not claim a completed product, a deployment, a live-registry benchmark or a browser usability result.

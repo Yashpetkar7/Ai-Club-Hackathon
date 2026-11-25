@@ -1,0 +1,3275 @@
+{
+  "sha256": "77caf3ccc2c6138bdb3157cea124c5f39a1599d6740ea82e4d785cd3defb3ffe",
+  "payload": {
+    "kind": "recorded-replay",
+    "recordedAt": "2026-11-25T05:30:38.806Z",
+    "registryCapturedAt": null,
+    "timing": "simulated-retry-clock",
+    "corpusHash": "a042f915a68edc7be4c6280396c4bc88cf4788bf744387796531f6eba77e4693",
+    "sourceHashes": {
+      "src/core/verify/verdict.ts": "cd28f245749bf3e23971dfda6d5cedd6aa6e9443cb04ce5078f376b495943cfd",
+      "src/core/verify/compare.ts": "c1c0376aee4a50c80a6415022214229dee627491b832a9f42cb38089c81944bb",
+      "src/core/verify/normalise.ts": "6afa01ef48a8e0dc4df197afc7eadaa18a7f932a5dafdc0d37c99e7a854644b8",
+      "src/core/registries/index.ts": "4ab906ccb78a126e4472e1900aa54be8bb108e23637bb1ad307405888fc1afd0",
+      "src/core/registries/http.ts": "bef21436ac89ea8f54c998a401303c10cec888cb0bbca54275c5b6a1b187bdca",
+      "src/core/registries/map.ts": "7fdb57c8fdde07937f5457ff6470c4fe873bbd28576fe0e96fe2434d3c83f8f2",
+      "src/policy/policy.ts": "5da8783cc2f8291c9fdb5d975ac1f2e13b3d10148b6873ecdc815525a0cf3ecd",
+      "src/core/lab/corpus.ts": "aedb00e07f8aa85b2bcd432b0ac0f6f95de3fa644754e68ee4befc7e0ad407c2",
+      "src/core/lab/recorded-seeds.json": "2266b3f9ac03c5cd4072eaeccc92123a7a21a0d869cb29b8f595058d8c997d63",
+      "tests/unit/replay.ts": "c3c95c8a2652d45a23ec4ca8b34b2c83a990dba7ffeb0bbcd4de8321b4a58229",
+      "tests/unit/fixtures/registry.json": "31230615fc87ac024c8e8336b95c661d33ad573eb640a48f2dc4a4daf9f21c7a"
+    },
+    "run": {
+      "id": "recorded-replay-2026-11-25T05:30:38.781Z",
+      "mode": "sample",
+      "corpusVersion": "1",
+      "status": "completed",
+      "startedAt": "2026-11-25T05:30:38.781Z",
+      "finishedAt": "2026-11-25T05:30:38.806Z",
+      "rows": [
+        {
+          "case": {
+            "id": "real:10.1016/j.ijinfomgt.2023.102642",
+            "family": "real",
+            "title": "Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy",
+            "label": "Real reference",
+            "invented": false,
+            "reference": {
+              "doi": "10.1016/j.ijinfomgt.2023.102642",
+              "title": "Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy",
+              "authors": [
+                "Dwivedi",
+                "Kshetri",
+                "Hughes"
+              ],
+              "year": 2023,
+              "raw": "Dwivedi, Kshetri, Hughes. (2023). Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy. https://doi.org/10.1016/j.ijinfomgt.2023.102642"
+            },
+            "expected": "metadata-match",
+            "explanation": "Title, year, DOI and up to three author family names come from the captured Crossref record. A real reference is not proof that its findings are true.",
+            "provenance": [
+              {
+                "registry": "crossref",
+                "doi": "10.1016/j.ijinfomgt.2023.102642",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works/10.1016/j.ijinfomgt.2023.102642",
+                "itemIndex": null
+              }
+            ]
+          },
+          "state": "completed",
+          "startedAt": "2026-11-25T05:30:38.782Z",
+          "finishedAt": "2026-11-25T05:30:38.787Z",
+          "check": {
+            "verdict": "confirmed",
+            "reasons": [],
+            "fields": [
+              {
+                "field": "title",
+                "given": "Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy",
+                "registry": "Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy",
+                "score": 1,
+                "ok": true
+              },
+              {
+                "field": "authors",
+                "given": "Dwivedi, Kshetri, Hughes",
+                "registry": "Dwivedi, Kshetri, Hughes and 70 more",
+                "score": 1,
+                "ok": true
+              },
+              {
+                "field": "year",
+                "given": "2023",
+                "registry": "2023",
+                "score": 1,
+                "ok": true
+              }
+            ],
+            "trace": [
+              {
+                "registry": "crossref",
+                "status": "match",
+                "ms": 0
+              },
+              {
+                "registry": "openalex",
+                "status": "match",
+                "ms": 0
+              }
+            ],
+            "checkedAt": "2026-11-25T05:30:38.787Z",
+            "record": {
+              "registry": "crossref",
+              "id": "10.1016/j.ijinfomgt.2023.102642",
+              "doi": "10.1016/j.ijinfomgt.2023.102642",
+              "title": "Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy",
+              "authors": [
+                {
+                  "family": "Dwivedi",
+                  "given": "Yogesh K."
+                },
+                {
+                  "family": "Kshetri",
+                  "given": "Nir"
+                },
+                {
+                  "family": "Hughes",
+                  "given": "Laurie"
+                },
+                {
+                  "family": "Slade",
+                  "given": "Emma Louise"
+                },
+                {
+                  "family": "Jeyaraj",
+                  "given": "Anand"
+                },
+                {
+                  "family": "Kar",
+                  "given": "Arpan Kumar"
+                },
+                {
+                  "family": "Baabdullah",
+                  "given": "Abdullah M."
+                },
+                {
+                  "family": "Koohang",
+                  "given": "Alex"
+                },
+                {
+                  "family": "Raghavan",
+                  "given": "Vishnupriya"
+                },
+                {
+                  "family": "Ahuja",
+                  "given": "Manju"
+                },
+                {
+                  "family": "Albanna",
+                  "given": "Hanaa"
+                },
+                {
+                  "family": "Albashrawi",
+                  "given": "Mousa Ahmad"
+                },
+                {
+                  "family": "Al-Busaidi",
+                  "given": "Adil S."
+                },
+                {
+                  "family": "Balakrishnan",
+                  "given": "Janarthanan"
+                },
+                {
+                  "family": "Barlette",
+                  "given": "Yves"
+                },
+                {
+                  "family": "Basu",
+                  "given": "Sriparna"
+                },
+                {
+                  "family": "Bose",
+                  "given": "Indranil"
+                },
+                {
+                  "family": "Brooks",
+                  "given": "Laurence"
+                },
+                {
+                  "family": "Buhalis",
+                  "given": "Dimitrios"
+                },
+                {
+                  "family": "Carter",
+                  "given": "Lemuria"
+                },
+                {
+                  "family": "Chowdhury",
+                  "given": "Soumyadeb"
+                },
+                {
+                  "family": "Crick",
+                  "given": "Tom"
+                },
+                {
+                  "family": "Cunningham",
+                  "given": "Scott W."
+                },
+                {
+                  "family": "Davies",
+                  "given": "Gareth H."
+                },
+                {
+                  "family": "Davison",
+                  "given": "Robert M."
+                },
+                {
+                  "family": "Dé",
+                  "given": "Rahul"
+                },
+                {
+                  "family": "Dennehy",
+                  "given": "Denis"
+                },
+                {
+                  "family": "Duan",
+                  "given": "Yanqing"
+                },
+                {
+                  "family": "Dubey",
+                  "given": "Rameshwar"
+                },
+                {
+                  "family": "Dwivedi",
+                  "given": "Rohita"
+                },
+                {
+                  "family": "Edwards",
+                  "given": "John S."
+                },
+                {
+                  "family": "Flavián",
+                  "given": "Carlos"
+                },
+                {
+                  "family": "Gauld",
+                  "given": "Robin"
+                },
+                {
+                  "family": "Grover",
+                  "given": "Varun"
+                },
+                {
+                  "family": "Hu",
+                  "given": "Mei-Chih"
+                },
+                {
+                  "family": "Janssen",
+                  "given": "Marijn"
+                },
+                {
+                  "family": "Jones",
+                  "given": "Paul"
+                },
+                {
+                  "family": "Junglas",
+                  "given": "Iris"
+                },
+                {
+                  "family": "Khorana",
+                  "given": "Sangeeta"
+                },
+                {
+                  "family": "Kraus",
+                  "given": "Sascha"
+                },
+                {
+                  "family": "Larsen",
+                  "given": "Kai R."
+                },
+                {
+                  "family": "Latreille",
+                  "given": "Paul"
+                },
+                {
+                  "family": "Laumer",
+                  "given": "Sven"
+                },
+                {
+                  "family": "Malik",
+                  "given": "F. Tegwen"
+                },
+                {
+                  "family": "Mardani",
+                  "given": "Abbas"
+                },
+                {
+                  "family": "Mariani",
+                  "given": "Marcello"
+                },
+                {
+                  "family": "Mithas",
+                  "given": "Sunil"
+                },
+                {
+                  "family": "Mogaji",
+                  "given": "Emmanuel"
+                },
+                {
+                  "family": "Nord",
+                  "given": "Jeretta Horn"
+                },
+                {
+                  "family": "O’Connor",
+                  "given": "Siobhan"
+                },
+                {
+                  "family": "Okumus",
+                  "given": "Fevzi"
+                },
+                {
+                  "family": "Pagani",
+                  "given": "Margherita"
+                },
+                {
+                  "family": "Pandey",
+                  "given": "Neeraj"
+                },
+                {
+                  "family": "Papagiannidis",
+                  "given": "Savvas"
+                },
+                {
+                  "family": "Pappas",
+                  "given": "Ilias O."
+                },
+                {
+                  "family": "Pathak",
+                  "given": "Nishith"
+                },
+                {
+                  "family": "Pries-Heje",
+                  "given": "Jan"
+                },
+                {
+                  "family": "Raman",
+                  "given": "Ramakrishnan"
+                },
+                {
+                  "family": "Rana",
+                  "given": "Nripendra P."
+                },
+                {
+                  "family": "Rehm",
+                  "given": "Sven-Volker"
+                },
+                {
+                  "family": "Ribeiro-Navarrete",
+                  "given": "Samuel"
+                },
+                {
+                  "family": "Richter",
+                  "given": "Alexander"
+                },
+                {
+                  "family": "Rowe",
+                  "given": "Frantz"
+                },
+                {
+                  "family": "Sarker",
+                  "given": "Suprateek"
+                },
+                {
+                  "family": "Stahl",
+                  "given": "Bernd Carsten"
+                },
+                {
+                  "family": "Tiwari",
+                  "given": "Manoj Kumar"
+                },
+                {
+                  "family": "van der Aalst",
+                  "given": "Wil"
+                },
+                {
+                  "family": "Venkatesh",
+                  "given": "Viswanath"
+                },
+                {
+                  "family": "Viglia",
+                  "given": "Giampaolo"
+                },
+                {
+                  "family": "Wade",
+                  "given": "Michael"
+                },
+                {
+                  "family": "Walton",
+                  "given": "Paul"
+                },
+                {
+                  "family": "Wirtz",
+                  "given": "Jochen"
+                },
+                {
+                  "family": "Wright",
+                  "given": "Ryan"
+                }
+              ],
+              "year": 2023,
+              "container": "International Journal of Information Management",
+              "volume": "71",
+              "pages": "102642",
+              "publisher": "Elsevier BV",
+              "type": "journal-article",
+              "url": "https://doi.org/10.1016/j.ijinfomgt.2023.102642",
+              "citedBy": 8593,
+              "retracted": false,
+              "openAccessUrl": "https://linkinghub.elsevier.com/science/article/pii/S0268401223000233/pdfft?md5=492895056a2fa29b1cb81876a1c57544&pid=1-s2.0-S0268401223000233-main.pdf",
+              "openalexId": "W4360620450"
+            }
+          },
+          "missingReplay": []
+        },
+        {
+          "case": {
+            "id": "real:10.1037/0033-2909.117.3.497",
+            "family": "real",
+            "title": "The need to belong: Desire for interpersonal attachments as a fundamental human motivation.",
+            "label": "Real reference",
+            "invented": false,
+            "reference": {
+              "doi": "10.1037/0033-2909.117.3.497",
+              "title": "The need to belong: Desire for interpersonal attachments as a fundamental human motivation.",
+              "authors": [
+                "Baumeister",
+                "Leary"
+              ],
+              "year": 1995,
+              "raw": "Baumeister, Leary. (1995). The need to belong: Desire for interpersonal attachments as a fundamental human motivation.. https://doi.org/10.1037/0033-2909.117.3.497"
+            },
+            "expected": "metadata-match",
+            "explanation": "Title, year, DOI and up to three author family names come from the captured Crossref record. A real reference is not proof that its findings are true.",
+            "provenance": [
+              {
+                "registry": "crossref",
+                "doi": "10.1037/0033-2909.117.3.497",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works/10.1037/0033-2909.117.3.497",
+                "itemIndex": null
+              }
+            ]
+          },
+          "state": "completed",
+          "startedAt": "2026-11-25T05:30:38.787Z",
+          "finishedAt": "2026-11-25T05:30:38.789Z",
+          "check": {
+            "verdict": "confirmed",
+            "reasons": [],
+            "fields": [
+              {
+                "field": "title",
+                "given": "The need to belong: Desire for interpersonal attachments as a fundamental human motivation.",
+                "registry": "The need to belong: Desire for interpersonal attachments as a fundamental human motivation.",
+                "score": 1,
+                "ok": true
+              },
+              {
+                "field": "authors",
+                "given": "Baumeister, Leary",
+                "registry": "Baumeister, Leary",
+                "score": 1,
+                "ok": true
+              },
+              {
+                "field": "year",
+                "given": "1995",
+                "registry": "1995",
+                "score": 1,
+                "ok": true
+              }
+            ],
+            "trace": [
+              {
+                "registry": "crossref",
+                "status": "match",
+                "ms": 230
+              },
+              {
+                "registry": "openalex",
+                "status": "match",
+                "ms": 0
+              }
+            ],
+            "checkedAt": "2026-11-25T05:30:38.788Z",
+            "record": {
+              "registry": "crossref",
+              "id": "10.1037/0033-2909.117.3.497",
+              "doi": "10.1037/0033-2909.117.3.497",
+              "title": "The need to belong: Desire for interpersonal attachments as a fundamental human motivation.",
+              "authors": [
+                {
+                  "family": "Baumeister",
+                  "given": "Roy F."
+                },
+                {
+                  "family": "Leary",
+                  "given": "Mark R."
+                }
+              ],
+              "year": 1995,
+              "container": "Psychological Bulletin",
+              "volume": "117",
+              "issue": "3",
+              "pages": "497-529",
+              "publisher": "American Psychological Association (APA)",
+              "type": "journal-article",
+              "url": "https://doi.org/10.1037/0033-2909.117.3.497",
+              "citedBy": 30565,
+              "retracted": false,
+              "openalexId": "W2081155210"
+            }
+          },
+          "missingReplay": []
+        },
+        {
+          "case": {
+            "id": "real:10.1038/s41598-023-41032-5",
+            "family": "real",
+            "title": "Fabrication and errors in the bibliographic citations generated by ChatGPT",
+            "label": "Real reference",
+            "invented": false,
+            "reference": {
+              "doi": "10.1038/s41598-023-41032-5",
+              "title": "Fabrication and errors in the bibliographic citations generated by ChatGPT",
+              "authors": [
+                "Walters",
+                "Wilder"
+              ],
+              "year": 2023,
+              "raw": "Walters, Wilder. (2023). Fabrication and errors in the bibliographic citations generated by ChatGPT. https://doi.org/10.1038/s41598-023-41032-5"
+            },
+            "expected": "metadata-match",
+            "explanation": "Title, year, DOI and up to three author family names come from the captured Crossref record. A real reference is not proof that its findings are true.",
+            "provenance": [
+              {
+                "registry": "crossref",
+                "doi": "10.1038/s41598-023-41032-5",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works/10.1038/s41598-023-41032-5",
+                "itemIndex": null
+              }
+            ]
+          },
+          "state": "completed",
+          "startedAt": "2026-11-25T05:30:38.789Z",
+          "finishedAt": "2026-11-25T05:30:38.789Z",
+          "check": {
+            "verdict": "confirmed",
+            "reasons": [],
+            "fields": [
+              {
+                "field": "title",
+                "given": "Fabrication and errors in the bibliographic citations generated by ChatGPT",
+                "registry": "Fabrication and errors in the bibliographic citations generated by ChatGPT",
+                "score": 1,
+                "ok": true
+              },
+              {
+                "field": "authors",
+                "given": "Walters, Wilder",
+                "registry": "Walters, Wilder",
+                "score": 1,
+                "ok": true
+              },
+              {
+                "field": "year",
+                "given": "2023",
+                "registry": "2023",
+                "score": 1,
+                "ok": true
+              }
+            ],
+            "trace": [
+              {
+                "registry": "crossref",
+                "status": "match",
+                "ms": 230
+              },
+              {
+                "registry": "openalex",
+                "status": "match",
+                "ms": 0
+              }
+            ],
+            "checkedAt": "2026-11-25T05:30:38.789Z",
+            "record": {
+              "registry": "crossref",
+              "id": "10.1038/s41598-023-41032-5",
+              "doi": "10.1038/s41598-023-41032-5",
+              "title": "Fabrication and errors in the bibliographic citations generated by ChatGPT",
+              "authors": [
+                {
+                  "family": "Walters",
+                  "given": "William H."
+                },
+                {
+                  "family": "Wilder",
+                  "given": "Esther Isabelle"
+                }
+              ],
+              "year": 2023,
+              "container": "Scientific Reports",
+              "volume": "13",
+              "issue": "1",
+              "pages": "14045",
+              "publisher": "Springer Science and Business Media LLC",
+              "type": "journal-article",
+              "url": "https://doi.org/10.1038/s41598-023-41032-5",
+              "citedBy": 939,
+              "retracted": false,
+              "openAccessUrl": "https://www.nature.com/articles/s41598-023-41032-5.pdf",
+              "openalexId": "W4386510404"
+            }
+          },
+          "missingReplay": []
+        },
+        {
+          "case": {
+            "id": "real:10.1086/261763",
+            "family": "real",
+            "title": "Increasing Returns and Economic Geography",
+            "label": "Real reference",
+            "invented": false,
+            "reference": {
+              "doi": "10.1086/261763",
+              "title": "Increasing Returns and Economic Geography",
+              "authors": [
+                "Krugman"
+              ],
+              "year": 1991,
+              "raw": "Krugman. (1991). Increasing Returns and Economic Geography. https://doi.org/10.1086/261763"
+            },
+            "expected": "metadata-match",
+            "explanation": "Title, year, DOI and up to three author family names come from the captured Crossref record. A real reference is not proof that its findings are true.",
+            "provenance": [
+              {
+                "registry": "crossref",
+                "doi": "10.1086/261763",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works/10.1086/261763",
+                "itemIndex": null
+              }
+            ]
+          },
+          "state": "completed",
+          "startedAt": "2026-11-25T05:30:38.789Z",
+          "finishedAt": "2026-11-25T05:30:38.790Z",
+          "check": {
+            "verdict": "confirmed",
+            "reasons": [],
+            "fields": [
+              {
+                "field": "title",
+                "given": "Increasing Returns and Economic Geography",
+                "registry": "Increasing Returns and Economic Geography",
+                "score": 1,
+                "ok": true
+              },
+              {
+                "field": "authors",
+                "given": "Krugman",
+                "registry": "Krugman",
+                "score": 1,
+                "ok": true
+              },
+              {
+                "field": "year",
+                "given": "1991",
+                "registry": "1991",
+                "score": 1,
+                "ok": true
+              }
+            ],
+            "trace": [
+              {
+                "registry": "crossref",
+                "status": "match",
+                "ms": 230
+              },
+              {
+                "registry": "openalex",
+                "status": "match",
+                "ms": 0
+              }
+            ],
+            "checkedAt": "2026-11-25T05:30:38.789Z",
+            "record": {
+              "registry": "crossref",
+              "id": "10.1086/261763",
+              "doi": "10.1086/261763",
+              "title": "Increasing Returns and Economic Geography",
+              "authors": [
+                {
+                  "family": "Krugman",
+                  "given": "Paul"
+                }
+              ],
+              "year": 1991,
+              "container": "Journal of Political Economy",
+              "volume": "99",
+              "issue": "3",
+              "pages": "483-499",
+              "publisher": "University of Chicago Press",
+              "type": "journal-article",
+              "url": "https://doi.org/10.1086/261763",
+              "citedBy": 16427,
+              "retracted": false,
+              "openAccessUrl": "https://doi.org/10.3386/w3275",
+              "openalexId": "W1979132028"
+            }
+          },
+          "missingReplay": []
+        },
+        {
+          "case": {
+            "id": "real:10.1093/qje/qju032",
+            "family": "real",
+            "title": "Does Working from Home Work? Evidence from a Chinese Experiment",
+            "label": "Real reference",
+            "invented": false,
+            "reference": {
+              "doi": "10.1093/qje/qju032",
+              "title": "Does Working from Home Work? Evidence from a Chinese Experiment",
+              "authors": [
+                "Bloom",
+                "Liang",
+                "Roberts"
+              ],
+              "year": 2014,
+              "raw": "Bloom, Liang, Roberts. (2014). Does Working from Home Work? Evidence from a Chinese Experiment. https://doi.org/10.1093/qje/qju032"
+            },
+            "expected": "metadata-match",
+            "explanation": "Title, year, DOI and up to three author family names come from the captured Crossref record. A real reference is not proof that its findings are true.",
+            "provenance": [
+              {
+                "registry": "crossref",
+                "doi": "10.1093/qje/qju032",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works/10.1093/qje/qju032",
+                "itemIndex": null
+              }
+            ]
+          },
+          "state": "completed",
+          "startedAt": "2026-11-25T05:30:38.790Z",
+          "finishedAt": "2026-11-25T05:30:38.790Z",
+          "check": {
+            "verdict": "confirmed",
+            "reasons": [],
+            "fields": [
+              {
+                "field": "title",
+                "given": "Does Working from Home Work? Evidence from a Chinese Experiment",
+                "registry": "Does Working from Home Work? Evidence from a Chinese Experiment",
+                "score": 1,
+                "ok": true
+              },
+              {
+                "field": "authors",
+                "given": "Bloom, Liang, Roberts",
+                "registry": "Bloom, Liang, Roberts, Ying",
+                "score": 1,
+                "ok": true
+              },
+              {
+                "field": "year",
+                "given": "2014",
+                "registry": "2014",
+                "score": 1,
+                "ok": true
+              }
+            ],
+            "trace": [
+              {
+                "registry": "crossref",
+                "status": "match",
+                "ms": 230
+              },
+              {
+                "registry": "openalex",
+                "status": "match",
+                "ms": 0
+              }
+            ],
+            "checkedAt": "2026-11-25T05:30:38.790Z",
+            "record": {
+              "registry": "crossref",
+              "id": "10.1093/qje/qju032",
+              "doi": "10.1093/qje/qju032",
+              "title": "Does Working from Home Work? Evidence from a Chinese Experiment *",
+              "authors": [
+                {
+                  "family": "Bloom",
+                  "given": "Nicholas"
+                },
+                {
+                  "family": "Liang",
+                  "given": "James"
+                },
+                {
+                  "family": "Roberts",
+                  "given": "John"
+                },
+                {
+                  "family": "Ying",
+                  "given": "Zhichun Jenny"
+                }
+              ],
+              "year": 2014,
+              "container": "The Quarterly Journal of Economics",
+              "volume": "130",
+              "issue": "1",
+              "pages": "165-218",
+              "publisher": "Oxford University Press (OUP)",
+              "type": "journal-article",
+              "url": "https://doi.org/10.1093/qje/qju032",
+              "citedBy": 3155,
+              "retracted": false,
+              "openalexId": "W2161708711"
+            }
+          },
+          "missingReplay": []
+        },
+        {
+          "case": {
+            "id": "real:10.1108/jrit-01-2024-0017",
+            "family": "real",
+            "title": "ChatGPT in the classroom: navigating the generative AI wave in management education",
+            "label": "Real reference; retracted",
+            "invented": false,
+            "reference": {
+              "doi": "10.1108/jrit-01-2024-0017",
+              "title": "ChatGPT in the classroom: navigating the generative AI wave in management education",
+              "authors": [
+                "Leelavathi",
+                "Surendhranatha"
+              ],
+              "year": 2024,
+              "raw": "Leelavathi, Surendhranatha. (2024). ChatGPT in the classroom: navigating the generative AI wave in management education. https://doi.org/10.1108/jrit-01-2024-0017"
+            },
+            "expected": "retraction-flag",
+            "explanation": "Title, year, DOI and up to three author family names come from the captured Crossref record. A real reference is not proof that its findings are true.",
+            "provenance": [
+              {
+                "registry": "crossref",
+                "doi": "10.1108/jrit-01-2024-0017",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works/10.1108/jrit-01-2024-0017",
+                "itemIndex": null
+              }
+            ]
+          },
+          "state": "completed",
+          "startedAt": "2026-11-25T05:30:38.790Z",
+          "finishedAt": "2026-11-25T05:30:38.791Z",
+          "check": {
+            "verdict": "retracted",
+            "reasons": [
+              "RETRACTED"
+            ],
+            "fields": [
+              {
+                "field": "title",
+                "given": "ChatGPT in the classroom: navigating the generative AI wave in management education",
+                "registry": "ChatGPT in the classroom: navigating the generative AI wave in management education",
+                "score": 1,
+                "ok": true
+              },
+              {
+                "field": "authors",
+                "given": "Leelavathi, Surendhranatha",
+                "registry": "Leelavathi, Surendhranatha",
+                "score": 1,
+                "ok": true
+              },
+              {
+                "field": "year",
+                "given": "2024",
+                "registry": "2024",
+                "score": 1,
+                "ok": true
+              }
+            ],
+            "trace": [
+              {
+                "registry": "crossref",
+                "status": "match",
+                "ms": 230
+              },
+              {
+                "registry": "openalex",
+                "status": "match",
+                "ms": 0
+              }
+            ],
+            "checkedAt": "2026-11-25T05:30:38.791Z",
+            "record": {
+              "registry": "crossref",
+              "id": "10.1108/jrit-01-2024-0017",
+              "doi": "10.1108/jrit-01-2024-0017",
+              "title": "RETRACTED: ChatGPT in the classroom: navigating the generative AI wave in management education",
+              "authors": [
+                {
+                  "family": "Leelavathi",
+                  "given": "R."
+                },
+                {
+                  "family": "Surendhranatha",
+                  "given": "Reddy C."
+                }
+              ],
+              "year": 2024,
+              "container": "Journal of Research in Innovative Teaching & Learning",
+              "volume": "19",
+              "issue": "2",
+              "pages": "241-256",
+              "publisher": "Emerald",
+              "type": "journal-article",
+              "url": "https://doi.org/10.1108/jrit-01-2024-0017",
+              "citedBy": 62,
+              "retracted": true,
+              "retractedOn": "2025-02-21",
+              "openAccessUrl": "https://doi.org/10.1108/jrit-01-2024-0017",
+              "openalexId": "W4400415508"
+            }
+          },
+          "missingReplay": []
+        },
+        {
+          "case": {
+            "id": "real:10.1126/science.adh2586",
+            "family": "real",
+            "title": "Experimental evidence on the productivity effects of generative artificial intelligence",
+            "label": "Real reference",
+            "invented": false,
+            "reference": {
+              "doi": "10.1126/science.adh2586",
+              "title": "Experimental evidence on the productivity effects of generative artificial intelligence",
+              "authors": [
+                "Noy",
+                "Zhang"
+              ],
+              "year": 2023,
+              "raw": "Noy, Zhang. (2023). Experimental evidence on the productivity effects of generative artificial intelligence. https://doi.org/10.1126/science.adh2586"
+            },
+            "expected": "metadata-match",
+            "explanation": "Title, year, DOI and up to three author family names come from the captured Crossref record. A real reference is not proof that its findings are true.",
+            "provenance": [
+              {
+                "registry": "crossref",
+                "doi": "10.1126/science.adh2586",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works/10.1126/science.adh2586",
+                "itemIndex": null
+              }
+            ]
+          },
+          "state": "completed",
+          "startedAt": "2026-11-25T05:30:38.791Z",
+          "finishedAt": "2026-11-25T05:30:38.791Z",
+          "check": {
+            "verdict": "confirmed",
+            "reasons": [],
+            "fields": [
+              {
+                "field": "title",
+                "given": "Experimental evidence on the productivity effects of generative artificial intelligence",
+                "registry": "Experimental evidence on the productivity effects of generative artificial intelligence",
+                "score": 1,
+                "ok": true
+              },
+              {
+                "field": "authors",
+                "given": "Noy, Zhang",
+                "registry": "Noy, Zhang",
+                "score": 1,
+                "ok": true
+              },
+              {
+                "field": "year",
+                "given": "2023",
+                "registry": "2023",
+                "score": 1,
+                "ok": true
+              }
+            ],
+            "trace": [
+              {
+                "registry": "crossref",
+                "status": "match",
+                "ms": 230
+              },
+              {
+                "registry": "openalex",
+                "status": "match",
+                "ms": 0
+              }
+            ],
+            "checkedAt": "2026-11-25T05:30:38.791Z",
+            "record": {
+              "registry": "crossref",
+              "id": "10.1126/science.adh2586",
+              "doi": "10.1126/science.adh2586",
+              "title": "Experimental evidence on the productivity effects of generative artificial intelligence",
+              "authors": [
+                {
+                  "family": "Noy",
+                  "given": "Shakked"
+                },
+                {
+                  "family": "Zhang",
+                  "given": "Whitney"
+                }
+              ],
+              "year": 2023,
+              "container": "Science",
+              "volume": "381",
+              "issue": "6654",
+              "pages": "187-192",
+              "publisher": "American Association for the Advancement of Science (AAAS)",
+              "type": "journal-article",
+              "url": "https://doi.org/10.1126/science.adh2586",
+              "citedBy": 3995,
+              "retracted": false,
+              "openAccessUrl": "https://doi.org/10.2139/ssrn.4375283",
+              "openalexId": "W4384154918"
+            }
+          },
+          "missingReplay": []
+        },
+        {
+          "case": {
+            "id": "real:10.1257/aer.20160696",
+            "family": "real",
+            "title": "The Race between Man and Machine: Implications of Technology for Growth, Factor Shares, and Employment",
+            "label": "Real reference",
+            "invented": false,
+            "reference": {
+              "doi": "10.1257/aer.20160696",
+              "title": "The Race between Man and Machine: Implications of Technology for Growth, Factor Shares, and Employment",
+              "authors": [
+                "Acemoglu",
+                "Restrepo"
+              ],
+              "year": 2018,
+              "raw": "Acemoglu, Restrepo. (2018). The Race between Man and Machine: Implications of Technology for Growth, Factor Shares, and Employment. https://doi.org/10.1257/aer.20160696"
+            },
+            "expected": "metadata-match",
+            "explanation": "Title, year, DOI and up to three author family names come from the captured Crossref record. A real reference is not proof that its findings are true.",
+            "provenance": [
+              {
+                "registry": "crossref",
+                "doi": "10.1257/aer.20160696",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works/10.1257/aer.20160696",
+                "itemIndex": null
+              }
+            ]
+          },
+          "state": "completed",
+          "startedAt": "2026-11-25T05:30:38.791Z",
+          "finishedAt": "2026-11-25T05:30:38.792Z",
+          "check": {
+            "verdict": "confirmed",
+            "reasons": [],
+            "fields": [
+              {
+                "field": "title",
+                "given": "The Race between Man and Machine: Implications of Technology for Growth, Factor Shares, and Employment",
+                "registry": "The Race between Man and Machine: Implications of Technology for Growth, Factor Shares, and Employment",
+                "score": 1,
+                "ok": true
+              },
+              {
+                "field": "authors",
+                "given": "Acemoglu, Restrepo",
+                "registry": "Acemoglu, Restrepo",
+                "score": 1,
+                "ok": true
+              },
+              {
+                "field": "year",
+                "given": "2018",
+                "registry": "2018",
+                "score": 1,
+                "ok": true
+              }
+            ],
+            "trace": [
+              {
+                "registry": "crossref",
+                "status": "match",
+                "ms": 230
+              },
+              {
+                "registry": "openalex",
+                "status": "match",
+                "ms": 0
+              }
+            ],
+            "checkedAt": "2026-11-25T05:30:38.792Z",
+            "record": {
+              "registry": "crossref",
+              "id": "10.1257/aer.20160696",
+              "doi": "10.1257/aer.20160696",
+              "title": "The Race between Man and Machine: Implications of Technology for Growth, Factor Shares, and Employment",
+              "authors": [
+                {
+                  "family": "Acemoglu",
+                  "given": "Daron"
+                },
+                {
+                  "family": "Restrepo",
+                  "given": "Pascual"
+                }
+              ],
+              "year": 2018,
+              "container": "American Economic Review",
+              "volume": "108",
+              "issue": "6",
+              "pages": "1488-1542",
+              "publisher": "American Economic Association",
+              "type": "journal-article",
+              "url": "https://doi.org/10.1257/aer.20160696",
+              "citedBy": 4667,
+              "retracted": false,
+              "openAccessUrl": "https://www.aeaweb.org/articles/pdf/doi/10.1257/aer.20160696",
+              "openalexId": "W3125498346"
+            }
+          },
+          "missingReplay": []
+        },
+        {
+          "case": {
+            "id": "real:10.1039/9781839167782-00159",
+            "family": "real",
+            "title": "Flipped Classrooms in Organic Chemistry—A Closer Look at Student Reasoning Through Discourse Analysis of a Group Activity",
+            "label": "Real reference",
+            "invented": false,
+            "reference": {
+              "doi": "10.1039/9781839167782-00159",
+              "title": "Flipped Classrooms in Organic Chemistry—A Closer Look at Student Reasoning Through Discourse Analysis of a Group Activity",
+              "authors": [
+                "Mooring",
+                "Burrows",
+                "Gamage"
+              ],
+              "year": 2022,
+              "raw": "Mooring, Burrows, Gamage. (2022). Flipped Classrooms in Organic Chemistry—A Closer Look at Student Reasoning Through Discourse Analysis of a Group Activity. https://doi.org/10.1039/9781839167782-00159"
+            },
+            "expected": "metadata-match",
+            "explanation": "Title, year, DOI and up to three author family names come from the captured Crossref record. A real reference is not proof that its findings are true.",
+            "provenance": [
+              {
+                "registry": "crossref",
+                "doi": "10.1039/9781839167782-00159",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works?rows=6&query.bibliographic=The%20honest%20machine%3A%20Provenance%20signals%20and%20student%20reasoning%20in%20hybrid%20classrooms%20Velasquez%202023",
+                "itemIndex": 4
+              }
+            ]
+          },
+          "state": "completed",
+          "startedAt": "2026-11-25T05:30:38.792Z",
+          "finishedAt": "2026-11-25T05:30:38.793Z",
+          "check": {
+            "verdict": "could-not-check",
+            "reasons": [
+              "REGISTRY_UNREACHABLE"
+            ],
+            "fields": [],
+            "trace": [
+              {
+                "registry": "crossref",
+                "status": "error",
+                "ms": 3230,
+                "note": "network error"
+              },
+              {
+                "registry": "datacite",
+                "status": "error",
+                "ms": 3000,
+                "note": "network error"
+              },
+              {
+                "registry": "doi.org",
+                "status": "error",
+                "ms": 3000,
+                "note": "network error"
+              }
+            ],
+            "checkedAt": "2026-11-25T05:30:38.793Z"
+          },
+          "missingReplay": [
+            "https://api.crossref.org/works/10.1039/9781839167782-00159",
+            "https://api.datacite.org/dois/10.1039/9781839167782-00159",
+            "https://doi.org/api/handles/10.1039/9781839167782-00159"
+          ]
+        },
+        {
+          "case": {
+            "id": "real:10.1080/13546783.2024.2402129",
+            "family": "real",
+            "title": "Kahneman, Tversky, and Kahneman-Tversky: three ways of thinking",
+            "label": "Real reference",
+            "invented": false,
+            "reference": {
+              "doi": "10.1080/13546783.2024.2402129",
+              "title": "Kahneman, Tversky, and Kahneman-Tversky: three ways of thinking",
+              "authors": [
+                "Johnson-Laird"
+              ],
+              "year": 2024,
+              "raw": "Johnson-Laird. (2024). Kahneman, Tversky, and Kahneman-Tversky: three ways of thinking. https://doi.org/10.1080/13546783.2024.2402129"
+            },
+            "expected": "metadata-match",
+            "explanation": "Title, year, DOI and up to three author family names come from the captured Crossref record. A real reference is not proof that its findings are true.",
+            "provenance": [
+              {
+                "registry": "crossref",
+                "doi": "10.1080/13546783.2024.2402129",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works?rows=6&query.bibliographic=The%20need%20to%20belong%3A%20Desire%20for%20interpersonal%20attachments%20as%20a%20fundamental%20human%20motivation%20Kahneman%20Tversky%201995",
+                "itemIndex": 2
+              }
+            ]
+          },
+          "state": "completed",
+          "startedAt": "2026-11-25T05:30:38.793Z",
+          "finishedAt": "2026-11-25T05:30:38.793Z",
+          "check": {
+            "verdict": "could-not-check",
+            "reasons": [
+              "REGISTRY_UNREACHABLE"
+            ],
+            "fields": [],
+            "trace": [
+              {
+                "registry": "crossref",
+                "status": "error",
+                "ms": 3000,
+                "note": "network error"
+              },
+              {
+                "registry": "datacite",
+                "status": "error",
+                "ms": 3000,
+                "note": "network error"
+              },
+              {
+                "registry": "doi.org",
+                "status": "error",
+                "ms": 3000,
+                "note": "network error"
+              }
+            ],
+            "checkedAt": "2026-11-25T05:30:38.793Z"
+          },
+          "missingReplay": [
+            "https://api.crossref.org/works/10.1080/13546783.2024.2402129",
+            "https://api.datacite.org/dois/10.1080/13546783.2024.2402129",
+            "https://doi.org/api/handles/10.1080/13546783.2024.2402129"
+          ]
+        },
+        {
+          "case": {
+            "id": "real:10.15581/003.39.1.030",
+            "family": "real",
+            "title": "Algorithmic Truthfulness, Community Notes, and Trust in Greenwashing Claims: Evidence from Aspirational Fashion and Sustainable Luxury Brands",
+            "label": "Real reference",
+            "invented": false,
+            "reference": {
+              "doi": "10.15581/003.39.1.030",
+              "title": "Algorithmic Truthfulness, Community Notes, and Trust in Greenwashing Claims: Evidence from Aspirational Fashion and Sustainable Luxury Brands",
+              "authors": [
+                "Gil-García",
+                "Presol-Herrero"
+              ],
+              "year": 2026,
+              "raw": "Gil-García, Presol-Herrero. (2026). Algorithmic Truthfulness, Community Notes, and Trust in Greenwashing Claims: Evidence from Aspirational Fashion and Sustainable Luxury Brands. https://doi.org/10.15581/003.39.1.030"
+            },
+            "expected": "metadata-match",
+            "explanation": "Title, year, DOI and up to three author family names come from the captured Crossref record. A real reference is not proof that its findings are true.",
+            "provenance": [
+              {
+                "registry": "crossref",
+                "doi": "10.15581/003.39.1.030",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works?rows=6&query.bibliographic=Trust%20decay%20in%20algorithmic%20tutoring%3A%20Evidence%20from%2014%20universities%20Okonjo%20Reyes%202022",
+                "itemIndex": 0
+              }
+            ]
+          },
+          "state": "completed",
+          "startedAt": "2026-11-25T05:30:38.793Z",
+          "finishedAt": "2026-11-25T05:30:38.793Z",
+          "check": {
+            "verdict": "could-not-check",
+            "reasons": [
+              "REGISTRY_UNREACHABLE"
+            ],
+            "fields": [],
+            "trace": [
+              {
+                "registry": "crossref",
+                "status": "error",
+                "ms": 3000,
+                "note": "network error"
+              },
+              {
+                "registry": "datacite",
+                "status": "error",
+                "ms": 3000,
+                "note": "network error"
+              },
+              {
+                "registry": "doi.org",
+                "status": "error",
+                "ms": 3000,
+                "note": "network error"
+              }
+            ],
+            "checkedAt": "2026-11-25T05:30:38.793Z"
+          },
+          "missingReplay": [
+            "https://api.crossref.org/works/10.15581/003.39.1.030",
+            "https://api.datacite.org/dois/10.15581/003.39.1.030",
+            "https://doi.org/api/handles/10.15581/003.39.1.030"
+          ]
+        },
+        {
+          "case": {
+            "id": "real:10.21125/inted.2022.1033",
+            "family": "real",
+            "title": "MACHINE TRANSLATION AS A MEDIUM AND TOOL FOR INTERNATIONAL STUDENT PARTICIPATION IN FACE-TO-FACE, ONLINE AND HYBRID MULTILINGUAL CLASSROOMS",
+            "label": "Real reference",
+            "invented": false,
+            "reference": {
+              "doi": "10.21125/inted.2022.1033",
+              "title": "MACHINE TRANSLATION AS A MEDIUM AND TOOL FOR INTERNATIONAL STUDENT PARTICIPATION IN FACE-TO-FACE, ONLINE AND HYBRID MULTILINGUAL CLASSROOMS",
+              "authors": [
+                "Panagiotidou"
+              ],
+              "year": 2022,
+              "raw": "Panagiotidou. (2022). MACHINE TRANSLATION AS A MEDIUM AND TOOL FOR INTERNATIONAL STUDENT PARTICIPATION IN FACE-TO-FACE, ONLINE AND HYBRID MULTILINGUAL CLASSROOMS. https://doi.org/10.21125/inted.2022.1033"
+            },
+            "expected": "metadata-match",
+            "explanation": "Title, year, DOI and up to three author family names come from the captured Crossref record. A real reference is not proof that its findings are true.",
+            "provenance": [
+              {
+                "registry": "crossref",
+                "doi": "10.21125/inted.2022.1033",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works?rows=6&query.bibliographic=The%20honest%20machine%3A%20Provenance%20signals%20and%20student%20reasoning%20in%20hybrid%20classrooms%20Velasquez%202023",
+                "itemIndex": 2
+              }
+            ]
+          },
+          "state": "completed",
+          "startedAt": "2026-11-25T05:30:38.793Z",
+          "finishedAt": "2026-11-25T05:30:38.793Z",
+          "check": {
+            "verdict": "could-not-check",
+            "reasons": [
+              "REGISTRY_UNREACHABLE"
+            ],
+            "fields": [],
+            "trace": [
+              {
+                "registry": "crossref",
+                "status": "error",
+                "ms": 3000,
+                "note": "network error"
+              },
+              {
+                "registry": "datacite",
+                "status": "error",
+                "ms": 3000,
+                "note": "network error"
+              },
+              {
+                "registry": "doi.org",
+                "status": "error",
+                "ms": 3000,
+                "note": "network error"
+              }
+            ],
+            "checkedAt": "2026-11-25T05:30:38.793Z"
+          },
+          "missingReplay": [
+            "https://api.crossref.org/works/10.21125/inted.2022.1033",
+            "https://api.datacite.org/dois/10.21125/inted.2022.1033",
+            "https://doi.org/api/handles/10.21125/inted.2022.1033"
+          ]
+        },
+        {
+          "case": {
+            "id": "invented:total:1",
+            "family": "total-fabrication",
+            "title": "Entirely invented combination",
+            "label": "Invented for this Lab; do not cite",
+            "invented": true,
+            "reference": {
+              "title": "Counterfactual evidence ledgers for collaborative annotation in learning communities",
+              "authors": [
+                "LabInventedAuthor1"
+              ],
+              "year": 2023,
+              "raw": "LabInventedAuthor1. (2023). Counterfactual evidence ledgers for collaborative annotation in learning communities"
+            },
+            "expected": "reject-invented",
+            "explanation": "Code composes a new title and an explicitly invented author. The year is borrowed from the control. No DOI or venue is invented; the result is not a real citation.",
+            "provenance": [
+              {
+                "registry": "crossref",
+                "doi": "10.1016/j.ijinfomgt.2023.102642",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works/10.1016/j.ijinfomgt.2023.102642",
+                "itemIndex": null
+              }
+            ],
+            "mutation": {
+              "method": "compose-reference",
+              "baseCaseIds": [
+                "real:10.1016/j.ijinfomgt.2023.102642"
+              ],
+              "changedFields": [
+                "title",
+                "authors",
+                "doi"
+              ]
+            }
+          },
+          "state": "completed",
+          "startedAt": "2026-11-25T05:30:38.793Z",
+          "finishedAt": "2026-11-25T05:30:38.794Z",
+          "check": {
+            "verdict": "could-not-check",
+            "reasons": [
+              "REGISTRY_UNREACHABLE"
+            ],
+            "fields": [],
+            "trace": [
+              {
+                "registry": "crossref",
+                "status": "error",
+                "ms": 3600,
+                "note": "network error"
+              }
+            ],
+            "checkedAt": "2026-11-25T05:30:38.794Z"
+          },
+          "missingReplay": [
+            "https://api.crossref.org/works?rows=6&query.bibliographic=Counterfactual%20evidence%20ledgers%20for%20collaborative%20annotation%20in%20learning%20communities%20LabInventedAuthor1%202023"
+          ]
+        },
+        {
+          "case": {
+            "id": "invented:author:1",
+            "family": "part-corrupted",
+            "title": "Author attached to the wrong work",
+            "label": "Invented for this Lab; do not cite",
+            "invented": true,
+            "reference": {
+              "title": "Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy",
+              "authors": [
+                "Walters",
+                "Kshetri",
+                "Hughes"
+              ],
+              "year": 2023,
+              "doi": "10.1016/j.ijinfomgt.2023.102642",
+              "raw": "Walters, Kshetri, Hughes. (2023). Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy. https://doi.org/10.1016/j.ijinfomgt.2023.102642"
+            },
+            "expected": "reject-invented",
+            "explanation": "The first author family name is replaced with one from a different captured work. The DOI, title and year still identify the original control.",
+            "provenance": [
+              {
+                "registry": "crossref",
+                "doi": "10.1016/j.ijinfomgt.2023.102642",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works/10.1016/j.ijinfomgt.2023.102642",
+                "itemIndex": null
+              },
+              {
+                "registry": "crossref",
+                "doi": "10.1038/s41598-023-41032-5",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works/10.1038/s41598-023-41032-5",
+                "itemIndex": null
+              }
+            ],
+            "mutation": {
+              "method": "replace-author",
+              "baseCaseIds": [
+                "real:10.1016/j.ijinfomgt.2023.102642",
+                "real:10.1038/s41598-023-41032-5"
+              ],
+              "changedFields": [
+                "authors"
+              ]
+            }
+          },
+          "state": "completed",
+          "startedAt": "2026-11-25T05:30:38.794Z",
+          "finishedAt": "2026-11-25T05:30:38.795Z",
+          "check": {
+            "verdict": "details-differ",
+            "reasons": [
+              "AUTHOR_DIFFERS"
+            ],
+            "fields": [
+              {
+                "field": "title",
+                "given": "Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy",
+                "registry": "Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy",
+                "score": 1,
+                "ok": true
+              },
+              {
+                "field": "authors",
+                "given": "Walters, Kshetri, Hughes",
+                "registry": "Dwivedi, Kshetri, Hughes and 70 more",
+                "score": 0.6666666666666666,
+                "ok": false
+              },
+              {
+                "field": "year",
+                "given": "2023",
+                "registry": "2023",
+                "score": 1,
+                "ok": true
+              }
+            ],
+            "trace": [
+              {
+                "registry": "crossref",
+                "status": "match",
+                "ms": 0
+              },
+              {
+                "registry": "openalex",
+                "status": "match",
+                "ms": 0
+              }
+            ],
+            "checkedAt": "2026-11-25T05:30:38.795Z",
+            "record": {
+              "registry": "crossref",
+              "id": "10.1016/j.ijinfomgt.2023.102642",
+              "doi": "10.1016/j.ijinfomgt.2023.102642",
+              "title": "Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy",
+              "authors": [
+                {
+                  "family": "Dwivedi",
+                  "given": "Yogesh K."
+                },
+                {
+                  "family": "Kshetri",
+                  "given": "Nir"
+                },
+                {
+                  "family": "Hughes",
+                  "given": "Laurie"
+                },
+                {
+                  "family": "Slade",
+                  "given": "Emma Louise"
+                },
+                {
+                  "family": "Jeyaraj",
+                  "given": "Anand"
+                },
+                {
+                  "family": "Kar",
+                  "given": "Arpan Kumar"
+                },
+                {
+                  "family": "Baabdullah",
+                  "given": "Abdullah M."
+                },
+                {
+                  "family": "Koohang",
+                  "given": "Alex"
+                },
+                {
+                  "family": "Raghavan",
+                  "given": "Vishnupriya"
+                },
+                {
+                  "family": "Ahuja",
+                  "given": "Manju"
+                },
+                {
+                  "family": "Albanna",
+                  "given": "Hanaa"
+                },
+                {
+                  "family": "Albashrawi",
+                  "given": "Mousa Ahmad"
+                },
+                {
+                  "family": "Al-Busaidi",
+                  "given": "Adil S."
+                },
+                {
+                  "family": "Balakrishnan",
+                  "given": "Janarthanan"
+                },
+                {
+                  "family": "Barlette",
+                  "given": "Yves"
+                },
+                {
+                  "family": "Basu",
+                  "given": "Sriparna"
+                },
+                {
+                  "family": "Bose",
+                  "given": "Indranil"
+                },
+                {
+                  "family": "Brooks",
+                  "given": "Laurence"
+                },
+                {
+                  "family": "Buhalis",
+                  "given": "Dimitrios"
+                },
+                {
+                  "family": "Carter",
+                  "given": "Lemuria"
+                },
+                {
+                  "family": "Chowdhury",
+                  "given": "Soumyadeb"
+                },
+                {
+                  "family": "Crick",
+                  "given": "Tom"
+                },
+                {
+                  "family": "Cunningham",
+                  "given": "Scott W."
+                },
+                {
+                  "family": "Davies",
+                  "given": "Gareth H."
+                },
+                {
+                  "family": "Davison",
+                  "given": "Robert M."
+                },
+                {
+                  "family": "Dé",
+                  "given": "Rahul"
+                },
+                {
+                  "family": "Dennehy",
+                  "given": "Denis"
+                },
+                {
+                  "family": "Duan",
+                  "given": "Yanqing"
+                },
+                {
+                  "family": "Dubey",
+                  "given": "Rameshwar"
+                },
+                {
+                  "family": "Dwivedi",
+                  "given": "Rohita"
+                },
+                {
+                  "family": "Edwards",
+                  "given": "John S."
+                },
+                {
+                  "family": "Flavián",
+                  "given": "Carlos"
+                },
+                {
+                  "family": "Gauld",
+                  "given": "Robin"
+                },
+                {
+                  "family": "Grover",
+                  "given": "Varun"
+                },
+                {
+                  "family": "Hu",
+                  "given": "Mei-Chih"
+                },
+                {
+                  "family": "Janssen",
+                  "given": "Marijn"
+                },
+                {
+                  "family": "Jones",
+                  "given": "Paul"
+                },
+                {
+                  "family": "Junglas",
+                  "given": "Iris"
+                },
+                {
+                  "family": "Khorana",
+                  "given": "Sangeeta"
+                },
+                {
+                  "family": "Kraus",
+                  "given": "Sascha"
+                },
+                {
+                  "family": "Larsen",
+                  "given": "Kai R."
+                },
+                {
+                  "family": "Latreille",
+                  "given": "Paul"
+                },
+                {
+                  "family": "Laumer",
+                  "given": "Sven"
+                },
+                {
+                  "family": "Malik",
+                  "given": "F. Tegwen"
+                },
+                {
+                  "family": "Mardani",
+                  "given": "Abbas"
+                },
+                {
+                  "family": "Mariani",
+                  "given": "Marcello"
+                },
+                {
+                  "family": "Mithas",
+                  "given": "Sunil"
+                },
+                {
+                  "family": "Mogaji",
+                  "given": "Emmanuel"
+                },
+                {
+                  "family": "Nord",
+                  "given": "Jeretta Horn"
+                },
+                {
+                  "family": "O’Connor",
+                  "given": "Siobhan"
+                },
+                {
+                  "family": "Okumus",
+                  "given": "Fevzi"
+                },
+                {
+                  "family": "Pagani",
+                  "given": "Margherita"
+                },
+                {
+                  "family": "Pandey",
+                  "given": "Neeraj"
+                },
+                {
+                  "family": "Papagiannidis",
+                  "given": "Savvas"
+                },
+                {
+                  "family": "Pappas",
+                  "given": "Ilias O."
+                },
+                {
+                  "family": "Pathak",
+                  "given": "Nishith"
+                },
+                {
+                  "family": "Pries-Heje",
+                  "given": "Jan"
+                },
+                {
+                  "family": "Raman",
+                  "given": "Ramakrishnan"
+                },
+                {
+                  "family": "Rana",
+                  "given": "Nripendra P."
+                },
+                {
+                  "family": "Rehm",
+                  "given": "Sven-Volker"
+                },
+                {
+                  "family": "Ribeiro-Navarrete",
+                  "given": "Samuel"
+                },
+                {
+                  "family": "Richter",
+                  "given": "Alexander"
+                },
+                {
+                  "family": "Rowe",
+                  "given": "Frantz"
+                },
+                {
+                  "family": "Sarker",
+                  "given": "Suprateek"
+                },
+                {
+                  "family": "Stahl",
+                  "given": "Bernd Carsten"
+                },
+                {
+                  "family": "Tiwari",
+                  "given": "Manoj Kumar"
+                },
+                {
+                  "family": "van der Aalst",
+                  "given": "Wil"
+                },
+                {
+                  "family": "Venkatesh",
+                  "given": "Viswanath"
+                },
+                {
+                  "family": "Viglia",
+                  "given": "Giampaolo"
+                },
+                {
+                  "family": "Wade",
+                  "given": "Michael"
+                },
+                {
+                  "family": "Walton",
+                  "given": "Paul"
+                },
+                {
+                  "family": "Wirtz",
+                  "given": "Jochen"
+                },
+                {
+                  "family": "Wright",
+                  "given": "Ryan"
+                }
+              ],
+              "year": 2023,
+              "container": "International Journal of Information Management",
+              "volume": "71",
+              "pages": "102642",
+              "publisher": "Elsevier BV",
+              "type": "journal-article",
+              "url": "https://doi.org/10.1016/j.ijinfomgt.2023.102642",
+              "citedBy": 8593,
+              "retracted": false,
+              "openAccessUrl": "https://linkinghub.elsevier.com/science/article/pii/S0268401223000233/pdfft?md5=492895056a2fa29b1cb81876a1c57544&pid=1-s2.0-S0268401223000233-main.pdf",
+              "openalexId": "W4360620450"
+            }
+          },
+          "missingReplay": []
+        },
+        {
+          "case": {
+            "id": "invented:year:1",
+            "family": "part-corrupted",
+            "title": "Year deliberately shifted",
+            "label": "Invented for this Lab; do not cite",
+            "invented": true,
+            "reference": {
+              "title": "Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy",
+              "authors": [
+                "Dwivedi",
+                "Kshetri",
+                "Hughes"
+              ],
+              "year": 2016,
+              "doi": "10.1016/j.ijinfomgt.2023.102642",
+              "raw": "Dwivedi, Kshetri, Hughes. (2016). Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy. https://doi.org/10.1016/j.ijinfomgt.2023.102642"
+            },
+            "expected": "reject-invented",
+            "explanation": "The recorded year is reduced by seven while the original DOI and other fields remain. This is a declared alteration, not a claim about another publication date.",
+            "provenance": [
+              {
+                "registry": "crossref",
+                "doi": "10.1016/j.ijinfomgt.2023.102642",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works/10.1016/j.ijinfomgt.2023.102642",
+                "itemIndex": null
+              }
+            ],
+            "mutation": {
+              "method": "shift-year",
+              "baseCaseIds": [
+                "real:10.1016/j.ijinfomgt.2023.102642"
+              ],
+              "changedFields": [
+                "year"
+              ]
+            }
+          },
+          "state": "completed",
+          "startedAt": "2026-11-25T05:30:38.795Z",
+          "finishedAt": "2026-11-25T05:30:38.796Z",
+          "check": {
+            "verdict": "details-differ",
+            "reasons": [
+              "YEAR_DIFFERS"
+            ],
+            "fields": [
+              {
+                "field": "title",
+                "given": "Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy",
+                "registry": "Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy",
+                "score": 1,
+                "ok": true
+              },
+              {
+                "field": "authors",
+                "given": "Dwivedi, Kshetri, Hughes",
+                "registry": "Dwivedi, Kshetri, Hughes and 70 more",
+                "score": 1,
+                "ok": true
+              },
+              {
+                "field": "year",
+                "given": "2016",
+                "registry": "2023",
+                "score": 0,
+                "ok": false
+              }
+            ],
+            "trace": [
+              {
+                "registry": "crossref",
+                "status": "match",
+                "ms": 0
+              },
+              {
+                "registry": "openalex",
+                "status": "match",
+                "ms": 0
+              }
+            ],
+            "checkedAt": "2026-11-25T05:30:38.796Z",
+            "record": {
+              "registry": "crossref",
+              "id": "10.1016/j.ijinfomgt.2023.102642",
+              "doi": "10.1016/j.ijinfomgt.2023.102642",
+              "title": "Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy",
+              "authors": [
+                {
+                  "family": "Dwivedi",
+                  "given": "Yogesh K."
+                },
+                {
+                  "family": "Kshetri",
+                  "given": "Nir"
+                },
+                {
+                  "family": "Hughes",
+                  "given": "Laurie"
+                },
+                {
+                  "family": "Slade",
+                  "given": "Emma Louise"
+                },
+                {
+                  "family": "Jeyaraj",
+                  "given": "Anand"
+                },
+                {
+                  "family": "Kar",
+                  "given": "Arpan Kumar"
+                },
+                {
+                  "family": "Baabdullah",
+                  "given": "Abdullah M."
+                },
+                {
+                  "family": "Koohang",
+                  "given": "Alex"
+                },
+                {
+                  "family": "Raghavan",
+                  "given": "Vishnupriya"
+                },
+                {
+                  "family": "Ahuja",
+                  "given": "Manju"
+                },
+                {
+                  "family": "Albanna",
+                  "given": "Hanaa"
+                },
+                {
+                  "family": "Albashrawi",
+                  "given": "Mousa Ahmad"
+                },
+                {
+                  "family": "Al-Busaidi",
+                  "given": "Adil S."
+                },
+                {
+                  "family": "Balakrishnan",
+                  "given": "Janarthanan"
+                },
+                {
+                  "family": "Barlette",
+                  "given": "Yves"
+                },
+                {
+                  "family": "Basu",
+                  "given": "Sriparna"
+                },
+                {
+                  "family": "Bose",
+                  "given": "Indranil"
+                },
+                {
+                  "family": "Brooks",
+                  "given": "Laurence"
+                },
+                {
+                  "family": "Buhalis",
+                  "given": "Dimitrios"
+                },
+                {
+                  "family": "Carter",
+                  "given": "Lemuria"
+                },
+                {
+                  "family": "Chowdhury",
+                  "given": "Soumyadeb"
+                },
+                {
+                  "family": "Crick",
+                  "given": "Tom"
+                },
+                {
+                  "family": "Cunningham",
+                  "given": "Scott W."
+                },
+                {
+                  "family": "Davies",
+                  "given": "Gareth H."
+                },
+                {
+                  "family": "Davison",
+                  "given": "Robert M."
+                },
+                {
+                  "family": "Dé",
+                  "given": "Rahul"
+                },
+                {
+                  "family": "Dennehy",
+                  "given": "Denis"
+                },
+                {
+                  "family": "Duan",
+                  "given": "Yanqing"
+                },
+                {
+                  "family": "Dubey",
+                  "given": "Rameshwar"
+                },
+                {
+                  "family": "Dwivedi",
+                  "given": "Rohita"
+                },
+                {
+                  "family": "Edwards",
+                  "given": "John S."
+                },
+                {
+                  "family": "Flavián",
+                  "given": "Carlos"
+                },
+                {
+                  "family": "Gauld",
+                  "given": "Robin"
+                },
+                {
+                  "family": "Grover",
+                  "given": "Varun"
+                },
+                {
+                  "family": "Hu",
+                  "given": "Mei-Chih"
+                },
+                {
+                  "family": "Janssen",
+                  "given": "Marijn"
+                },
+                {
+                  "family": "Jones",
+                  "given": "Paul"
+                },
+                {
+                  "family": "Junglas",
+                  "given": "Iris"
+                },
+                {
+                  "family": "Khorana",
+                  "given": "Sangeeta"
+                },
+                {
+                  "family": "Kraus",
+                  "given": "Sascha"
+                },
+                {
+                  "family": "Larsen",
+                  "given": "Kai R."
+                },
+                {
+                  "family": "Latreille",
+                  "given": "Paul"
+                },
+                {
+                  "family": "Laumer",
+                  "given": "Sven"
+                },
+                {
+                  "family": "Malik",
+                  "given": "F. Tegwen"
+                },
+                {
+                  "family": "Mardani",
+                  "given": "Abbas"
+                },
+                {
+                  "family": "Mariani",
+                  "given": "Marcello"
+                },
+                {
+                  "family": "Mithas",
+                  "given": "Sunil"
+                },
+                {
+                  "family": "Mogaji",
+                  "given": "Emmanuel"
+                },
+                {
+                  "family": "Nord",
+                  "given": "Jeretta Horn"
+                },
+                {
+                  "family": "O’Connor",
+                  "given": "Siobhan"
+                },
+                {
+                  "family": "Okumus",
+                  "given": "Fevzi"
+                },
+                {
+                  "family": "Pagani",
+                  "given": "Margherita"
+                },
+                {
+                  "family": "Pandey",
+                  "given": "Neeraj"
+                },
+                {
+                  "family": "Papagiannidis",
+                  "given": "Savvas"
+                },
+                {
+                  "family": "Pappas",
+                  "given": "Ilias O."
+                },
+                {
+                  "family": "Pathak",
+                  "given": "Nishith"
+                },
+                {
+                  "family": "Pries-Heje",
+                  "given": "Jan"
+                },
+                {
+                  "family": "Raman",
+                  "given": "Ramakrishnan"
+                },
+                {
+                  "family": "Rana",
+                  "given": "Nripendra P."
+                },
+                {
+                  "family": "Rehm",
+                  "given": "Sven-Volker"
+                },
+                {
+                  "family": "Ribeiro-Navarrete",
+                  "given": "Samuel"
+                },
+                {
+                  "family": "Richter",
+                  "given": "Alexander"
+                },
+                {
+                  "family": "Rowe",
+                  "given": "Frantz"
+                },
+                {
+                  "family": "Sarker",
+                  "given": "Suprateek"
+                },
+                {
+                  "family": "Stahl",
+                  "given": "Bernd Carsten"
+                },
+                {
+                  "family": "Tiwari",
+                  "given": "Manoj Kumar"
+                },
+                {
+                  "family": "van der Aalst",
+                  "given": "Wil"
+                },
+                {
+                  "family": "Venkatesh",
+                  "given": "Viswanath"
+                },
+                {
+                  "family": "Viglia",
+                  "given": "Giampaolo"
+                },
+                {
+                  "family": "Wade",
+                  "given": "Michael"
+                },
+                {
+                  "family": "Walton",
+                  "given": "Paul"
+                },
+                {
+                  "family": "Wirtz",
+                  "given": "Jochen"
+                },
+                {
+                  "family": "Wright",
+                  "given": "Ryan"
+                }
+              ],
+              "year": 2023,
+              "container": "International Journal of Information Management",
+              "volume": "71",
+              "pages": "102642",
+              "publisher": "Elsevier BV",
+              "type": "journal-article",
+              "url": "https://doi.org/10.1016/j.ijinfomgt.2023.102642",
+              "citedBy": 8593,
+              "retracted": false,
+              "openAccessUrl": "https://linkinghub.elsevier.com/science/article/pii/S0268401223000233/pdfft?md5=492895056a2fa29b1cb81876a1c57544&pid=1-s2.0-S0268401223000233-main.pdf",
+              "openalexId": "W4360620450"
+            }
+          },
+          "missingReplay": []
+        },
+        {
+          "case": {
+            "id": "invented:identifier:1",
+            "family": "hijacked-identifier",
+            "title": "A real DOI attached to another work",
+            "label": "Invented for this Lab; do not cite",
+            "invented": true,
+            "reference": {
+              "title": "Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy",
+              "authors": [
+                "Dwivedi",
+                "Kshetri",
+                "Hughes"
+              ],
+              "year": 2023,
+              "doi": "10.1037/0033-2909.117.3.497",
+              "raw": "Dwivedi, Kshetri, Hughes. (2023). Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy. https://doi.org/10.1037/0033-2909.117.3.497"
+            },
+            "expected": "reject-invented",
+            "explanation": "The DOI is copied from another real control. The exercise invents the association, not the identifier.",
+            "provenance": [
+              {
+                "registry": "crossref",
+                "doi": "10.1016/j.ijinfomgt.2023.102642",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works/10.1016/j.ijinfomgt.2023.102642",
+                "itemIndex": null
+              },
+              {
+                "registry": "crossref",
+                "doi": "10.1037/0033-2909.117.3.497",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works/10.1037/0033-2909.117.3.497",
+                "itemIndex": null
+              }
+            ],
+            "mutation": {
+              "method": "swap-doi",
+              "baseCaseIds": [
+                "real:10.1016/j.ijinfomgt.2023.102642",
+                "real:10.1037/0033-2909.117.3.497"
+              ],
+              "changedFields": [
+                "doi"
+              ]
+            }
+          },
+          "state": "completed",
+          "startedAt": "2026-11-25T05:30:38.796Z",
+          "finishedAt": "2026-11-25T05:30:38.796Z",
+          "check": {
+            "verdict": "wrong-paper",
+            "reasons": [
+              "DOI_IS_ANOTHER_PAPER"
+            ],
+            "fields": [
+              {
+                "field": "title",
+                "given": "Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy",
+                "registry": "The need to belong: Desire for interpersonal attachments as a fundamental human motivation.",
+                "score": 0.05405405405405406,
+                "ok": false
+              },
+              {
+                "field": "authors",
+                "given": "Dwivedi, Kshetri, Hughes",
+                "registry": "Baumeister, Leary",
+                "score": 0,
+                "ok": false
+              },
+              {
+                "field": "year",
+                "given": "2023",
+                "registry": "1995",
+                "score": 0,
+                "ok": false
+              }
+            ],
+            "trace": [
+              {
+                "registry": "crossref",
+                "status": "match",
+                "ms": 0
+              },
+              {
+                "registry": "openalex",
+                "status": "match",
+                "ms": 0
+              }
+            ],
+            "checkedAt": "2026-11-25T05:30:38.796Z",
+            "record": {
+              "registry": "crossref",
+              "id": "10.1037/0033-2909.117.3.497",
+              "doi": "10.1037/0033-2909.117.3.497",
+              "title": "The need to belong: Desire for interpersonal attachments as a fundamental human motivation.",
+              "authors": [
+                {
+                  "family": "Baumeister",
+                  "given": "Roy F."
+                },
+                {
+                  "family": "Leary",
+                  "given": "Mark R."
+                }
+              ],
+              "year": 1995,
+              "container": "Psychological Bulletin",
+              "volume": "117",
+              "issue": "3",
+              "pages": "497-529",
+              "publisher": "American Psychological Association (APA)",
+              "type": "journal-article",
+              "url": "https://doi.org/10.1037/0033-2909.117.3.497",
+              "citedBy": 30565,
+              "retracted": false,
+              "openalexId": "W2081155210"
+            }
+          },
+          "missingReplay": []
+        },
+        {
+          "case": {
+            "id": "invented:placeholder:1",
+            "family": "placeholder",
+            "title": "Unfinished reference placeholder",
+            "label": "Invented for this Lab; do not cite",
+            "invented": true,
+            "reference": {
+              "raw": "[ citation needed ]"
+            },
+            "expected": "reject-invented",
+            "explanation": "This generated placeholder has too little reference information to search. It is not a real source.",
+            "provenance": [],
+            "mutation": {
+              "method": "placeholder",
+              "baseCaseIds": [],
+              "changedFields": [
+                "raw"
+              ]
+            }
+          },
+          "state": "completed",
+          "startedAt": "2026-11-25T05:30:38.796Z",
+          "finishedAt": "2026-11-25T05:30:38.796Z",
+          "check": {
+            "verdict": "not-found",
+            "reasons": [
+              "NOT_ENOUGH_TO_SEARCH"
+            ],
+            "fields": [],
+            "trace": [],
+            "checkedAt": "2026-11-25T05:30:38.796Z"
+          },
+          "missingReplay": []
+        },
+        {
+          "case": {
+            "id": "invented:plausible-title:1",
+            "family": "plausible-missing-title",
+            "title": "Plausible title with invented extra wording",
+            "label": "Invented for this Lab; do not cite",
+            "invented": true,
+            "reference": {
+              "title": "Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy: a replication across learning communities",
+              "authors": [
+                "Dwivedi",
+                "Kshetri",
+                "Hughes"
+              ],
+              "year": 2023,
+              "raw": "Dwivedi, Kshetri, Hughes. (2023). Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy: a replication across learning communities"
+            },
+            "expected": "reject-invented",
+            "explanation": "Code adds a plausible clause absent from the captured title and removes the DOI. The title is an invented exercise; no claim of global nonexistence or semantic claim-checking is made.",
+            "provenance": [
+              {
+                "registry": "crossref",
+                "doi": "10.1016/j.ijinfomgt.2023.102642",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works/10.1016/j.ijinfomgt.2023.102642",
+                "itemIndex": null
+              }
+            ],
+            "mutation": {
+              "method": "append-title",
+              "baseCaseIds": [
+                "real:10.1016/j.ijinfomgt.2023.102642"
+              ],
+              "changedFields": [
+                "title",
+                "doi"
+              ]
+            }
+          },
+          "state": "completed",
+          "startedAt": "2026-11-25T05:30:38.796Z",
+          "finishedAt": "2026-11-25T05:30:38.796Z",
+          "check": {
+            "verdict": "could-not-check",
+            "reasons": [
+              "REGISTRY_UNREACHABLE"
+            ],
+            "fields": [],
+            "trace": [
+              {
+                "registry": "crossref",
+                "status": "error",
+                "ms": 3600,
+                "note": "network error"
+              }
+            ],
+            "checkedAt": "2026-11-25T05:30:38.796Z"
+          },
+          "missingReplay": [
+            "https://api.crossref.org/works?rows=6&query.bibliographic=Opinion%20Paper%3A%20%E2%80%9CSo%20what%20if%20ChatGPT%20wrote%20it%3F%E2%80%9D%20Multidisciplinary%20perspectives%20on%20opportunities%2C%20challenges%20and%20implications%20of%20generative%20conversational%20AI%20for%20research%2C%20practice%20and%20policy%3A%20a%20replication%20across%20learning%20communities%20Dwivedi%20Kshetri%20Hughes%202023"
+          ]
+        },
+        {
+          "case": {
+            "id": "invented:total:2",
+            "family": "total-fabrication",
+            "title": "Entirely invented combination",
+            "label": "Invented for this Lab; do not cite",
+            "invented": true,
+            "reference": {
+              "title": "Imagined evidence ledgers for reflective notebooks in learning communities",
+              "authors": [
+                "LabInventedAuthor2"
+              ],
+              "year": 1995,
+              "raw": "LabInventedAuthor2. (1995). Imagined evidence ledgers for reflective notebooks in learning communities"
+            },
+            "expected": "reject-invented",
+            "explanation": "Code composes a new title and an explicitly invented author. The year is borrowed from the control. No DOI or venue is invented; the result is not a real citation.",
+            "provenance": [
+              {
+                "registry": "crossref",
+                "doi": "10.1037/0033-2909.117.3.497",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works/10.1037/0033-2909.117.3.497",
+                "itemIndex": null
+              }
+            ],
+            "mutation": {
+              "method": "compose-reference",
+              "baseCaseIds": [
+                "real:10.1037/0033-2909.117.3.497"
+              ],
+              "changedFields": [
+                "title",
+                "authors",
+                "doi"
+              ]
+            }
+          },
+          "state": "completed",
+          "startedAt": "2026-11-25T05:30:38.796Z",
+          "finishedAt": "2026-11-25T05:30:38.797Z",
+          "check": {
+            "verdict": "could-not-check",
+            "reasons": [
+              "REGISTRY_UNREACHABLE"
+            ],
+            "fields": [],
+            "trace": [
+              {
+                "registry": "crossref",
+                "status": "error",
+                "ms": 3600,
+                "note": "network error"
+              }
+            ],
+            "checkedAt": "2026-11-25T05:30:38.797Z"
+          },
+          "missingReplay": [
+            "https://api.crossref.org/works?rows=6&query.bibliographic=Imagined%20evidence%20ledgers%20for%20reflective%20notebooks%20in%20learning%20communities%20LabInventedAuthor2%201995"
+          ]
+        },
+        {
+          "case": {
+            "id": "invented:author:2",
+            "family": "part-corrupted",
+            "title": "Author attached to the wrong work",
+            "label": "Invented for this Lab; do not cite",
+            "invented": true,
+            "reference": {
+              "title": "The need to belong: Desire for interpersonal attachments as a fundamental human motivation.",
+              "authors": [
+                "Krugman",
+                "Leary"
+              ],
+              "year": 1995,
+              "doi": "10.1037/0033-2909.117.3.497",
+              "raw": "Krugman, Leary. (1995). The need to belong: Desire for interpersonal attachments as a fundamental human motivation.. https://doi.org/10.1037/0033-2909.117.3.497"
+            },
+            "expected": "reject-invented",
+            "explanation": "The first author family name is replaced with one from a different captured work. The DOI, title and year still identify the original control.",
+            "provenance": [
+              {
+                "registry": "crossref",
+                "doi": "10.1037/0033-2909.117.3.497",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works/10.1037/0033-2909.117.3.497",
+                "itemIndex": null
+              },
+              {
+                "registry": "crossref",
+                "doi": "10.1086/261763",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works/10.1086/261763",
+                "itemIndex": null
+              }
+            ],
+            "mutation": {
+              "method": "replace-author",
+              "baseCaseIds": [
+                "real:10.1037/0033-2909.117.3.497",
+                "real:10.1086/261763"
+              ],
+              "changedFields": [
+                "authors"
+              ]
+            }
+          },
+          "state": "completed",
+          "startedAt": "2026-11-25T05:30:38.797Z",
+          "finishedAt": "2026-11-25T05:30:38.797Z",
+          "check": {
+            "verdict": "details-differ",
+            "reasons": [
+              "AUTHOR_DIFFERS"
+            ],
+            "fields": [
+              {
+                "field": "title",
+                "given": "The need to belong: Desire for interpersonal attachments as a fundamental human motivation.",
+                "registry": "The need to belong: Desire for interpersonal attachments as a fundamental human motivation.",
+                "score": 1,
+                "ok": true
+              },
+              {
+                "field": "authors",
+                "given": "Krugman, Leary",
+                "registry": "Baumeister, Leary",
+                "score": 0.5,
+                "ok": false
+              },
+              {
+                "field": "year",
+                "given": "1995",
+                "registry": "1995",
+                "score": 1,
+                "ok": true
+              }
+            ],
+            "trace": [
+              {
+                "registry": "crossref",
+                "status": "match",
+                "ms": 0
+              },
+              {
+                "registry": "openalex",
+                "status": "match",
+                "ms": 0
+              }
+            ],
+            "checkedAt": "2026-11-25T05:30:38.797Z",
+            "record": {
+              "registry": "crossref",
+              "id": "10.1037/0033-2909.117.3.497",
+              "doi": "10.1037/0033-2909.117.3.497",
+              "title": "The need to belong: Desire for interpersonal attachments as a fundamental human motivation.",
+              "authors": [
+                {
+                  "family": "Baumeister",
+                  "given": "Roy F."
+                },
+                {
+                  "family": "Leary",
+                  "given": "Mark R."
+                }
+              ],
+              "year": 1995,
+              "container": "Psychological Bulletin",
+              "volume": "117",
+              "issue": "3",
+              "pages": "497-529",
+              "publisher": "American Psychological Association (APA)",
+              "type": "journal-article",
+              "url": "https://doi.org/10.1037/0033-2909.117.3.497",
+              "citedBy": 30565,
+              "retracted": false,
+              "openalexId": "W2081155210"
+            }
+          },
+          "missingReplay": []
+        },
+        {
+          "case": {
+            "id": "invented:year:2",
+            "family": "part-corrupted",
+            "title": "Year deliberately shifted",
+            "label": "Invented for this Lab; do not cite",
+            "invented": true,
+            "reference": {
+              "title": "The need to belong: Desire for interpersonal attachments as a fundamental human motivation.",
+              "authors": [
+                "Baumeister",
+                "Leary"
+              ],
+              "year": 1988,
+              "doi": "10.1037/0033-2909.117.3.497",
+              "raw": "Baumeister, Leary. (1988). The need to belong: Desire for interpersonal attachments as a fundamental human motivation.. https://doi.org/10.1037/0033-2909.117.3.497"
+            },
+            "expected": "reject-invented",
+            "explanation": "The recorded year is reduced by seven while the original DOI and other fields remain. This is a declared alteration, not a claim about another publication date.",
+            "provenance": [
+              {
+                "registry": "crossref",
+                "doi": "10.1037/0033-2909.117.3.497",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works/10.1037/0033-2909.117.3.497",
+                "itemIndex": null
+              }
+            ],
+            "mutation": {
+              "method": "shift-year",
+              "baseCaseIds": [
+                "real:10.1037/0033-2909.117.3.497"
+              ],
+              "changedFields": [
+                "year"
+              ]
+            }
+          },
+          "state": "completed",
+          "startedAt": "2026-11-25T05:30:38.797Z",
+          "finishedAt": "2026-11-25T05:30:38.797Z",
+          "check": {
+            "verdict": "details-differ",
+            "reasons": [
+              "YEAR_DIFFERS"
+            ],
+            "fields": [
+              {
+                "field": "title",
+                "given": "The need to belong: Desire for interpersonal attachments as a fundamental human motivation.",
+                "registry": "The need to belong: Desire for interpersonal attachments as a fundamental human motivation.",
+                "score": 1,
+                "ok": true
+              },
+              {
+                "field": "authors",
+                "given": "Baumeister, Leary",
+                "registry": "Baumeister, Leary",
+                "score": 1,
+                "ok": true
+              },
+              {
+                "field": "year",
+                "given": "1988",
+                "registry": "1995",
+                "score": 0,
+                "ok": false
+              }
+            ],
+            "trace": [
+              {
+                "registry": "crossref",
+                "status": "match",
+                "ms": 0
+              },
+              {
+                "registry": "openalex",
+                "status": "match",
+                "ms": 0
+              }
+            ],
+            "checkedAt": "2026-11-25T05:30:38.797Z",
+            "record": {
+              "registry": "crossref",
+              "id": "10.1037/0033-2909.117.3.497",
+              "doi": "10.1037/0033-2909.117.3.497",
+              "title": "The need to belong: Desire for interpersonal attachments as a fundamental human motivation.",
+              "authors": [
+                {
+                  "family": "Baumeister",
+                  "given": "Roy F."
+                },
+                {
+                  "family": "Leary",
+                  "given": "Mark R."
+                }
+              ],
+              "year": 1995,
+              "container": "Psychological Bulletin",
+              "volume": "117",
+              "issue": "3",
+              "pages": "497-529",
+              "publisher": "American Psychological Association (APA)",
+              "type": "journal-article",
+              "url": "https://doi.org/10.1037/0033-2909.117.3.497",
+              "citedBy": 30565,
+              "retracted": false,
+              "openalexId": "W2081155210"
+            }
+          },
+          "missingReplay": []
+        },
+        {
+          "case": {
+            "id": "invented:identifier:2",
+            "family": "hijacked-identifier",
+            "title": "A real DOI attached to another work",
+            "label": "Invented for this Lab; do not cite",
+            "invented": true,
+            "reference": {
+              "title": "The need to belong: Desire for interpersonal attachments as a fundamental human motivation.",
+              "authors": [
+                "Baumeister",
+                "Leary"
+              ],
+              "year": 1995,
+              "doi": "10.1016/j.ijinfomgt.2023.102642",
+              "raw": "Baumeister, Leary. (1995). The need to belong: Desire for interpersonal attachments as a fundamental human motivation.. https://doi.org/10.1016/j.ijinfomgt.2023.102642"
+            },
+            "expected": "reject-invented",
+            "explanation": "The DOI is copied from another real control. The exercise invents the association, not the identifier.",
+            "provenance": [
+              {
+                "registry": "crossref",
+                "doi": "10.1037/0033-2909.117.3.497",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works/10.1037/0033-2909.117.3.497",
+                "itemIndex": null
+              },
+              {
+                "registry": "crossref",
+                "doi": "10.1016/j.ijinfomgt.2023.102642",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works/10.1016/j.ijinfomgt.2023.102642",
+                "itemIndex": null
+              }
+            ],
+            "mutation": {
+              "method": "swap-doi",
+              "baseCaseIds": [
+                "real:10.1037/0033-2909.117.3.497",
+                "real:10.1016/j.ijinfomgt.2023.102642"
+              ],
+              "changedFields": [
+                "doi"
+              ]
+            }
+          },
+          "state": "completed",
+          "startedAt": "2026-11-25T05:30:38.797Z",
+          "finishedAt": "2026-11-25T05:30:38.805Z",
+          "check": {
+            "verdict": "wrong-paper",
+            "reasons": [
+              "DOI_IS_ANOTHER_PAPER"
+            ],
+            "fields": [
+              {
+                "field": "title",
+                "given": "The need to belong: Desire for interpersonal attachments as a fundamental human motivation.",
+                "registry": "Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy",
+                "score": 0.05405405405405406,
+                "ok": false
+              },
+              {
+                "field": "authors",
+                "given": "Baumeister, Leary",
+                "registry": "Dwivedi, Kshetri, Hughes and 70 more",
+                "score": 0,
+                "ok": false
+              },
+              {
+                "field": "year",
+                "given": "1995",
+                "registry": "2023",
+                "score": 0,
+                "ok": false
+              }
+            ],
+            "trace": [
+              {
+                "registry": "crossref",
+                "status": "match",
+                "ms": 0
+              },
+              {
+                "registry": "openalex",
+                "status": "match",
+                "ms": 0
+              }
+            ],
+            "checkedAt": "2026-11-25T05:30:38.802Z",
+            "record": {
+              "registry": "crossref",
+              "id": "10.1016/j.ijinfomgt.2023.102642",
+              "doi": "10.1016/j.ijinfomgt.2023.102642",
+              "title": "Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy",
+              "authors": [
+                {
+                  "family": "Dwivedi",
+                  "given": "Yogesh K."
+                },
+                {
+                  "family": "Kshetri",
+                  "given": "Nir"
+                },
+                {
+                  "family": "Hughes",
+                  "given": "Laurie"
+                },
+                {
+                  "family": "Slade",
+                  "given": "Emma Louise"
+                },
+                {
+                  "family": "Jeyaraj",
+                  "given": "Anand"
+                },
+                {
+                  "family": "Kar",
+                  "given": "Arpan Kumar"
+                },
+                {
+                  "family": "Baabdullah",
+                  "given": "Abdullah M."
+                },
+                {
+                  "family": "Koohang",
+                  "given": "Alex"
+                },
+                {
+                  "family": "Raghavan",
+                  "given": "Vishnupriya"
+                },
+                {
+                  "family": "Ahuja",
+                  "given": "Manju"
+                },
+                {
+                  "family": "Albanna",
+                  "given": "Hanaa"
+                },
+                {
+                  "family": "Albashrawi",
+                  "given": "Mousa Ahmad"
+                },
+                {
+                  "family": "Al-Busaidi",
+                  "given": "Adil S."
+                },
+                {
+                  "family": "Balakrishnan",
+                  "given": "Janarthanan"
+                },
+                {
+                  "family": "Barlette",
+                  "given": "Yves"
+                },
+                {
+                  "family": "Basu",
+                  "given": "Sriparna"
+                },
+                {
+                  "family": "Bose",
+                  "given": "Indranil"
+                },
+                {
+                  "family": "Brooks",
+                  "given": "Laurence"
+                },
+                {
+                  "family": "Buhalis",
+                  "given": "Dimitrios"
+                },
+                {
+                  "family": "Carter",
+                  "given": "Lemuria"
+                },
+                {
+                  "family": "Chowdhury",
+                  "given": "Soumyadeb"
+                },
+                {
+                  "family": "Crick",
+                  "given": "Tom"
+                },
+                {
+                  "family": "Cunningham",
+                  "given": "Scott W."
+                },
+                {
+                  "family": "Davies",
+                  "given": "Gareth H."
+                },
+                {
+                  "family": "Davison",
+                  "given": "Robert M."
+                },
+                {
+                  "family": "Dé",
+                  "given": "Rahul"
+                },
+                {
+                  "family": "Dennehy",
+                  "given": "Denis"
+                },
+                {
+                  "family": "Duan",
+                  "given": "Yanqing"
+                },
+                {
+                  "family": "Dubey",
+                  "given": "Rameshwar"
+                },
+                {
+                  "family": "Dwivedi",
+                  "given": "Rohita"
+                },
+                {
+                  "family": "Edwards",
+                  "given": "John S."
+                },
+                {
+                  "family": "Flavián",
+                  "given": "Carlos"
+                },
+                {
+                  "family": "Gauld",
+                  "given": "Robin"
+                },
+                {
+                  "family": "Grover",
+                  "given": "Varun"
+                },
+                {
+                  "family": "Hu",
+                  "given": "Mei-Chih"
+                },
+                {
+                  "family": "Janssen",
+                  "given": "Marijn"
+                },
+                {
+                  "family": "Jones",
+                  "given": "Paul"
+                },
+                {
+                  "family": "Junglas",
+                  "given": "Iris"
+                },
+                {
+                  "family": "Khorana",
+                  "given": "Sangeeta"
+                },
+                {
+                  "family": "Kraus",
+                  "given": "Sascha"
+                },
+                {
+                  "family": "Larsen",
+                  "given": "Kai R."
+                },
+                {
+                  "family": "Latreille",
+                  "given": "Paul"
+                },
+                {
+                  "family": "Laumer",
+                  "given": "Sven"
+                },
+                {
+                  "family": "Malik",
+                  "given": "F. Tegwen"
+                },
+                {
+                  "family": "Mardani",
+                  "given": "Abbas"
+                },
+                {
+                  "family": "Mariani",
+                  "given": "Marcello"
+                },
+                {
+                  "family": "Mithas",
+                  "given": "Sunil"
+                },
+                {
+                  "family": "Mogaji",
+                  "given": "Emmanuel"
+                },
+                {
+                  "family": "Nord",
+                  "given": "Jeretta Horn"
+                },
+                {
+                  "family": "O’Connor",
+                  "given": "Siobhan"
+                },
+                {
+                  "family": "Okumus",
+                  "given": "Fevzi"
+                },
+                {
+                  "family": "Pagani",
+                  "given": "Margherita"
+                },
+                {
+                  "family": "Pandey",
+                  "given": "Neeraj"
+                },
+                {
+                  "family": "Papagiannidis",
+                  "given": "Savvas"
+                },
+                {
+                  "family": "Pappas",
+                  "given": "Ilias O."
+                },
+                {
+                  "family": "Pathak",
+                  "given": "Nishith"
+                },
+                {
+                  "family": "Pries-Heje",
+                  "given": "Jan"
+                },
+                {
+                  "family": "Raman",
+                  "given": "Ramakrishnan"
+                },
+                {
+                  "family": "Rana",
+                  "given": "Nripendra P."
+                },
+                {
+                  "family": "Rehm",
+                  "given": "Sven-Volker"
+                },
+                {
+                  "family": "Ribeiro-Navarrete",
+                  "given": "Samuel"
+                },
+                {
+                  "family": "Richter",
+                  "given": "Alexander"
+                },
+                {
+                  "family": "Rowe",
+                  "given": "Frantz"
+                },
+                {
+                  "family": "Sarker",
+                  "given": "Suprateek"
+                },
+                {
+                  "family": "Stahl",
+                  "given": "Bernd Carsten"
+                },
+                {
+                  "family": "Tiwari",
+                  "given": "Manoj Kumar"
+                },
+                {
+                  "family": "van der Aalst",
+                  "given": "Wil"
+                },
+                {
+                  "family": "Venkatesh",
+                  "given": "Viswanath"
+                },
+                {
+                  "family": "Viglia",
+                  "given": "Giampaolo"
+                },
+                {
+                  "family": "Wade",
+                  "given": "Michael"
+                },
+                {
+                  "family": "Walton",
+                  "given": "Paul"
+                },
+                {
+                  "family": "Wirtz",
+                  "given": "Jochen"
+                },
+                {
+                  "family": "Wright",
+                  "given": "Ryan"
+                }
+              ],
+              "year": 2023,
+              "container": "International Journal of Information Management",
+              "volume": "71",
+              "pages": "102642",
+              "publisher": "Elsevier BV",
+              "type": "journal-article",
+              "url": "https://doi.org/10.1016/j.ijinfomgt.2023.102642",
+              "citedBy": 8593,
+              "retracted": false,
+              "openAccessUrl": "https://linkinghub.elsevier.com/science/article/pii/S0268401223000233/pdfft?md5=492895056a2fa29b1cb81876a1c57544&pid=1-s2.0-S0268401223000233-main.pdf",
+              "openalexId": "W4360620450"
+            }
+          },
+          "missingReplay": []
+        },
+        {
+          "case": {
+            "id": "invented:placeholder:2",
+            "family": "placeholder",
+            "title": "Unfinished reference placeholder",
+            "label": "Invented for this Lab; do not cite",
+            "invented": true,
+            "reference": {
+              "raw": "TODO"
+            },
+            "expected": "reject-invented",
+            "explanation": "This generated placeholder has too little reference information to search. It is not a real source.",
+            "provenance": [],
+            "mutation": {
+              "method": "placeholder",
+              "baseCaseIds": [],
+              "changedFields": [
+                "raw"
+              ]
+            }
+          },
+          "state": "completed",
+          "startedAt": "2026-11-25T05:30:38.805Z",
+          "finishedAt": "2026-11-25T05:30:38.805Z",
+          "check": {
+            "verdict": "not-found",
+            "reasons": [
+              "NOT_ENOUGH_TO_SEARCH"
+            ],
+            "fields": [],
+            "trace": [],
+            "checkedAt": "2026-11-25T05:30:38.805Z"
+          },
+          "missingReplay": []
+        },
+        {
+          "case": {
+            "id": "invented:plausible-title:2",
+            "family": "plausible-missing-title",
+            "title": "Plausible title with invented extra wording",
+            "label": "Invented for this Lab; do not cite",
+            "invented": true,
+            "reference": {
+              "title": "The need to belong: Desire for interpersonal attachments as a fundamental human motivation.: a comparison of classroom settings",
+              "authors": [
+                "Baumeister",
+                "Leary"
+              ],
+              "year": 1995,
+              "raw": "Baumeister, Leary. (1995). The need to belong: Desire for interpersonal attachments as a fundamental human motivation.: a comparison of classroom settings"
+            },
+            "expected": "reject-invented",
+            "explanation": "Code adds a plausible clause absent from the captured title and removes the DOI. The title is an invented exercise; no claim of global nonexistence or semantic claim-checking is made.",
+            "provenance": [
+              {
+                "registry": "crossref",
+                "doi": "10.1037/0033-2909.117.3.497",
+                "fixturePath": "tests/unit/fixtures/registry.json",
+                "fixtureUrl": "https://api.crossref.org/works/10.1037/0033-2909.117.3.497",
+                "itemIndex": null
+              }
+            ],
+            "mutation": {
+              "method": "append-title",
+              "baseCaseIds": [
+                "real:10.1037/0033-2909.117.3.497"
+              ],
+              "changedFields": [
+                "title",
+                "doi"
+              ]
+            }
+          },
+          "state": "completed",
+          "startedAt": "2026-11-25T05:30:38.805Z",
+          "finishedAt": "2026-11-25T05:30:38.806Z",
+          "check": {
+            "verdict": "could-not-check",
+            "reasons": [
+              "REGISTRY_UNREACHABLE"
+            ],
+            "fields": [],
+            "trace": [
+              {
+                "registry": "crossref",
+                "status": "error",
+                "ms": 3600,
+                "note": "network error"
+              }
+            ],
+            "checkedAt": "2026-11-25T05:30:38.806Z"
+          },
+          "missingReplay": [
+            "https://api.crossref.org/works?rows=6&query.bibliographic=The%20need%20to%20belong%3A%20Desire%20for%20interpersonal%20attachments%20as%20a%20fundamental%20human%20motivation.%3A%20a%20comparison%20of%20classroom%20settings%20Baumeister%20Leary%201995"
+          ]
+        }
+      ]
+    }
+  }
+}

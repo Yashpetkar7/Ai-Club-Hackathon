@@ -1,5 +1,44 @@
 # Integrity Lab: measured results and limits
 
+## Task 3 recorded fallback: actual case-level evidence
+
+**SAMPLE — an executed offline replay.** Execution recorded at **25 November 2026, 09:30:38 Dubai**; original registry capture time is **unknown**. Retry waits used a simulated clock; the stored request timings are not live latency measurements. The checker execution timestamps use wall time.
+
+The complete snapshot is [sample-run.json](../../src/core/lab/sample-run.json). Its content SHA-256 is `77caf3ccc2c6138bdb3157cea124c5f39a1599d6740ea82e4d785cd3defb3ffe`. The artifact carries corpus and source-file hashes, actual checker results, traces and missing-request evidence. A matching hash is an internal content check, not an external signature. The recording test reruns the real checker through the unchanged shared replay and compares non-timing outcomes.
+
+| Case ID | Family | Declared expectation | Actual verdict | Coverage evidence |
+|---|---|---|---|---|
+| `real:10.1016/j.ijinfomgt.2023.102642` | real | metadata-match | confirmed | Requested replay responses available |
+| `real:10.1037/0033-2909.117.3.497` | real | metadata-match | confirmed | Requested replay responses available |
+| `real:10.1038/s41598-023-41032-5` | real | metadata-match | confirmed | Requested replay responses available |
+| `real:10.1086/261763` | real | metadata-match | confirmed | Requested replay responses available |
+| `real:10.1093/qje/qju032` | real | metadata-match | confirmed | Requested replay responses available |
+| `real:10.1108/jrit-01-2024-0017` | real | retraction-flag | retracted | Requested replay responses available |
+| `real:10.1126/science.adh2586` | real | metadata-match | confirmed | Requested replay responses available |
+| `real:10.1257/aer.20160696` | real | metadata-match | confirmed | Requested replay responses available |
+| `real:10.1039/9781839167782-00159` | real | metadata-match | could-not-check | Missing recorded requests; unresolved |
+| `real:10.1080/13546783.2024.2402129` | real | metadata-match | could-not-check | Missing recorded requests; unresolved |
+| `real:10.15581/003.39.1.030` | real | metadata-match | could-not-check | Missing recorded requests; unresolved |
+| `real:10.21125/inted.2022.1033` | real | metadata-match | could-not-check | Missing recorded requests; unresolved |
+| `invented:total:1` | total-fabrication | reject-invented | could-not-check | Missing recorded requests; unresolved |
+| `invented:author:1` | part-corrupted | reject-invented | details-differ | Requested replay responses available |
+| `invented:year:1` | part-corrupted | reject-invented | details-differ | Requested replay responses available |
+| `invented:identifier:1` | hijacked-identifier | reject-invented | wrong-paper | Requested replay responses available |
+| `invented:placeholder:1` | placeholder | reject-invented | not-found | Input-only rejection; no registry request |
+| `invented:plausible-title:1` | plausible-missing-title | reject-invented | could-not-check | Missing recorded requests; unresolved |
+| `invented:total:2` | total-fabrication | reject-invented | could-not-check | Missing recorded requests; unresolved |
+| `invented:author:2` | part-corrupted | reject-invented | details-differ | Requested replay responses available |
+| `invented:year:2` | part-corrupted | reject-invented | details-differ | Requested replay responses available |
+| `invented:identifier:2` | hijacked-identifier | reject-invented | wrong-paper | Requested replay responses available |
+| `invented:placeholder:2` | placeholder | reject-invented | not-found | Input-only rejection; no registry request |
+| `invented:plausible-title:2` | plausible-missing-title | reject-invented | could-not-check | Missing recorded requests; unresolved |
+
+Generated reference text is shown with its invented label in the Lab; it is not copied into this document as a research citation. Every case remains in the run. The case-level table agrees with the family totals below.
+
+The live runner uses the actual registry client, which may reuse in-memory responses. A new run timestamp does not establish a new registry retrieval. Cancellation stops the queue and discards late UI results; it does not abort already-issued HTTP requests through the current shared API. Completed live rows remain available when inspecting the recorded sample.
+
+A detected miss remains a miss even if secondary coverage is limited. A caught discrepancy can also carry a coverage gap; those counts overlap. A clean real reference returned Confirmed alongside an error trace is unresolved in Lab evaluation. The checker verdict itself is never rewritten by the Lab.
+
 ## Task 2 recorded-response run, 25 November 2026
 
 **Mode: SAMPLE — recorded registry responses, not a live check.** Corpus version 1 supplies structured reference fields to the real metadata checker. The paste parser, claim support and whole-product reliability are not measured.
@@ -35,4 +74,6 @@ The manifest fixes the selection rule before measurement: retain all eight direc
 
 ## Task 3 review checkpoint
 
-The next slice adds the live runner, cancellation, visible case-by-case results, misses and a labelled recorded fallback. A live run must carry its own time and actual outcomes; this sample must never be relabelled live. Any in-flight transport limitation must be stated plainly because the current shared checker does not accept an abort signal.
+The Lab page and runner are implemented on `hemanth/lab-governance`, with case-by-case evidence, cancellation, visible misses, partial-result restoration and the labelled recorded fallback. `npm run verify`, test stage **09:36:47 Dubai, 25 November 2026**, passed typecheck, **165 tests / 1 existing skip across nine files**, and build. The Lab-specific suite has **74 passing tests**. [Validation scope](VALIDATION.md).
+
+The requested review stops here, after Task 3. A successful live-registry run, full-browser visual/375 px review and native assistive-technology checks remain pending. The sample must never be relabelled live. Rules, the standalone statement and the final Q&A are later tasks, not implied complete by this results table.
