@@ -202,9 +202,9 @@ export function Landing() {
             Paper Trail
           </Link>
           <nav aria-label="Main">
+            <Link to="/guide">How it works</Link>
             <Link to="/check">Check</Link>
             <Link to="/lab">Integrity Lab</Link>
-            <Link to="/rules">House rules</Link>
           </nav>
           <Link to="/home" className={css.btn}>
             Open workspace

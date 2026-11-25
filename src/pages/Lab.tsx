@@ -223,20 +223,26 @@ export function Lab() {
     <main className="wrap page" id="main" tabIndex={-1}>
       <div className="stack">
         <h1>Integrity Lab</h1>
-        <p className="soft">Run our real metadata checker against a fixed set of public references and deliberately altered inputs. Every case stays visible, including misses, errors and unfinished checks.</p>
-        <p className="soft">Corpus version {CORPUS_MANIFEST.version}: {LAB_CORPUS.filter((item) => !item.invented).length} real controls and {LAB_CORPUS.filter((item) => item.invented).length} invented exercises. This checks structured metadata, not the paste parser, scientific truth or support for a claim.</p>
+        <p className="soft">We test our own checker here, in public. Half of these references are real and half are invented on purpose. Every miss stays on this page.</p>
       </div>
 
       <section className="stack" aria-label="Run controls">
-        <p>Run live checks sends the fixed public or labelled invented reference fields below to scholarly registries. Your project library is not part of this run.</p>
-        <p className="soft">Lookups may reuse responses cached during this page load. Run timestamps show checker execution, not guaranteed fresh registry fetches.</p>
         <div className="row">
           <button ref={startButton} className="btn main" type="button" disabled={running || !online} onClick={startLive}>Run live checks</button>
           {running && <button ref={cancelButton} className="btn" type="button" onFocus={() => { cancelHadFocus.current = true; }} onBlur={() => { cancelHadFocus.current = false; }} onClick={cancelLive}>Cancel run</button>}
           <button ref={sampleButton} className="btn" type="button" disabled={sampleLoading} onClick={() => void showSample()}>View recorded sample</button>
           {isSample && <button className="btn" type="button" onClick={() => { setView('live'); startButton.current?.focus(); }}>{live ? 'Back to live results' : 'Back to fixed cases'}</button>}
         </div>
-        <p className="soft">Cancel stops new cases and ignores late results; in-flight requests may finish. Viewing the sample also cancels a live queue and preserves its completed results.</p>
+        <details>
+          <summary>What these checks do and do not show</summary>
+          <div className="stack">
+            <p className="soft">Run our real metadata checker against a fixed set of public references and deliberately altered inputs. Every case stays visible, including misses, errors and unfinished checks.</p>
+            <p className="soft">Corpus version {CORPUS_MANIFEST.version}: {LAB_CORPUS.filter((item) => !item.invented).length} real controls and {LAB_CORPUS.filter((item) => item.invented).length} invented exercises. This checks structured metadata, not the paste parser, scientific truth or support for a claim.</p>
+            <p>Run live checks sends the fixed public or labelled invented reference fields below to scholarly registries. Your project library is not part of this run.</p>
+            <p className="soft">Lookups may reuse responses cached during this page load. Run timestamps show checker execution, not guaranteed fresh registry fetches.</p>
+            <p className="soft">Cancel stops new cases and ignores late results; in-flight requests may finish. Viewing the sample also cancels a live queue and preserves its completed results.</p>
+          </div>
+        </details>
         {!online && <p className={css.note}>Your browser reports that it is offline. The recorded sample is available without registry requests; live checks become available when the browser reports a connection.</p>}
         {notice && <p className={css.error} role="alert">{notice}</p>}
       </section>

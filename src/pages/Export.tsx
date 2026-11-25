@@ -95,7 +95,7 @@ export function Export({ project }: StepProps) {
       )}
       {p.titles.filter((t) => list.includes(t.source)).length > 0 && (
         <details>
-          <summary>{p.titles.filter((t) => list.includes(t.source)).length} titles have capitals only you can judge</summary>
+          <summary>{p.titles.filter((t) => list.includes(t.source)).length === 1 ? '1 title has' : `${p.titles.filter((t) => list.includes(t.source)).length} titles have`} capitals only you can judge</summary>
           <ul>
             {p.titles.filter((t) => list.includes(t.source)).map((t) => (
               <li key={t.source.id}>
