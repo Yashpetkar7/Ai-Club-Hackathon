@@ -46,9 +46,18 @@ async function prepare(page: Page): Promise<string> {
   await page.getByRole('button', { name: 'Find the sentence' }).click();
   await page.getByRole('button', { name: 'Accept' }).click();
   await step(page, 'Write');
-  await page.getByLabel('Your draft').fill('Home working led to a 13% performance increase (Bloom et al., 2015). Trust falls over time (Okonjo, 2022).');
+  await page.getByLabel('Your draft').fill('Home working led to a 13% performance increase (Bloom et al., 2015). Trust falls over time (Okonjo, 2022). Their attrition rate halved, but their promotion rate conditional on performance fell. It had a effect on the the firm.');
   await expect(page.getByText('saved on this device')).toBeVisible();
   await page.waitForTimeout(400);
+  // So the panels for duplicates, retracted references and missing papers are on the page. SAMPLE records, for this test only.
+  await page.evaluate(async (project) => {
+    const path = '/src/store/db.ts';
+    const { db } = await import(/* @vite-ignore */ path);
+    const all = await db.sources.toArray();
+    for (const s of all) await db.sources.update(s.id, { record: { ...s.record, references: ['W2081155210', 'W4386510404'], notices: [{ kind: 'correction', label: 'Correction', by: 'publisher', on: '2020-01-01', doi: '10.5555/sample-notice' }] }, retractedRefs: { at: '2026-11-25T10:00:00Z', items: [{ id: 'W1', title: 'SAMPLE withdrawn study', doi: '10.5555/sample' }] } });
+    const s = all.find((x) => x.record?.doi === '10.1093/qje/qju032');
+    await db.sources.add({ ...s, id: 'sample-preprint', projectId: project, addedAt: '2020-01-01', keys: { found: true, checked: true, approved: false }, record: { ...s.record, id: '10.5555/pre', doi: '10.5555/pre', type: 'posted-content', container: 'SAMPLE preprints' } });
+  }, id);
   return id;
 }
 
@@ -139,6 +148,8 @@ test('every control on every page does something', async ({ browser, page }) => 
       await p.goto(`/#${r}`);
       await p.waitForSelector(r === '/' ? 'h1' : 'main h1', { timeout: 20_000 });
       await p.waitForTimeout(r === '/' ? 900 : 350);
+      if (r.endsWith('/write')) { await p.getByRole('button', { name: 'Check my draft' }).click(); await p.getByText(/about your sources/).waitFor(); }
+      if (r.endsWith('/map')) { await p.getByRole('button', { name: 'Show them' }).click(); await p.getByRole('region', { name: 'Papers you may be missing' }).getByRole('button', { name: 'Keep' }).first().waitFor(); await p.waitForTimeout(900); }
       if (r.endsWith('/library')) { await p.locator('main ul > li > button').first().click(); await p.waitForTimeout(150); }
     };
     const first = await open();

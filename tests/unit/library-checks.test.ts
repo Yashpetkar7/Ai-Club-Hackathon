@@ -8,6 +8,7 @@ import { mergeSources, notTheSame } from '@/core/library/merge';
 import { checkAgain, watchLibrary, type Ask } from '@/core/library/watch';
 import { articlePages, pageAt, pageText } from '@/core/pdf/pages';
 import { fromCrossref } from '@/core/registries/map';
+import { buildReport } from '@/core/report/report';
 import { statementLines } from '@/core/report/statement';
 import { reviewProject } from '@/core/review/review';
 import { sharedMissing } from '@/map/missing';
@@ -261,6 +262,15 @@ describe('the Reviewer and the statement use the draft check', () => {
   it('says what it compared when nothing was copied', () => {
     const r = reviewProject({ projectId: pid, sources: [source()], claims: [], draft: 'Staff at home did about an eighth more work (Bloom et al., 2015).', log: [] });
     expect(r.findings.find((f) => f.id === 'ownwords')!.detail).toContain('cannot see the web');
+  });
+  it('the evidence report shows what was published later, and the page of a passage, escaped', async () => {
+    const s = source({ record: { ...real(BLOOM), notices: [{ kind: 'concern', label: 'Expression of <b>concern</b>', by: 'publisher', on: '2026-05-01' }] }, retractedRefs: { at: '2026-11-25', items: [{ id: 'W1', title: 'A withdrawn study' }] } });
+    const claim = { id: 'c', projectId: pid, text: 'X.', label: 'reported' as const, reasons: [], checks: { exactQuote: true, support: null, contradiction: null, numbers: null, direction: null, scope: null }, by: 'student' as const, createdAt: '2026-11-25', sourceId: s.id, passage: { id: 'p', sourceId: s.id, text: 'Some words.', start: 0, end: 4, page: 3, printed: 167 } };
+    const html = await buildReport({ project: (await db.projects.get(pid))!, sources: [s], claims: [claim], log: [], generatedAt: '2026-11-25T10:00:00Z' });
+    expect(html).toContain('Expression of &lt;b&gt;concern&lt;/b&gt; (2026-05-01)');
+    expect(html).toContain('Cites retracted work: A withdrawn study');
+    expect(html).toContain('Page 167 (page 3 of the PDF)');
+    expect(html).toContain('Text copied from anywhere outside');
   });
   it('the AI-use statement names the rule-based check and counts the clicks', () => {
     const e = (action: string) => ({ seq: 1, projectId: pid, at: '2026-11-25T10:00:00Z', actor: 'student' as const, action, detail: '', prevHash: '', hash: '' });

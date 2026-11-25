@@ -58,3 +58,22 @@ describe('registry proxy answers are data and stay on the list', () => {
   it('other sites may not use it', async () => expect((await ask('https://api.crossref.org/works/10.1/a', { 'sec-fetch-site': 'cross-site' })).status).toBe(403));
 });
 
+describe('asking a registry again', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
+  it('an old copy is used, unless the page asks for a fresh answer, and then at most once a minute', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    let n = 0;
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async () => new Response(JSON.stringify({ n: ++n })));
+    const u = encodeURIComponent('https://api.crossref.org/works/10.5555/again');
+    const ask = async (fresh: boolean): Promise<number> => (await (await route(new Request(`http://localhost/api/registry?url=${u}${fresh ? '&fresh=1' : ''}`))).json()).n;
+    expect(await ask(false)).toBe(1);
+    expect(await ask(true)).toBe(1);
+    vi.setSystemTime(Date.now() + 120_000);
+    expect(await ask(false)).toBe(1);
+    expect(await ask(true)).toBe(2);
+    expect(await ask(false)).toBe(2);
+  });
+});

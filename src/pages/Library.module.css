@@ -43,7 +43,8 @@
 .webform > button { justify-self: start; }
 .warn ul { margin: 6px 0 0; padding-left: 1.2em; overflow-wrap: anywhere; }
 .warn a { color: inherit; }
-.watch, .dups { border-top: 1px solid var(--line); padding-top: 22px; display: grid; gap: 12px; min-width: 0; }
+.watch, .dups { display: grid; gap: 12px; min-width: 0; }
+.watch { border: 1px solid var(--line); background: var(--sheet); padding: 14px 18px; }
 .watchHead { display: flex; flex-wrap: wrap; gap: 10px 24px; justify-content: space-between; align-items: end; }
 .watch h2, .dups h2 { font-size: 1.3rem; }
 .watchList { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }

@@ -113,6 +113,7 @@ export function Library({ project }: StepProps) {
         </div>
       ) : (
         <>
+          <RetractionCheck project={project} sources={sources} />
           <div className={css.filters}>
             <label className={css.wide}>
               <span>Search your library</span>
@@ -204,7 +205,6 @@ export function Library({ project }: StepProps) {
             )}
             <div className={css.side}>{current ? <Detail key={current.id} s={current} folders={folders} onClose={() => setOpen(null)} /> : <p className="soft">Select a source to see its receipt, approve it, or add notes.</p>}</div>
           </div>
-          <RetractionCheck project={project} sources={sources} />
         </>
       )}
     </>

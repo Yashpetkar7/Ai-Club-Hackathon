@@ -43,14 +43,20 @@ export function MissingPapers({ project, sources }: { project: Project; sources:
       setLeft(all.filter((m) => m.record.retracted).length);
       setRows(list);
       void log(project.id, 'code', 'missing.looked', `${list.length} works cited by two or more sources and not in the library`);
-      for (const m of list) {
-        const t = cleanTitle(m.record.title);
-        const check = await checkReference({ raw: t, title: t, authors: m.record.authors.slice(0, 6).map((a) => a.family), ...(m.record.year ? { year: m.record.year } : {}), ...(m.record.doi ? { doi: m.record.doi } : {}) }, registries);
-        if (run.current !== mine) return;
-        setRows((cur) => cur?.map((x) => (x.id === m.id ? { ...x, check: check.record ? { ...check, record: { ...check.record, abstract: check.record.abstract ?? m.record.abstract } as RegistryRecord } : check } : x)) ?? null);
-      }
+      // Three at a time, so one slow answer does not hold up the rest.
+      let next = 0;
+      const worker = async () => {
+        while (next < list.length && run.current === mine) {
+          const m = list[next++]!;
+          const t = cleanTitle(m.record.title);
+          const check = await checkReference({ raw: t, title: t, authors: m.record.authors.slice(0, 6).map((x) => x.family), ...(m.record.year ? { year: m.record.year } : {}), ...(m.record.doi ? { doi: m.record.doi } : {}) }, registries);
+          if (run.current !== mine) return;
+          setRows((cur) => cur?.map((x) => (x.id === m.id ? { ...x, check: check.record ? { ...check, record: { ...check.record, abstract: check.record.abstract ?? m.record.abstract } as RegistryRecord } : check } : x)) ?? null);
+        }
+      };
+      await Promise.all([worker(), worker(), worker()]);
     } catch {
-      if (run.current === mine) setError('OpenAlex did not answer. Try again in a minute.');
+      if (run.current === mine) setError('A registry did not answer. Try again in a minute.');
     }
     if (run.current === mine) setBusy(false);
   }
@@ -103,7 +109,7 @@ export function MissingPapers({ project, sources }: { project: Project; sources:
                   {m.record.container ? ` · ${m.record.container}` : ''}
                 </span>
                 <span>
-                  Cited by {m.by.length} of your sources: {m.by.map(who).join('; ')}
+                  Cited by {m.by.length} of your sources: {[...m.by].sort((a, b) => (citeKey(a).year ?? 0) - (citeKey(b).year ?? 0) || who(a).localeCompare(who(b))).map(who).join('; ')}
                 </span>
                 <div className="row">{m.check ? <VerdictStamp verdict={m.check.verdict} /> : <span className="soft">Checking…</span>}</div>
                 {policyIssues(m.check?.record).map((x) => (

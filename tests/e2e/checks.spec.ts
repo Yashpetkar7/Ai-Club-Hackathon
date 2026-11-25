@@ -277,11 +277,11 @@ test('papers you may be missing: counted from reference lists, checked, kept or 
   await start(page, [BLOOM, NOY]);
   await step(page, 'Map');
   await expect(page.getByText('This needs at least two sources with a reference list')).toBeVisible();
-  // W2081155210 and W1979132028 are real records in the recorded answers.
+  // W2081155210 and W4386510404 are real records in the recorded answers.
   await page.evaluate(async () => {
     const path = '/src/store/db.ts';
     const { db } = await import(/* @vite-ignore */ path);
-    for (const s of await db.sources.toArray()) await db.sources.update(s.id, { record: { ...s.record, references: ['W2081155210', 'W1979132028', s.id] } });
+    for (const s of await db.sources.toArray()) await db.sources.update(s.id, { record: { ...s.record, references: ['W2081155210', 'W4386510404', s.id] } });
   });
   const box = page.getByRole('region', { name: 'Papers you may be missing' });
   await expect(box.getByText('Counted from 2 reference lists.')).toBeVisible();
