@@ -1,5 +1,21 @@
 # Hemanth handover
 
+## Task 2 implementation update: 25 November 2026
+
+**Branch:** `hemanth/lab-governance`. The preceding `30a4595` update contained eight documentation files, not new application implementation. The latest follow-up continues the engineering work through the required Task 3 review checkpoint.
+
+**What works:** the owned Lab corpus now has twelve distinct recorded real controls and twelve reproducible, labelled exercises across all five requested failure families. Every real field is checked against its recorded source. Code generates the deliberately broken inputs only inside the Lab corpus. No new DOI or registry response is invented. [Results and limits](LAB_RESULTS.md).
+
+**Tested:** tests were written first; the targeted corpus suite passed 42 tests. `npm run verify`, test stage **09:21:51 Dubai, 25 November**, passed typecheck, **133 tests / 1 skipped in five files**, and the build. The normal gate still skips the existing final no-stubs check. No live or browser result is implied.
+
+**Incomplete:** Task 3 page and runner are the next slice. Four real controls and four generated searches have missing replay requests; these remain unresolved. Task 4 Rules additions, Task 5 statement and Task 6 Q&A remain pending. The personal guide is updated outside Git.
+
+**Files:** `src/core/lab/corpus.ts`, `recorded-seeds.json`, `collect-seeds.mjs`, `README.md`; `tests/unit/lab-corpus.test.ts`; the owned results, validation, handover and prompt log.
+
+**Shared-code request to Yash:** add genuine missing request recordings, or approve a supplemental recorded-fixture interface, without changing the declared corpus after seeing outcomes. Also expose caller cancellation if transport abort is required; the current checker API has no signal parameter. Hemanth will implement honest run cancellation without claiming an HTTP request was aborted.
+
+The earlier branch audit below is retained as dated history. Its statements that the Lab is a stub describe main/integration before Hemanth's new implementation, not completion of Task 3.
+
 ## Current update: 25 November 2026
 
 **Branch:** `hemanth/lab-governance`. Only this branch is authorised for Hemanth's push.

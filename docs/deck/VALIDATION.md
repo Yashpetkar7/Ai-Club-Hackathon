@@ -2,6 +2,18 @@
 
 Maintained 25 November 2026, Dubai time. This record distinguishes executed checks from source inspection and pending work. Earlier runs retain their dates. It is supporting evidence, not an extra slide.
 
+## Task 2 corpus verification, 25 November 2026
+
+After the user's follow-up about missing implementation, the session fetched origin, stayed on `hemanth/lab-governance`, and merged `origin/main`; Git reported `Already up to date`. Main and integration remained at the snapshots below. No integration-only code was imported.
+
+The new `tests/unit/lab-corpus.test.ts` was written before the corpus implementation. Its initial run failed on the missing corpus module. The completed targeted suite passed **42 tests**. It checks distinct real sources, the declared selection and transformation rules, reproducibility, explicit invented labels, metadata provenance, retraction expectations and actual checker outcomes through the unchanged `tests/unit/replay.ts`.
+
+The full `npm run verify` test stage began at **09:21:51 Dubai, 25 November 2026** and exited **0**: typecheck passed, **133 tests passed / 1 skipped in five files**, and the production build passed. The existing `FINAL=1` no-stubs check remains skipped; its condition was not changed.
+
+[LAB_RESULTS.md](LAB_RESULTS.md) records the executed 24-case replay. Eight cases encountered missing recorded requests. These are replay-coverage gaps, not a measured live outage or successful rejection. The corpus supplies structured fields to the checker; parser quality, claim support and whole-platform accuracy are outside the measurement. No new live-network or browser result is claimed by Task 2.
+
+The source fixture is unchanged, with SHA-256 `31230615fc87ac024c8e8336b95c661d33ad573eb640a48f2dc4a4daf9f21c7a`. The owned seed extractor copies recorded metadata only; it does not create missing HTTP responses.
+
 ## 25 November branch verification
 
 The session fetched origin, switched to `hemanth/lab-governance`, and merged main `7b0391ff0ec90e8b8f9fd2a030845cc42d3a753d` without conflicts. Integration `59a876d6acf9fbdc6ea2a71697a0f6f16e16dcd5` was checked out in a separate detached worktree for read-only source review and verification; it was not merged into Hemanth's branch.
