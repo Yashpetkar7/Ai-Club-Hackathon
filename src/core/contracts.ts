@@ -72,6 +72,7 @@ export interface RegistryRecord {
   openAccessUrl?: string;
   citedBy?: number;
   references?: string[];
+  openalexId?: string;
   retracted: boolean;
   retractedOn?: string;
 }

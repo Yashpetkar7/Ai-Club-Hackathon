@@ -1,5 +1,6 @@
 import { exportable, VERDICT_TEXT, type AiLevel, type CitationStyle, type Project, type RawReference, type ReferenceCheck, type RegistryRecord, type SearchPlan, type Source, type SourceOrigin } from '@/core/contracts';
 import { record as log } from '@/log/log';
+import { sourceIssues } from '@/policy/apply';
 import { POLICY } from '@/policy/policy';
 import { db, newId } from './db';
 
@@ -61,8 +62,8 @@ export async function addSource(projectId: string, origin: SourceOrigin, input: 
 export async function approveSource(sourceId: string, reason?: string): Promise<Source> {
   const s = await db.sources.get(sourceId);
   if (!s) throw new Error('This source no longer exists.');
-  const clean = s.keys.found && s.keys.checked;
-  if (!clean && (reason ?? '').trim().length < POLICY.overrideReasonMinChars) throw new Error(`Write at least ${POLICY.overrideReasonMinChars} characters on why you are keeping a source that is not confirmed.`);
+  const clean = s.keys.found && s.keys.checked && !sourceIssues(s).length;
+  if (!clean && (reason ?? '').trim().length < POLICY.overrideReasonMinChars) throw new Error(`Write at least ${POLICY.overrideReasonMinChars} characters on why you are keeping a source that is not confirmed or is outside house rules.`);
   const keys = { ...s.keys, approved: true };
   const patch: Partial<Source> = { keys, ...(clean ? {} : { keptWithReason: reason!.trim() }) };
   await db.sources.update(sourceId, patch);
@@ -82,7 +83,7 @@ export async function editSource(sourceId: string, patch: Pick<Partial<Source>, 
 }
 
 /** What may be cited: all three keys, or kept with a written reason (shown as such). */
-export const citable = (s: Source): boolean => exportable(s) || (s.keys.approved && !!s.keptWithReason && (!!s.record || s.origin === 'web' || s.origin === 'manual'));
+export const citable = (s: Source, policy = POLICY): boolean => (exportable(s) && !sourceIssues(s, policy).length) || (s.keys.approved && !!s.keptWithReason && (!!s.record || s.origin === 'web' || s.origin === 'manual'));
 
 /** One button. Removes everything this site has stored in this browser. */
 export async function deleteEverything(): Promise<void> {

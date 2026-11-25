@@ -31,19 +31,20 @@ export function Check() {
   const [isSample, setIsSample] = useState(false);
   const [projectId, setProjectId] = useState('');
   const run = useRef(0);
+  const handed = useRef<string | null>(null);
   const projects = useLiveQuery(() => db.projects.orderBy('createdAt').reverse().toArray(), []) ?? [];
 
   useEffect(() => {
-    let handed: string | null = null;
+    // Kept in a ref because React mounts effects twice in development.
     try {
-      handed = sessionStorage.getItem(HANDOFF);
+      handed.current ??= sessionStorage.getItem(HANDOFF);
       sessionStorage.removeItem(HANDOFF);
     } catch {
       /* storage is blocked: start empty */
     }
-    if (handed) {
-      setText(handed);
-      void start(handed);
+    if (handed.current) {
+      setText(handed.current);
+      void start(handed.current);
     }
     return () => {
       run.current++;
