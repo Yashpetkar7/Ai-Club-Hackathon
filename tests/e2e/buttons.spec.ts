@@ -175,7 +175,8 @@ test('every control on every page does something', async ({ browser, page }) => 
         if (/NOTHING|BAD/.test(did)) bad.push(`${r.replace(id, ':id')}: ${name} -> ${did}`);
         if (errors.length) bad.push(`${r.replace(id, ':id')}: ${name} -> error ${errors[0]}`);
       } catch (e) {
-        bad.push(`${r.replace(id, ':id')}: control ${i} -> ${String(e).split('\n')[0]}`);
+        const what = await p.locator(CONTROLS).nth(i).evaluate((x) => `${x.tagName} ${(x.textContent ?? '').trim().slice(0, 40)}`).catch(() => 'gone');
+        bad.push(`${r.replace(id, ':id')}: control ${i} (${what}) -> ${String(e).split('\n')[0]}`);
       } finally {
         await ctx.close();
       }

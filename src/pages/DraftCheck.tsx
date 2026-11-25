@@ -1,4 +1,4 @@
-import { useDeferredValue, useMemo, useState, type RefObject } from 'react';
+import { useDeferredValue, useMemo, useRef, useState, type RefObject } from 'react';
 import { Link } from '@/app/router';
 import { titleOf } from '@/core/cite/preflight';
 import { findCitations, sourceFor } from '@/core/cite/draft';
@@ -27,6 +27,8 @@ interface Props {
 /** Copied text, quotations, repetition and slips. Rules only: no AI, nothing leaves the device, nothing changes without a click. */
 export function DraftCheck({ project, text, sources, cite, onChange, area }: Props) {
   const [on, setOn] = useState(false);
+  const [at, setAt] = useState('');
+  const result = useRef<HTMLParagraphElement>(null);
   const [left, setLeft] = useState<Set<string>>(new Set());
   const [all, setAll] = useState(false);
   const [said, setSaid] = useState('');
@@ -44,6 +46,9 @@ export function DraftCheck({ project, text, sources, cite, onChange, area }: Pro
 
   function start() {
     setOn(true);
+    setAt(new Date().toLocaleTimeString('en-GB'));
+    // Takes the reader to the result, by eye and by screen reader.
+    requestAnimationFrame(() => result.current?.focus());
     setSaid('');
     setLeft(new Set());
     const c = POLICY.draftCheck.copied ? checkCopied(text, sources, project.style) : null;
@@ -113,10 +118,10 @@ export function DraftCheck({ project, text, sources, cite, onChange, area }: Pro
           {copied && (
             <p className={css.scope}>
               {copied.compared.length === 0 ? 'No source in your library has text yet, so nothing could be compared. Get abstracts in Evidence, or add PDFs in the library.' : `Compared with ${copied.compared.length} ${copied.compared.length === 1 ? 'source' : 'sources'} in your library.`}
-              {copied.unreadable.length > 0 && ` ${copied.unreadable.length} ${copied.unreadable.length === 1 ? 'has' : 'have'} no text we can read.`} We cannot see the web, books or other people’s work, so this is not a plagiarism verdict.
+              {copied.unreadable.length > 0 && ` ${copied.unreadable.length} ${copied.unreadable.length === 1 ? 'has' : 'have'} no text we can read.`} We cannot see the web, books or other people’s work, so this is not a plagiarism verdict.{at && <span className="soft"> Checked at {at}, and again as you type.</span>}
             </p>
           )}
-          <p role="status" className={css.count}>
+          <p role="status" className={css.count} ref={result} tabIndex={-1}>
             {stale ? 'Reading your changes…' : total === 0 ? 'Nothing found. That is not the same as nothing there.' : `${items.length} about your sources, ${repeat.length} said more than once, ${language.length} about wording.`}
             {copied && copied.quotesOk > 0 && !stale ? ` ${copied.quotesOk} ${copied.quotesOk === 1 ? 'quotation matches its' : 'quotations match their'} source.` : ''} {last?.after === text ? said : ''}
           </p>
