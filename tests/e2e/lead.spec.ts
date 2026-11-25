@@ -181,6 +181,9 @@ test('tour: from the front page, signed out, on the real pages, and a touch only
   await expect(bar.getByText('SAMPLE', { exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Check references' })).toBeVisible();
   await expect(page.getByText(/Checked \d of 5|5 references checked/)).toBeVisible({ timeout: 15_000 });
+  // Stamps fade in for under half a second. Contrast is measured once they have landed.
+  await expect(page.getByText('5 references checked')).toBeVisible({ timeout: 15_000 });
+  await page.waitForTimeout(700);
   await axe(page, 'tour');
   // It moves on by itself.
   await expect(bar).toContainText('The verdicts', { timeout: 15_000 });
