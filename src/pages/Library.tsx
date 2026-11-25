@@ -7,11 +7,12 @@ import { titleOf } from '@/core/cite/preflight';
 import { sentenceCase } from '@/core/cite/sentenceCase';
 import { VERDICT_TEXT, type RawReference, type Source, type Verdict } from '@/core/contracts';
 import { addChecked, addWebPage, refFromLine, refsFromFile, webProblems, type WebPage } from '@/core/import/import';
-import { registries } from '@/core/registries';
-import { checkReference } from '@/core/verify/verdict';
+import { checkAgain } from '@/core/library/watch';
+import { cleanTitle } from '@/core/verify/normalise';
 import { sourceIssues } from '@/policy/apply';
 import { POLICY } from '@/policy/policy';
-import { approveSource, citable, editSource, recheckSource, removeSource } from '@/store/actions';
+import { Duplicates, RetractionCheck } from '@/pages/LibraryChecks';
+import { approveSource, citable, editSource, removeSource } from '@/store/actions';
 import { db } from '@/store/db';
 import { PdfDrop } from '@/ui/PdfDrop';
 import { Receipt } from '@/ui/Receipt';
@@ -101,7 +102,8 @@ export function Library({ project }: StepProps) {
           {adding ? 'Close' : 'Add a source'}
         </button>
       </div>
-      {(adding || sources.length === 0) && <AddSource projectId={project.id} onAdded={(id) => setOpen(id)} />}
+      {(adding || sources.length === 0) && <AddSource projectId={project.id} onAdded={(id) => setOpen(id)} onBusy={() => setAdding(true)} />}
+      <Duplicates project={project} sources={sources} />
       {sources.length === 0 ? (
         <div className={`card ${css.empty}`}>
           <h2>Nothing here yet</h2>
@@ -184,6 +186,9 @@ export function Library({ project }: StepProps) {
                       </span>
                       <span className={css.marks}>
                         <SourceMark s={s} />
+                        {s.record?.notices?.some((x) => x.kind === 'concern') && <span className={css.flag}>Expression of concern</span>}
+                        {s.record?.notices?.some((x) => x.kind === 'correction') && <span className={css.flag}>Corrected</span>}
+                        {!!s.retractedRefs?.items.length && <span className={css.flag}>Cites retracted work</span>}
                         {s.folder && <span className={css.chip}>{s.folder}</span>}
                         {s.tags.map((t) => (
                           <span key={t} className={css.chip}>
@@ -199,6 +204,7 @@ export function Library({ project }: StepProps) {
             )}
             <div className={css.side}>{current ? <Detail key={current.id} s={current} folders={folders} onClose={() => setOpen(null)} /> : <p className="soft">Select a source to see its receipt, approve it, or add notes.</p>}</div>
           </div>
+          <RetractionCheck project={project} sources={sources} />
         </>
       )}
     </>
@@ -231,8 +237,8 @@ function Detail({ s, folders, onClose }: { s: Source; folders: string[]; onClose
   }
   const again = () =>
     attempt(async () => {
-      const raw: RawReference = s.raw ?? { raw: titleOf(s), title: titleOf(s), ...(s.record?.doi ? { doi: s.record.doi } : {}), ...(s.record?.year ? { year: s.record.year } : {}), ...(s.record ? { authors: s.record.authors.slice(0, 6).map((a) => a.family) } : {}) };
-      await recheckSource(s.id, await checkReference(raw, registries));
+      const r = await checkAgain(s);
+      if (!r.ok) throw new Error(`A registry did not answer, so the result from ${new Date(s.check!.checkedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} stays.`);
     });
 
   return (
@@ -271,6 +277,26 @@ function Detail({ s, folders, onClose }: { s: Source; folders: string[]; onClose
           {x}
         </p>
       ))}
+      {!!s.retractedRefs?.items.length && (
+        <div className={css.warn}>
+          <p>
+            <strong>This source cites {s.retractedRefs.items.length === 1 ? 'a work that was retracted' : `${s.retractedRefs.items.length} works that were retracted`}.</strong> That can be right, for example to criticise it. Look at how it is used.
+          </p>
+          <ul>
+            {s.retractedRefs.items.map((r) => (
+              <li key={r.id}>
+                {cleanTitle(r.title)}
+                {r.year ? ` (${r.year})` : ''}{' '}
+                {r.doi && (
+                  <a href={`https://doi.org/${r.doi}`} target="_blank" rel="noreferrer">
+                    Open it
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className={css.decide}>
         {s.keys.approved ? (
@@ -388,7 +414,7 @@ const TABS = [
   ['pdf', 'PDF'],
 ] as const;
 
-function AddSource({ projectId, onAdded }: { projectId: string; onAdded: (id: string) => void }) {
+function AddSource({ projectId, onAdded, onBusy }: { projectId: string; onAdded: (id: string) => void; onBusy: () => void }) {
   const [tab, setTab] = useState<(typeof TABS)[number][0]>('doi');
   const [line, setLine] = useState('');
   const [file, setFile] = useState('');
@@ -512,7 +538,7 @@ function AddSource({ projectId, onAdded }: { projectId: string; onAdded: (id: st
           </button>
         </form>
       )}
-      {tab === 'pdf' && <PdfDrop projectId={projectId} />}
+      {tab === 'pdf' && <PdfDrop projectId={projectId} onBusy={onBusy} onAdded={onAdded} />}
       <p role="status" className="soft">
         {busy || said}
       </p>

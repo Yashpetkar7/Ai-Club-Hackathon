@@ -17,6 +17,10 @@ export async function mockRegistries(page: Page): Promise<string[]> {
   await page.route('**/api/health', (r) => r.fulfill({ json: { ok: true, ai: true, openalexKey: false } }));
   await page.route('**/api/registry?*', (r) => {
     const url = new URL(r.request().url()).searchParams.get('url') ?? '';
+    // Questions about one work's reference list, and about works by id, are not searches.
+    if (url.includes('filter=cited_by:')) return r.fulfill({ json: { results: [] } });
+    const ids = url.match(/filter=openalex:([W\d|]+)/)?.[1]?.split('|');
+    if (ids) return r.fulfill({ json: { results: openAlexWorks.filter((w) => ids.includes(String(w.id).replace('https://openalex.org/', ''))) } });
     if (url.startsWith('https://api.openalex.org/works?')) return r.fulfill({ json: { results: openAlexWorks } });
     const hit = store[url];
     if (!hit) {

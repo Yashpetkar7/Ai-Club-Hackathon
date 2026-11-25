@@ -42,6 +42,9 @@ export function statementLines(log: LogEvent[], project: Pick<Project, 'aiLevel'
     else out.push('The log does not record which suggestions I kept, changed or rejected.');
   }
   if (device.length) out.push(`A small language model ran on my own device ${times(device.length)} to compare a claim with a sentence from its source. It wrote no text, and no claim was sent anywhere.`);
+  const checks = log.filter((e) => e.action === 'draft.checked').length;
+  const fixes = log.filter((e) => e.action === 'draft.fix').length;
+  if (checks) out.push(`A rule-based check, which is not AI, compared my draft with my own sources and looked for slips ${times(checks)}. ${fixes ? `I applied ${fixes === 1 ? 'one of its corrections' : `${fixes} of its corrections`}, each with a click.` : 'I applied none of its corrections.'}`);
   out.push('Paper Trail did not write any of my assignment. It has no feature that does.');
   out.push(`The AI permission level was ${project.aiLevel} (${AI_LEVELS[project.aiLevel]?.name ?? 'unknown'})${levels.length ? `, and was changed ${times(levels.length)}` : ''}. The level is my own declaration.`);
   const ok = log.filter((e) => e.action === 'source.approved').length;

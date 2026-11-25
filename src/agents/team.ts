@@ -255,7 +255,7 @@ async function steps(id: string, status: (a: AgentId, s: AgentState, n: string) 
   // 7. Reviewer and Clerk
   status('reviewer', 'working', 'Reading the whole project.');
   const [sources, events, draft] = await Promise.all([sourcesNow(), db.log.where('projectId').equals(id).sortBy('seq'), db.drafts.get(id)]);
-  const r = reviewProject({ projectId: id, sources, claims, draft: draft?.html ?? '', log: events });
+  const r = reviewProject({ projectId: id, sources, claims, draft: draft?.html ?? '', log: events, style: p.style, ...(p.notTheSame ? { notTheSame: p.notTheSame } : {}) });
   const fix = r.findings.filter((f) => f.level === 'fix').length;
   const look = r.findings.filter((f) => f.level === 'look').length;
   await log(id, 'code', 'reviewer.ran', `${fix} to fix, ${look} to look at`);

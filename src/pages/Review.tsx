@@ -25,7 +25,7 @@ export function Review({ project }: StepProps) {
     ]);
     return { sources, claims, log: events, draft: draft?.html ?? '' };
   }, [project.id]);
-  const review = useMemo(() => (data ? reviewProject({ projectId: project.id, ...data }) : null), [data, project.id]);
+  const review = useMemo(() => (data ? reviewProject({ projectId: project.id, style: project.style, ...(project.notTheSame ? { notTheSame: project.notTheSame } : {}), ...data }) : null), [data, project.id, project.style, project.notTheSame]);
   const [said, setSaid] = useState('');
   const fix = review?.findings.filter((f) => f.level === 'fix').length ?? 0;
   const look = review?.findings.filter((f) => f.level === 'look').length ?? 0;
@@ -104,7 +104,11 @@ export function Review({ project }: StepProps) {
                   )}
                   <span className="soft">{l.reasons.filter((r) => r !== 'NO_SOURCE').map((r) => REASON_TEXT[r]).join(' ')}</span>
                 </div>
-                {l.passage && <p className={css.passage}>Closest sentence in the source: “{l.passage}”</p>}
+                {l.passage && (
+                  <p className={css.passage}>
+                    Closest sentence in the source{l.where ? `, ${l.where.charAt(0).toLowerCase()}${l.where.slice(1)}` : ''}: “{l.passage}”
+                  </p>
+                )}
               </li>
             ))}
           </ul>

@@ -54,6 +54,16 @@ export interface Author {
   given?: string;
 }
 
+/** Something the journal or Retraction Watch published about a work after it came out. Read from Crossref. */
+export interface Notice {
+  kind: 'retraction' | 'concern' | 'correction';
+  label: string;
+  on?: string;
+  /** DOI of the notice itself. */
+  doi?: string;
+  by: 'publisher' | 'retraction-watch';
+}
+
 /** A record that came from a registry. The only thing a citation may be built from. */
 export interface RegistryRecord {
   registry: RegistryName;
@@ -78,6 +88,9 @@ export interface RegistryRecord {
   openalexId?: string;
   retracted: boolean;
   retractedOn?: string;
+  notices?: Notice[];
+  /** DOIs the publisher says are another version of this work, for example its preprint. */
+  versions?: string[];
 }
 
 export interface FieldDiff {
@@ -123,6 +136,8 @@ export interface Project {
   createdAt: string;
   /** Gate 1. Set when the student approves the search plan. */
   plan?: SearchPlan;
+  /** Pairs of source ids the student said are different works. */
+  notTheSame?: string[];
 }
 
 export interface SearchPlan {
@@ -149,6 +164,10 @@ export interface Source {
   /** Plain text we are allowed to read: abstract, open full text, or the student's own PDF. */
   text?: string;
   textOrigin?: 'abstract' | 'fulltext' | 'pdf' | 'web';
+  /** Pages in the student's PDF, so a quote can say where it is. */
+  pdfPages?: number;
+  /** Retracted works in this source's own reference list, and when we asked. */
+  retractedRefs?: { at: string; items: { id: string; title: string; doi?: string; year?: number }[] };
   /** Set when the student keeps a flagged source. Shown on every export. */
   keptWithReason?: string;
   addedAt: string;
@@ -160,6 +179,11 @@ export interface Passage {
   text: string;
   start: number;
   end: number;
+  /** Page of the PDF, and the printed page when both agree. Missing for abstracts. */
+  page?: number;
+  to?: number;
+  printed?: number;
+  printedTo?: number;
 }
 
 export interface ClaimChecks {
@@ -206,6 +230,10 @@ export interface Policy {
   minYear: number | null;
   peerReviewedOnly: boolean;
   blockRetracted: boolean;
+  /** A work under an expression of concern needs a written reason, like a retracted one. */
+  flagConcerns: boolean;
+  /** Checks on the student's own draft. Rule-based, no AI. */
+  draftCheck: { copied: boolean; language: boolean };
   maxAiCallsPerProject: number;
   overrideReasonMinChars: number;
   thresholds: {

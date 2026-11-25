@@ -16,13 +16,14 @@ interface Outcome {
 }
 
 /** Adds a PDF the student already has. It is read on this device and never uploaded. */
-export function PdfDrop({ projectId }: { projectId: string }) {
+export function PdfDrop({ projectId, onBusy, onAdded }: { projectId: string; onBusy?: () => void; onAdded?: (id: string) => void }) {
   const id = useId();
   const [busy, setBusy] = useState('');
   const [over, setOver] = useState(false);
   const [done, setDone] = useState<Outcome[]>([]);
 
   async function take(files: FileList | null) {
+    if (files?.length) onBusy?.();
     for (const file of [...(files ?? [])].slice(0, 10)) {
       setBusy(`Reading ${file.name}`);
       let out: Outcome = { name: file.name };
@@ -33,9 +34,10 @@ export function PdfDrop({ projectId }: { projectId: string }) {
         setBusy(`Checking ${file.name}`);
         const check = await checkReference(raw, registries);
         const s = await addSource(projectId, 'pdf', { raw, check });
-        await editSource(s.id, { text: pdf.text, textOrigin: 'pdf' });
+        await editSource(s.id, { text: pdf.text, textOrigin: 'pdf', pdfPages: pdf.pages });
         if (pdf.instructions.length) await log(projectId, 'code', 'pdf.instructions-found', `${file.name}: text aimed at an AI was found and ignored`);
         out = { ...out, check, pages: pdf.pages, instructions: pdf.instructions };
+        onAdded?.(s.id);
       } catch (e) {
         out = { ...out, error: e instanceof Error ? e.message : 'This file could not be read.' };
       }

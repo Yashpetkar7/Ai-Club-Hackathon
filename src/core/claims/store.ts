@@ -1,5 +1,6 @@
 import { CLAIM_TEXT, type Claim, type Passage, type Source } from '@/core/contracts';
 import { record as log } from '@/log/log';
+import { pageAt } from '@/core/pdf/pages';
 import { POLICY } from '@/policy/policy';
 import { db, newId } from '@/store/db';
 import { judge, type Support } from './label';
@@ -20,7 +21,8 @@ export async function saveClaim(o: {
   const j = judge(text, o.source, o.passage?.text, o.support ?? null);
   const reason = (o.reason ?? '').trim();
   if (o.decision !== 'rejected' && j.label !== 'verified' && reason.length < POLICY.overrideReasonMinChars) throw new Error(`This is not Verified. Write at least ${POLICY.overrideReasonMinChars} characters on why you are keeping it.`);
-  const passage: Passage | undefined = o.source && o.passage ? { id: `${o.source.id}:${o.passage.start}`, sourceId: o.source.id, ...o.passage } : undefined;
+  const page = o.source && o.passage ? pageAt(o.source, o.passage.start, o.passage.end) : null;
+  const passage: Passage | undefined = o.source && o.passage ? { id: `${o.source.id}:${o.passage.start}`, sourceId: o.source.id, ...o.passage, ...(page ?? {}) } : undefined;
   const claim: Claim = {
     id: newId(),
     projectId: o.projectId,

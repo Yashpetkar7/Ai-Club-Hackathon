@@ -36,3 +36,4 @@
   .right { position: static; }
 }
 .own { background: var(--mute-bg); color: var(--mute); padding: 8px 12px; max-width: none; }
+.page { color: var(--soft); font-size: 0.92rem; }

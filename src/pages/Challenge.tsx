@@ -189,7 +189,7 @@ export function Challenge({ project }: StepProps) {
                         {f.kept || keptDois.has(f.record.doi) ? (
                           <span className="soft">In your library</span>
                         ) : (
-                          <button className="btn quiet" type="button" onClick={() => void addSource(project.id, 'search', { record: f.record, check: f.check!, approve: !policyIssues(f.record).length })}>
+                          <button className="btn quiet" type="button" onClick={() => void addSource(project.id, 'search', { record: f.record, check: f.check!, approve: !policyIssues(f.check!.record ?? f.record).length })}>
                             Keep
                           </button>
                         )}

@@ -34,6 +34,26 @@ export const registries: Registries = {
   },
 };
 
+export interface RetractedRef { id: string; title: string; doi?: string; year?: number }
+
+/** Retracted works in one work's own reference list, as OpenAlex holds it. One small request. */
+export async function retractedReferences(openalexId: string): Promise<RetractedRef[]> {
+  if (!/^W\d+$/.test(openalexId)) return [];
+  const j = await getJson<{ results: Record<string, any>[] }>(`https://api.openalex.org/works?filter=cited_by:${openalexId},is_retracted:true&per-page=25&select=id,doi,title,publication_year`, 'openalex');
+  return (j?.results ?? []).map((w) => {
+    const r = fromOpenAlex(w);
+    return { id: r.id, title: r.title, ...(r.doi ? { doi: r.doi } : {}), ...(r.year ? { year: r.year } : {}) };
+  });
+}
+
+/** Full records for a handful of OpenAlex ids, in one request. */
+export async function worksById(ids: string[]): Promise<RegistryRecord[]> {
+  const ok = ids.filter((x) => /^W\d+$/.test(x)).slice(0, 50);
+  if (!ok.length) return [];
+  const j = await getJson<{ results: Record<string, unknown>[] }>(`https://api.openalex.org/works?filter=openalex:${ok.join('|')}&per-page=${ok.length}&select=${OA_FIELDS}`, 'openalex');
+  return (j?.results ?? []).map(fromOpenAlex).filter((r) => r.title);
+}
+
 export interface SearchOptions {
   fromYear?: number;
   perPage?: number;

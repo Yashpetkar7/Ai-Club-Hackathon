@@ -8,6 +8,7 @@ import { rankSentences, type Ranked } from '@/core/claims/rank';
 import { removeClaim, saveClaim } from '@/core/claims/store';
 import { cancelSupport, loadSupport, onSupport, scoreSupport, SUPPORT_MB, SUPPORT_MODEL, supportState } from '@/core/claims/support';
 import { CLAIM_TEXT, REASON_TEXT, type Claim, type ClaimChecks, type Source } from '@/core/contracts';
+import { pageAt, pageText } from '@/core/pdf/pages';
 import { registries } from '@/core/registries';
 import { record as log } from '@/log/log';
 import { POLICY } from '@/policy/policy';
@@ -73,6 +74,7 @@ export function Evidence({ project }: StepProps) {
   const kept = sources ?? [];
   const source: Source | undefined = kept.find((s) => s.id === sourceId) ?? kept.find((s) => s.text) ?? kept[0];
   const passage = ranked?.[pick];
+  const where = source && passage ? pageAt(source, passage.start, passage.end) : null;
   const judged = useMemo(() => (ranked && source ? judge(claim, source, passage?.text, support) : null), [ranked, source, claim, passage, support]);
 
   function find(e?: React.FormEvent) {
@@ -224,6 +226,7 @@ export function Evidence({ project }: StepProps) {
             <h2>In the source</h2>
             {passage ? (
               <>
+                <p className={css.page}>{where ? pageText(where) : source.textOrigin === 'abstract' ? 'In the abstract, which has no page numbers. Add the PDF to get one.' : 'This text has no page numbers.'}</p>
                 <p className={css.source} tabIndex={0} role="region" aria-label="Text of the source">
                   <Marked text={source.text!} at={passage} />
                 </p>
@@ -350,7 +353,12 @@ function ClaimCard({ c, source }: { c: Claim; source: Source | undefined }) {
         </button>
       </div>
       {c.passage && <blockquote>“{c.passage.text}”</blockquote>}
-      {c.passage && <p className="soft">{source ? titleOf(source) : 'The source was removed from your library.'}</p>}
+      {c.passage && (
+        <p className="soft">
+          {source ? titleOf(source) : 'The source was removed from your library.'}
+          {c.passage.page ? ` · ${pageText({ ...c.passage, page: c.passage.page })}` : ''}
+        </p>
+      )}
       {c.reasons.length > 0 && <p className="soft">{c.reasons.map((r) => REASON_TEXT[r]).join(' ')}</p>}
       {c.keptWithReason && <p className={css.why}>Your reason: {c.keptWithReason}</p>}
     </li>

@@ -7,7 +7,8 @@ const TTL = 6 * 60 * 60 * 1000;
 const MAX = 800;
 
 export async function registry(req) {
-  const target = new URL(req.url).searchParams.get('url');
+  const asked = new URL(req.url).searchParams;
+  const target = asked.get('url');
   let u;
   try {
     u = new URL(target ?? '');
@@ -19,7 +20,8 @@ export async function registry(req) {
   if (u.hostname === 'doi.org' && !/^\/(api\/handles|ra)\//.test(u.pathname)) return Response.json({ error: 'not allowed' }, { status: 403 });
   const key = u.toString();
   const hit = cache.get(key);
-  if (hit && Date.now() - hit.at < TTL) return new Response(hit.body, { status: hit.status, headers: { ...DATA, 'x-cache': 'hit' } });
+  // A retraction may be newer than our copy. Even then, one copy a minute is enough.
+  if (hit && Date.now() - hit.at < (asked.get('fresh') === '1' ? 60_000 : TTL)) return new Response(hit.body, { status: hit.status, headers: { ...DATA, 'x-cache': 'hit' } });
   const out = new URL(u);
   if (u.hostname === 'api.openalex.org' && process.env.OPENALEX_API_KEY) out.searchParams.set('api_key', process.env.OPENALEX_API_KEY);
   try {

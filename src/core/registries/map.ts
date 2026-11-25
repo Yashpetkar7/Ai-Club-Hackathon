@@ -1,4 +1,4 @@
-import type { Author, RegistryRecord } from '@/core/contracts';
+import type { Author, Notice, RegistryRecord } from '@/core/contracts';
 import { stripTags } from '@/core/verify/normalise';
 
 /** Turns each registry's own JSON into our one record shape. Pure functions, tested on recorded responses. */
@@ -27,7 +27,39 @@ const crossrefYear = (m: Json): number | undefined => {
 /** The year of the issue, only when there is an issue to speak of. */
 const printYear = (m: Json): number | undefined => (m.volume ? Number(m['published-print']?.['date-parts']?.[0]?.[0]) || undefined : undefined);
 
-const isRetraction = (u: Json): boolean => /^(retraction|withdrawal|removal|retracted)$/i.test(String(u.type ?? u.label ?? ''));
+/** Crossref's own spellings, including the misspelled ones publishers have deposited. */
+const isRetraction = (u: Json): boolean => /^(retraction|retration|retracion|withdrawal|removal|retracted)$/i.test(String(u.type ?? u.label ?? ''));
+const noticeKind = (u: Json): Notice['kind'] | null => {
+  const t = String(u.type ?? u.label ?? '').toLowerCase().replace(/[\s-]+/g, '_');
+  if (isRetraction(u)) return 'retraction';
+  if (/^expression_of_concern$|^partial_retraction$/.test(t)) return 'concern';
+  if (/^(correction|erratum|corrigendum|err|corrected|corrected_article|addendum|clarification|publisher_note)$/.test(t)) return 'correction';
+  return null;
+};
+const dateOf = (u: Json): string | undefined => {
+  const d = u?.updated?.['date-parts']?.[0] as number[] | undefined;
+  return d?.length ? d.map((n, i) => (i ? String(n).padStart(2, '0') : String(n))).join('-') : undefined;
+};
+
+/** The same notice is often deposited twice, by the publisher and by Retraction Watch. One line is enough. */
+function noticesFrom(updates: Json[]): Notice[] {
+  const out: Notice[] = [];
+  for (const u of updates) {
+    const kind = noticeKind(u);
+    if (!kind) continue;
+    const doi = u.DOI ? String(u.DOI).toLowerCase() : undefined;
+    if (doi && out.some((x) => x.doi === doi && x.kind === kind)) continue;
+    const on = dateOf(u);
+    out.push({ kind, label: String(u.label ?? u.type), by: u.source === 'retraction-watch' ? 'retraction-watch' : 'publisher', ...(on ? { on } : {}), ...(doi ? { doi } : {}) });
+  }
+  return out.sort((x, y) => (y.on ?? '').localeCompare(x.on ?? ''));
+}
+
+const versionsOf = (m: Json): string[] => {
+  const out = new Set<string>();
+  for (const k of ['is-preprint-of', 'has-preprint', 'is-version-of', 'has-version']) for (const x of m.relation?.[k] ?? []) if (x?.['id-type'] === 'doi' && x.id) out.add(String(x.id).toLowerCase());
+  return [...out];
+};
 
 export function fromCrossref(m: Json): RegistryRecord {
   const rawTitle = String(m.title?.[0] ?? '');
@@ -35,7 +67,8 @@ export function fromCrossref(m: Json): RegistryRecord {
   const title = stripTags(sub && !rawTitle.toLowerCase().includes(String(sub).toLowerCase()) ? `${rawTitle}: ${sub}` : rawTitle);
   const updates: Json[] = m['updated-by'] ?? [];
   const ret = updates.find(isRetraction);
-  const when = ret?.updated?.['date-parts']?.[0] as number[] | undefined;
+  const notices = noticesFrom(updates);
+  const versions = versionsOf(m);
   const people: Json[] = m.author?.length ? m.author : (m.editor ?? []);
   return drop({
     registry: 'crossref' as const,
@@ -55,7 +88,9 @@ export function fromCrossref(m: Json): RegistryRecord {
     abstract: clean(m.abstract)?.replace(/^abstract\s*/i, ''),
     citedBy: typeof m['is-referenced-by-count'] === 'number' ? m['is-referenced-by-count'] : undefined,
     retracted: !!ret || /^\s*(retracted( article)?|withdrawn)\s*[:.\-–]/i.test(rawTitle),
-    retractedOn: when ? when.map((n, i) => (i ? String(n).padStart(2, '0') : String(n))).join('-') : undefined,
+    retractedOn: ret ? dateOf(ret) : undefined,
+    notices: notices.length ? notices : undefined,
+    versions: versions.length ? versions : undefined,
   }) as RegistryRecord;
 }
 

@@ -78,13 +78,13 @@ export async function removeSource(sourceId: string): Promise<void> {
   await log(s.projectId, 'student', 'source.removed', s.record?.title ?? s.raw?.raw.slice(0, 120) ?? sourceId);
 }
 
-export async function editSource(sourceId: string, patch: Pick<Partial<Source>, 'folder' | 'tags' | 'notes' | 'text' | 'textOrigin' | 'citeTitle'>): Promise<void> {
+export async function editSource(sourceId: string, patch: Pick<Partial<Source>, 'folder' | 'tags' | 'notes' | 'text' | 'textOrigin' | 'citeTitle' | 'pdfPages'>): Promise<void> {
   const s = await db.sources.get(sourceId);
   if (!s) return;
   // The student may fix capitals. Changing the words would cite a work that does not exist.
   if (patch.citeTitle !== undefined && patch.citeTitle.toLowerCase() !== cleanTitle(s.record?.title ?? s.raw?.title ?? '').toLowerCase()) throw new Error('Only capital letters may change. The words must stay as the registry has them.');
   await db.sources.update(sourceId, patch);
-  const what = Object.keys(patch).filter((k) => k !== 'textOrigin').join(', ');
+  const what = Object.keys(patch).filter((k) => k !== 'textOrigin' && k !== 'pdfPages').join(', ');
   await log(s.projectId, 'student', 'source.edited', `${s.record?.title ?? s.raw?.raw.slice(0, 120) ?? sourceId} | ${what}`);
 }
 

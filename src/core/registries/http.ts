@@ -43,9 +43,20 @@ export const hasServer = async (): Promise<boolean> => (await serverHealth()).ok
 /** True only when the server has said it has no AI key. */
 export const hasNoAi = async (): Promise<boolean> => (await serverHealth()).noAi;
 
+let asking = 0;
+/** Asks the registries again instead of using answers from earlier today. */
+export async function withFreshAnswers<T>(run: () => Promise<T>): Promise<T> {
+  asking++;
+  try {
+    return await run();
+  } finally {
+    asking--;
+  }
+}
+
 async function once(url: string): Promise<Response> {
   if (await hasServer()) {
-    const viaServer = await fetch(`/api/registry?url=${encodeURIComponent(url)}`, { signal: AbortSignal.timeout(15000) });
+    const viaServer = await fetch(`/api/registry?url=${encodeURIComponent(url)}${asking ? '&fresh=1' : ''}`, { signal: AbortSignal.timeout(15000) });
     if (viaServer.status !== 502 && viaServer.status !== 403) return viaServer;
   }
   return fetch(url, { signal: AbortSignal.timeout(12000) });
@@ -58,7 +69,7 @@ export const resetClosed = (): void => closedUntil.clear();
 
 /** Returns the JSON body, or null when the registry says the thing does not exist (404 or 410). */
 export async function getJson<T>(url: string, lane: string): Promise<T | null> {
-  if (cache.has(url)) {
+  if (!asking && cache.has(url)) {
     const v = cache.get(url);
     return v === MISSING ? null : (v as T);
   }

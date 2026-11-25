@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from '@/app/router';
 import type { StepProps } from '@/app/ProjectShell';
 import type { RegistryRecord } from '@/core/contracts';
+import { alreadyHave } from '@/core/library/duplicates';
+import { titleOf } from '@/core/cite/preflight';
 import { registries, searchPapers } from '@/core/registries';
 import { cleanTitle } from '@/core/verify/normalise';
 import { checkReference } from '@/core/verify/verdict';
@@ -82,7 +84,7 @@ export function Find({ project }: StepProps) {
 
   async function keep(h: Hit) {
     if (!h.check) return;
-    await addSource(project.id, 'search', { record: h.record, check: h.check, approve: h.check.verdict === 'confirmed' && !policyIssues(h.record).length });
+    await addSource(project.id, 'search', { record: h.record, check: h.check, approve: h.check.verdict === 'confirmed' && !policyIssues(h.check.record ?? h.record).length });
     setHits((cur) => cur.map((c) => (c.key === h.key ? { ...c, choice: 'kept' } : c)));
   }
 
@@ -132,6 +134,7 @@ export function Find({ project }: StepProps) {
         {hits.map((h) => {
           const isKept = h.choice === 'kept' || keptDois.has(h.record.doi);
           const abs = h.record.abstract ?? h.check?.record?.abstract;
+          const twin = isKept ? undefined : alreadyHave(h.check?.record ?? h.record, kept ?? []);
           return (
             <li key={h.key} className={`card ${css.hit}`} data-choice={isKept ? 'kept' : h.choice}>
               <div className="stack">
@@ -155,11 +158,12 @@ export function Find({ project }: StepProps) {
                     </button>
                   )}
                 </div>
-                {policyIssues(h.record).map((x) => (
+                {policyIssues(h.check?.record ?? h.record).map((x) => (
                   <p key={x} className={css.note}>
                     {x}
                   </p>
                 ))}
+                {twin && <p className={css.note}>You may already have this: {titleOf(twin)}{twin.record?.container ? `, ${twin.record.container}` : ''}.</p>}
                 {show === h.key && abs && <p className={css.abs}>{abs}</p>}
               </div>
               <div className={css.acts}>

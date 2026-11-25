@@ -43,7 +43,10 @@ export function toRuns(html: string): Run[] {
 const plain = (runs: Run[]): string => runs.map((r) => r.text).join('');
 
 /** Formats items in the order given. IEEE numbers follow that order; the other styles sort themselves. */
-export function formatItems(items: CslItem[], style: CitationStyle, files: StyleFiles): Formatted {
+/** A page for a quotation: 167, 167-168 or e12. Anything else is refused, so nothing odd reaches a citation. */
+export const isPage = (s: string): boolean => /^[a-z]?\d{1,6}(?:\s*[-–]\s*[a-z]?\d{1,6})?$/i.test(s.trim());
+
+export function formatItems(items: CslItem[], style: CitationStyle, files: StyleFiles, page = ''): Formatted {
   if (!items.length) return { entries: [], inText: new Map() };
   const byId = new Map(items.map((i) => [i.id, i]));
   const engine = new CSL.Engine({ retrieveLocale: (l) => files.locales[l] ?? files.locales['en-US']!, retrieveItem: (id) => structuredClone(byId.get(id)) }, files.style);
@@ -64,10 +67,11 @@ export function formatItems(items: CslItem[], style: CitationStyle, files: Style
       const label = left ? plain(toRuns(left[1]!)).trim() : undefined;
       entries.push({ id: bib[0].entry_ids[n]![0]!, runs, text: `${label ? `${label} ` : ''}${plain(runs)}`, ...(label ? { label } : {}) });
     });
-  const inText = new Map(items.map((i) => [i.id, plain(toRuns(engine.makeCitationCluster([{ id: i.id }])))]));
+  const where = isPage(page) ? { locator: page.trim().replace(/\s*[-–]\s*/, '–'), label: 'page' } : {};
+  const inText = new Map(items.map((i) => [i.id, plain(toRuns(engine.makeCitationCluster([{ id: i.id, ...where }])))]));
   return { entries, inText };
 }
 
-export function formatSources(sources: Source[], style: CitationStyle, files: StyleFiles): Formatted {
-  return formatItems(sources.map((s) => sourceToCsl(s, SENTENCE.has(style))).filter((x): x is CslItem => !!x), style, files);
+export function formatSources(sources: Source[], style: CitationStyle, files: StyleFiles, page = ''): Formatted {
+  return formatItems(sources.map((s) => sourceToCsl(s, SENTENCE.has(style))).filter((x): x is CslItem => !!x), style, files, page);
 }

@@ -8,6 +8,7 @@ import { citeKey } from '@/core/cite/csl';
 import { saveFile } from '@/core/cite/save';
 import { titleOf } from '@/core/cite/preflight';
 import { VERDICT_TEXT, type Source } from '@/core/contracts';
+import { pageAt, pageText } from '@/core/pdf/pages';
 import { registries } from '@/core/registries';
 import { record as log } from '@/log/log';
 import { agentAllowed } from '@/policy/policy';
@@ -81,9 +82,10 @@ function One({ project, sources }: StepProps & { sources: Source[] }) {
     }
     setBusy(false);
   }
-  async function keep(text: string) {
-    const line = `“${text}”`;
-    if (!s.notes.includes(line)) await editSource(s.id, { notes: [s.notes, line].filter(Boolean).join('\n') });
+  async function keep(text: string, at: { start: number; end: number }) {
+    const p = pageAt(s, at.start, at.end);
+    const line = `“${text}”${p ? ` (${pageText(p)})` : ''}`;
+    if (!s.notes.includes(`“${text}”`)) await editSource(s.id, { notes: [s.notes, line].filter(Boolean).join('\n') });
     setSaved(text);
   }
   function claim(text: string) {
@@ -161,9 +163,11 @@ function One({ project, sources }: StepProps & { sources: Source[] }) {
                 ) : (
                   reading.parts[p.key].map((x) => (
                     <dd key={x.start}>
-                      <blockquote>“{x.text}”</blockquote>
+                      <blockquote>
+                        “{x.text}”{pageAt(s, x.start, x.end) && <small className="soft"> {pageText(pageAt(s, x.start, x.end)!)}</small>}
+                      </blockquote>
                       <div className="row">
-                        <button className="btn quiet" type="button" onClick={() => void keep(x.text)}>
+                        <button className="btn quiet" type="button" onClick={() => void keep(x.text, x)}>
                           {s.notes.includes(`“${x.text}”`) ? 'In your notes' : 'Save passage'}
                         </button>
                         <button className="btn quiet" type="button" onClick={() => claim(x.text)}>

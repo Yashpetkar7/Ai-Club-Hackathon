@@ -1,5 +1,6 @@
 import { findDoi } from '@/core/verify/normalise';
 import { findInstructions } from './injection';
+import { PAGE_BREAK } from './pages';
 
 export interface PdfRead { text: string; pages: number; doi?: string; title?: string; instructions: string[] }
 export class PdfError extends Error {}
@@ -25,8 +26,9 @@ export async function readPdf(file: Blob, onPage?: (n: number, of: number) => vo
       pages.push(c.items.map((x) => ('str' in x ? x.str + (x.hasEOL ? '\n' : '') : '')).join(' ').replace(/-\s*\n\s*(?=\p{Ll})/gu, '').replace(/\s+/g, ' ').trim());
       onPage?.(i, n);
     }
-    const text = pages.join('\n\n').trim();
-    if (text.length < 40) throw new PdfError('This PDF has no readable text. It may be a scan.');
+    // Not trimmed: an empty first page must still count, or every page number would be one too low.
+    const text = pages.join(PAGE_BREAK);
+    if (text.trim().length < 40) throw new PdfError('This PDF has no readable text. It may be a scan.');
     const meta = (await doc.getMetadata().catch(() => null))?.info as { Title?: string } | undefined;
     const doi = findDoi(pages.slice(0, 2).join(' '));
     const title = meta?.Title?.trim();

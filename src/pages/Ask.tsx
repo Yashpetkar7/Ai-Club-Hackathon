@@ -7,6 +7,7 @@ import { citeKey } from '@/core/cite/csl';
 import { titleOf } from '@/core/cite/preflight';
 import { askLibrary, type Asked } from '@/core/claims/rank';
 import type { Source } from '@/core/contracts';
+import { pageAt, pageText } from '@/core/pdf/pages';
 import { record as log } from '@/log/log';
 import { agentAllowed } from '@/policy/policy';
 import { recordAiDecision } from '@/store/actions';
@@ -99,7 +100,9 @@ export function Ask({ project }: StepProps) {
               {groups.map((s) => (
                 <article key={s.id} className={`card ${css.group}`}>
                   {a.hits.filter((h) => h.source.id === s.id).map((h) => (
-                    <blockquote key={h.sentence.start}>“{h.sentence.text}”</blockquote>
+                    <blockquote key={h.sentence.start}>
+                      “{h.sentence.text}”{pageAt(s, h.sentence.start, h.sentence.end) && <small className="soft"> {pageText(pageAt(s, h.sentence.start, h.sentence.end)!)}</small>}
+                    </blockquote>
                   ))}
                   <p className={css.who}>
                     <strong>{titleOf(s)}</strong>

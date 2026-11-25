@@ -1,4 +1,5 @@
 import type { Source } from '@/core/contracts';
+import { articlePages } from '@/core/pdf/pages';
 import { sameFamily } from '@/core/verify/normalise';
 import { citeKey } from './csl';
 
@@ -50,7 +51,12 @@ export function sourceFor(c: Found, sources: Source[]): Source | undefined {
     if (!k.family) return false;
     const name = sameFamily(c.family, k.family) || c.family.toLowerCase() === k.family.toLowerCase();
     if (!name) return false;
-    if (c.year) return c.year === k.year || (!!s.record?.year && c.year === s.record.year);
+    if (c.year) {
+      if (c.year === k.year || (!!s.record?.year && c.year === s.record.year)) return true;
+      // MLA writes only a page, and a long journal has pages that look like years: (Krugman 1889).
+      const p = articlePages(s.record?.pages);
+      return !!p && c.year >= p.first && c.year <= p.last && !/,/.test(c.text);
+    }
     return c.noDate ? !k.year : true;
   });
 }
@@ -89,8 +95,8 @@ export function numberCitations(text: string, citableSources: Source[]): string 
   const groups = [...text.matchAll(/\(([^()]{3,300})\)/g)].reverse();
   for (const g of groups) {
     const inside = findCitations(g[0]);
-    const ids = inside.map((c) => sourceFor(c, citableSources)).map((s) => (s ? order.get(s.id) : undefined));
-    if (inside.length && ids.every((n) => n !== undefined)) out = `${out.slice(0, g.index)}${ids.map((n) => `[${n}]`).join(', ')}${out.slice(g.index + g[0].length)}`;
+    const ids = inside.map((c) => ({ s: sourceFor(c, citableSources), page: c.text.match(/,\s*(pp?\.\s*[^,;)]+)$/i)?.[1] })).map((x) => ({ n: x.s ? order.get(x.s.id) : undefined, page: x.page }));
+    if (inside.length && ids.every((x) => x.n !== undefined)) out = `${out.slice(0, g.index)}${ids.map((x) => `[${x.n}${x.page ? `, ${x.page}` : ''}]`).join(', ')}${out.slice(g.index + g[0].length)}`;
   }
   return out;
 }

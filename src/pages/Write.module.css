@@ -13,6 +13,8 @@
 .note { display: block; color: var(--soft); }
 .warn { background: var(--warn-bg); color: var(--warn); padding: 8px 12px; max-width: none; }
 .picker { padding: 12px; display: grid; gap: 8px; }
+.pageBox { display: grid; gap: 4px; color: var(--soft); font-size: 0.9rem; max-width: 240px; }
+.pageBox input { color: var(--ink); }
 .options { list-style: none; margin: 0; padding: 0; display: grid; }
 .options li { padding: 9px 10px; cursor: pointer; overflow-wrap: anywhere; }
 .options li[aria-selected='true'] { background: color-mix(in srgb, var(--accent) 14%, transparent); }

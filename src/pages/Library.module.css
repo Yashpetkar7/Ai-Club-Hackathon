@@ -14,6 +14,7 @@
 .sub { font-size: 0.9rem; color: var(--soft); overflow-wrap: anywhere; }
 .marks { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; }
 .chip { font-size: 0.82rem; color: var(--soft); border: 1px solid var(--line); padding: 1px 7px; overflow-wrap: anywhere; }
+.flag { font-size: 0.82rem; font-weight: 600; color: var(--warn); background: var(--warn-bg); padding: 1px 8px; }
 .state { font-size: 0.86rem; color: var(--soft); }
 .side { min-width: 0; position: sticky; top: 84px; max-height: calc(100vh - 104px); overflow: auto; }
 .detail { display: grid; gap: 16px; min-width: 0; padding: 2px; }
@@ -40,6 +41,18 @@
 .tabs button[aria-pressed='true'] { color: var(--ink); font-weight: 600; border-bottom-color: var(--accent); }
 .webform { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: end; }
 .webform > button { justify-self: start; }
+.warn ul { margin: 6px 0 0; padding-left: 1.2em; overflow-wrap: anywhere; }
+.warn a { color: inherit; }
+.watch, .dups { border-top: 1px solid var(--line); padding-top: 22px; display: grid; gap: 12px; min-width: 0; }
+.watchHead { display: flex; flex-wrap: wrap; gap: 10px 24px; justify-content: space-between; align-items: end; }
+.watch h2, .dups h2 { font-size: 1.3rem; }
+.watchList { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.watchList li { display: grid; gap: 4px; overflow-wrap: anywhere; }
+.dups { border: 2px solid var(--gate); padding: 16px 18px; background: var(--sheet); }
+.pair { padding: 14px 16px; display: grid; gap: 12px; justify-items: start; min-width: 0; }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; width: 100%; }
+.two > div { align-content: start; justify-items: start; overflow-wrap: anywhere; }
+@media (max-width: 620px) { .two { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 1080px) {
   .split { grid-template-columns: minmax(0, 1fr); }
   .side { position: static; max-height: none; }
