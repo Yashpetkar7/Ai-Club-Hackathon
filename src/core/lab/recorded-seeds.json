@@ -1,0 +1,2298 @@
+{
+  "description": "Unchanged metadata excerpts from the existing registry recording. This file is not an HTTP replay recording and does not fill missing request URLs.",
+  "fixturePath": "tests/unit/fixtures/registry.json",
+  "fixtureSha256": "31230615fc87ac024c8e8336b95c661d33ad573eb640a48f2dc4a4daf9f21c7a",
+  "selectionRule": "All eight direct Crossref records, including the retracted work; then the first four additional DOI-sorted records with a distinct title, named author, issued year, and type journal-article, proceedings-article, book-chapter or report. Selection precedes checker measurement.",
+  "entries": [
+    {
+      "fixtureUrl": "https://api.crossref.org/works/10.1016/j.ijinfomgt.2023.102642",
+      "itemIndex": null,
+      "record": {
+        "reference-count": 367,
+        "publisher": "Elsevier BV",
+        "short-container-title": [
+          "International Journal of Information Management"
+        ],
+        "published-print": {
+          "date-parts": [
+            [
+              2023,
+              8
+            ]
+          ]
+        },
+        "DOI": "10.1016/j.ijinfomgt.2023.102642",
+        "type": "journal-article",
+        "created": {
+          "date-parts": [
+            [
+              2023,
+              3,
+              11
+            ]
+          ],
+          "date-time": "2023-03-11T13:51:27Z",
+          "timestamp": 1678542687000
+        },
+        "page": "102642",
+        "update-policy": "https://doi.org/10.1016/elsevier_cm_policy",
+        "source": "Crossref",
+        "is-referenced-by-count": 4314,
+        "special_numbering": "C",
+        "title": [
+          "Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy"
+        ],
+        "prefix": "10.1016",
+        "volume": "71",
+        "author": [
+          {
+            "given": "Yogesh K.",
+            "family": "Dwivedi",
+            "sequence": "first",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Nir",
+            "family": "Kshetri",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Laurie",
+            "family": "Hughes",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Emma Louise",
+            "family": "Slade",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Anand",
+            "family": "Jeyaraj",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Arpan Kumar",
+            "family": "Kar",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Abdullah M.",
+            "family": "Baabdullah",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Alex",
+            "family": "Koohang",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Vishnupriya",
+            "family": "Raghavan",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Manju",
+            "family": "Ahuja",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Hanaa",
+            "family": "Albanna",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Mousa Ahmad",
+            "family": "Albashrawi",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Adil S.",
+            "family": "Al-Busaidi",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Janarthanan",
+            "family": "Balakrishnan",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Yves",
+            "family": "Barlette",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Sriparna",
+            "family": "Basu",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Indranil",
+            "family": "Bose",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Laurence",
+            "family": "Brooks",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Dimitrios",
+            "family": "Buhalis",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Lemuria",
+            "family": "Carter",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Soumyadeb",
+            "family": "Chowdhury",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Tom",
+            "family": "Crick",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Scott W.",
+            "family": "Cunningham",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Gareth H.",
+            "family": "Davies",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Robert M.",
+            "family": "Davison",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Rahul",
+            "family": "Dé",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Denis",
+            "family": "Dennehy",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Yanqing",
+            "family": "Duan",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Rameshwar",
+            "family": "Dubey",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Rohita",
+            "family": "Dwivedi",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "John S.",
+            "family": "Edwards",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Carlos",
+            "family": "Flavián",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Robin",
+            "family": "Gauld",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Varun",
+            "family": "Grover",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Mei-Chih",
+            "family": "Hu",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Marijn",
+            "family": "Janssen",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Paul",
+            "family": "Jones",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Iris",
+            "family": "Junglas",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Sangeeta",
+            "family": "Khorana",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Sascha",
+            "family": "Kraus",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Kai R.",
+            "family": "Larsen",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Paul",
+            "family": "Latreille",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Sven",
+            "family": "Laumer",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "F. Tegwen",
+            "family": "Malik",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Abbas",
+            "family": "Mardani",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Marcello",
+            "family": "Mariani",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Sunil",
+            "family": "Mithas",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Emmanuel",
+            "family": "Mogaji",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Jeretta Horn",
+            "family": "Nord",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Siobhan",
+            "family": "O’Connor",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Fevzi",
+            "family": "Okumus",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Margherita",
+            "family": "Pagani",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Neeraj",
+            "family": "Pandey",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Savvas",
+            "family": "Papagiannidis",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Ilias O.",
+            "family": "Pappas",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Nishith",
+            "family": "Pathak",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Jan",
+            "family": "Pries-Heje",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Ramakrishnan",
+            "family": "Raman",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Nripendra P.",
+            "family": "Rana",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Sven-Volker",
+            "family": "Rehm",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Samuel",
+            "family": "Ribeiro-Navarrete",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Alexander",
+            "family": "Richter",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Frantz",
+            "family": "Rowe",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Suprateek",
+            "family": "Sarker",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Bernd Carsten",
+            "family": "Stahl",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Manoj Kumar",
+            "family": "Tiwari",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Wil",
+            "family": "van der Aalst",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Viswanath",
+            "family": "Venkatesh",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Giampaolo",
+            "family": "Viglia",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Michael",
+            "family": "Wade",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Paul",
+            "family": "Walton",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Jochen",
+            "family": "Wirtz",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Ryan",
+            "family": "Wright",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "member": "78",
+        "container-title": [
+          "International Journal of Information Management"
+        ],
+        "original-title": [],
+        "language": "en",
+        "score": 1,
+        "resource": {
+          "primary": {
+            "URL": "https://linkinghub.elsevier.com/retrieve/pii/S0268401223000233"
+          }
+        },
+        "subtitle": [],
+        "short-title": [],
+        "issued": {
+          "date-parts": [
+            [
+              2023,
+              8
+            ]
+          ]
+        },
+        "references-count": 367,
+        "URL": "https://doi.org/10.1016/j.ijinfomgt.2023.102642",
+        "ISSN": [
+          "0268-4012"
+        ],
+        "issn-type": [
+          {
+            "value": "0268-4012",
+            "type": "print"
+          }
+        ],
+        "subject": [],
+        "published": {
+          "date-parts": [
+            [
+              2023,
+              8
+            ]
+          ]
+        },
+        "article-number": "102642"
+      }
+    },
+    {
+      "fixtureUrl": "https://api.crossref.org/works/10.1037/0033-2909.117.3.497",
+      "itemIndex": null,
+      "record": {
+        "reference-count": 0,
+        "publisher": "American Psychological Association (APA)",
+        "issue": "3",
+        "short-container-title": [
+          "Psychological Bulletin"
+        ],
+        "DOI": "10.1037/0033-2909.117.3.497",
+        "type": "journal-article",
+        "created": {
+          "date-parts": [
+            [
+              2005,
+              9,
+              21
+            ]
+          ],
+          "date-time": "2005-09-21T13:59:06Z",
+          "timestamp": 1127311146000
+        },
+        "page": "497-529",
+        "source": "Crossref",
+        "is-referenced-by-count": 15642,
+        "title": [
+          "The need to belong: Desire for interpersonal attachments as a fundamental human motivation."
+        ],
+        "prefix": "10.1037",
+        "volume": "117",
+        "author": [
+          {
+            "authenticated-orcid": false,
+            "given": "Roy F.",
+            "family": "Baumeister",
+            "sequence": "first",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Mark R.",
+            "family": "Leary",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "member": "15",
+        "published-online": {
+          "date-parts": [
+            [
+              1995,
+              5
+            ]
+          ]
+        },
+        "container-title": [
+          "Psychological Bulletin"
+        ],
+        "original-title": [],
+        "language": "en",
+        "score": 1,
+        "resource": {
+          "primary": {
+            "URL": "https://doi.apa.org/doi/10.1037/0033-2909.117.3.497"
+          }
+        },
+        "subtitle": [],
+        "short-title": [],
+        "issued": {
+          "date-parts": [
+            [
+              1995,
+              5
+            ]
+          ]
+        },
+        "references-count": 0,
+        "aliases": [
+          "10.1037//0033-2909.117.3.497"
+        ],
+        "journal-issue": {
+          "issue": "3",
+          "published-online": {
+            "date-parts": [
+              [
+                1995,
+                5
+              ]
+            ]
+          }
+        },
+        "URL": "https://doi.org/10.1037/0033-2909.117.3.497",
+        "ISSN": [
+          "1939-1455",
+          "0033-2909"
+        ],
+        "issn-type": [
+          {
+            "value": "1939-1455",
+            "type": "electronic"
+          },
+          {
+            "value": "0033-2909",
+            "type": "print"
+          }
+        ],
+        "subject": [],
+        "published": {
+          "date-parts": [
+            [
+              1995,
+              5
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "fixtureUrl": "https://api.crossref.org/works/10.1038/s41598-023-41032-5",
+      "itemIndex": null,
+      "record": {
+        "reference-count": 45,
+        "publisher": "Springer Science and Business Media LLC",
+        "issue": "1",
+        "short-container-title": [
+          "Sci Rep"
+        ],
+        "DOI": "10.1038/s41598-023-41032-5",
+        "type": "journal-article",
+        "created": {
+          "date-parts": [
+            [
+              2023,
+              9,
+              7
+            ]
+          ],
+          "date-time": "2023-09-07T06:04:29Z",
+          "timestamp": 1694066669000
+        },
+        "update-policy": "https://doi.org/10.1007/springer_crossmark_policy",
+        "source": "Crossref",
+        "is-referenced-by-count": 537,
+        "title": [
+          "Fabrication and errors in the bibliographic citations generated by ChatGPT"
+        ],
+        "prefix": "10.1038",
+        "volume": "13",
+        "author": [
+          {
+            "given": "William H.",
+            "family": "Walters",
+            "sequence": "first",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Esther Isabelle",
+            "family": "Wilder",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "member": "297",
+        "published-online": {
+          "date-parts": [
+            [
+              2023,
+              9,
+              7
+            ]
+          ]
+        },
+        "container-title": [
+          "Scientific Reports"
+        ],
+        "original-title": [],
+        "language": "en",
+        "score": 1,
+        "resource": {
+          "primary": {
+            "URL": "https://www.nature.com/articles/s41598-023-41032-5"
+          }
+        },
+        "subtitle": [],
+        "short-title": [],
+        "issued": {
+          "date-parts": [
+            [
+              2023,
+              9,
+              7
+            ]
+          ]
+        },
+        "references-count": 45,
+        "journal-issue": {
+          "issue": "1",
+          "published-online": {
+            "date-parts": [
+              [
+                2023,
+                12
+              ]
+            ]
+          }
+        },
+        "URL": "https://doi.org/10.1038/s41598-023-41032-5",
+        "ISSN": [
+          "2045-2322"
+        ],
+        "issn-type": [
+          {
+            "value": "2045-2322",
+            "type": "electronic"
+          }
+        ],
+        "subject": [],
+        "published": {
+          "date-parts": [
+            [
+              2023,
+              9,
+              7
+            ]
+          ]
+        },
+        "article-number": "14045"
+      }
+    },
+    {
+      "fixtureUrl": "https://api.crossref.org/works/10.1086/261763",
+      "itemIndex": null,
+      "record": {
+        "reference-count": 0,
+        "publisher": "University of Chicago Press",
+        "issue": "3",
+        "short-container-title": [
+          "Journal of Political Economy"
+        ],
+        "published-print": {
+          "date-parts": [
+            [
+              1991,
+              6
+            ]
+          ]
+        },
+        "DOI": "10.1086/261763",
+        "type": "journal-article",
+        "created": {
+          "date-parts": [
+            [
+              2002,
+              7,
+              26
+            ]
+          ],
+          "date-time": "2002-07-26T15:45:48Z",
+          "timestamp": 1027698348000
+        },
+        "page": "483-499",
+        "source": "Crossref",
+        "is-referenced-by-count": 7925,
+        "title": [
+          "Increasing Returns and Economic Geography"
+        ],
+        "prefix": "10.1086",
+        "volume": "99",
+        "author": [
+          {
+            "given": "Paul",
+            "family": "Krugman",
+            "sequence": "first",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "member": "200",
+        "container-title": [
+          "Journal of Political Economy"
+        ],
+        "original-title": [],
+        "language": "en",
+        "score": 1,
+        "resource": {
+          "primary": {
+            "URL": "https://www.journals.uchicago.edu/doi/10.1086/261763"
+          }
+        },
+        "subtitle": [],
+        "short-title": [],
+        "issued": {
+          "date-parts": [
+            [
+              1991,
+              6
+            ]
+          ]
+        },
+        "references-count": 0,
+        "journal-issue": {
+          "issue": "3",
+          "published-print": {
+            "date-parts": [
+              [
+                1991,
+                6
+              ]
+            ]
+          }
+        },
+        "URL": "https://doi.org/10.1086/261763",
+        "ISSN": [
+          "0022-3808",
+          "1537-534X"
+        ],
+        "issn-type": [
+          {
+            "value": "0022-3808",
+            "type": "print"
+          },
+          {
+            "value": "1537-534X",
+            "type": "electronic"
+          }
+        ],
+        "subject": [],
+        "published": {
+          "date-parts": [
+            [
+              1991,
+              6
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "fixtureUrl": "https://api.crossref.org/works/10.1093/qje/qju032",
+      "itemIndex": null,
+      "record": {
+        "reference-count": 40,
+        "publisher": "Oxford University Press (OUP)",
+        "issue": "1",
+        "short-container-title": [],
+        "published-print": {
+          "date-parts": [
+            [
+              2015,
+              2,
+              1
+            ]
+          ]
+        },
+        "DOI": "10.1093/qje/qju032",
+        "type": "journal-article",
+        "created": {
+          "date-parts": [
+            [
+              2014,
+              11,
+              21
+            ]
+          ],
+          "date-time": "2014-11-21T21:57:59Z",
+          "timestamp": 1416607079000
+        },
+        "page": "165-218",
+        "source": "Crossref",
+        "is-referenced-by-count": 1539,
+        "title": [
+          "Does Working from Home Work? Evidence from a Chinese Experiment\n*"
+        ],
+        "prefix": "10.1093",
+        "volume": "130",
+        "author": [
+          {
+            "given": "Nicholas",
+            "family": "Bloom",
+            "sequence": "first",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "James",
+            "family": "Liang",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "John",
+            "family": "Roberts",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Zhichun Jenny",
+            "family": "Ying",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "member": "286",
+        "published-online": {
+          "date-parts": [
+            [
+              2014,
+              11,
+              20
+            ]
+          ]
+        },
+        "container-title": [
+          "The Quarterly Journal of Economics"
+        ],
+        "original-title": [],
+        "language": "en",
+        "score": 1,
+        "resource": {
+          "primary": {
+            "URL": "https://academic.oup.com/qje/article/130/1/165/2337855"
+          }
+        },
+        "subtitle": [],
+        "short-title": [],
+        "issued": {
+          "date-parts": [
+            [
+              2014,
+              11,
+              20
+            ]
+          ]
+        },
+        "references-count": 40,
+        "journal-issue": {
+          "issue": "1",
+          "published-online": {
+            "date-parts": [
+              [
+                2014,
+                11,
+                20
+              ]
+            ]
+          },
+          "published-print": {
+            "date-parts": [
+              [
+                2015,
+                2,
+                1
+              ]
+            ]
+          }
+        },
+        "URL": "https://doi.org/10.1093/qje/qju032",
+        "ISSN": [
+          "0033-5533",
+          "1531-4650"
+        ],
+        "issn-type": [
+          {
+            "value": "0033-5533",
+            "type": "print"
+          },
+          {
+            "value": "1531-4650",
+            "type": "electronic"
+          }
+        ],
+        "subject": [],
+        "published-other": {
+          "date-parts": [
+            [
+              2015,
+              2
+            ]
+          ]
+        },
+        "published": {
+          "date-parts": [
+            [
+              2014,
+              11,
+              20
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "fixtureUrl": "https://api.crossref.org/works/10.1108/jrit-01-2024-0017",
+      "itemIndex": null,
+      "record": {
+        "reference-count": 64,
+        "publisher": "Emerald",
+        "issue": "2",
+        "short-container-title": [],
+        "published-print": {
+          "date-parts": [
+            [
+              2026,
+              10,
+              1
+            ]
+          ]
+        },
+        "DOI": "10.1108/jrit-01-2024-0017",
+        "type": "journal-article",
+        "created": {
+          "date-parts": [
+            [
+              2024,
+              7,
+              8
+            ]
+          ],
+          "date-time": "2024-07-08T10:36:28Z",
+          "timestamp": 1720434988000
+        },
+        "page": "241-256",
+        "source": "Crossref",
+        "is-referenced-by-count": 33,
+        "title": [
+          "RETRACTED: ChatGPT in the classroom: navigating the generative AI wave in management education"
+        ],
+        "prefix": "10.1108",
+        "volume": "19",
+        "author": [
+          {
+            "given": "R.",
+            "family": "Leelavathi",
+            "sequence": "first",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Reddy C.",
+            "family": "Surendhranatha",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "member": "140",
+        "published-online": {
+          "date-parts": [
+            [
+              2024,
+              7,
+              9
+            ]
+          ]
+        },
+        "updated-by": [
+          {
+            "DOI": "10.1108/jrit-03-2025-0056",
+            "type": "retraction",
+            "label": "Retraction",
+            "source": "publisher",
+            "updated": {
+              "date-parts": [
+                [
+                  2025,
+                  2,
+                  21
+                ]
+              ],
+              "date-time": "2025-02-21T00:00:00Z",
+              "timestamp": 1740096000000
+            }
+          }
+        ],
+        "container-title": [
+          "Journal of Research in Innovative Teaching &amp; Learning"
+        ],
+        "original-title": [],
+        "language": "en",
+        "score": 1,
+        "resource": {
+          "primary": {
+            "URL": "https://www.emerald.com/jrit/article/19/2/241/1254203/RETRACTED-ChatGPT-in-the-classroom-navigating-the"
+          }
+        },
+        "subtitle": [],
+        "short-title": [],
+        "issued": {
+          "date-parts": [
+            [
+              2024,
+              7,
+              9
+            ]
+          ]
+        },
+        "references-count": 64,
+        "journal-issue": {
+          "issue": "2",
+          "published-print": {
+            "date-parts": [
+              [
+                2026,
+                10,
+                1
+              ]
+            ]
+          }
+        },
+        "URL": "https://doi.org/10.1108/jrit-01-2024-0017",
+        "ISSN": [
+          "2397-7604"
+        ],
+        "issn-type": [
+          {
+            "value": "2397-7604",
+            "type": "electronic"
+          }
+        ],
+        "subject": [],
+        "published": {
+          "date-parts": [
+            [
+              2024,
+              7,
+              9
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "fixtureUrl": "https://api.crossref.org/works/10.1126/science.adh2586",
+      "itemIndex": null,
+      "record": {
+        "reference-count": 31,
+        "publisher": "American Association for the Advancement of Science (AAAS)",
+        "issue": "6654",
+        "short-container-title": [
+          "Science"
+        ],
+        "published-print": {
+          "date-parts": [
+            [
+              2023,
+              7,
+              14
+            ]
+          ]
+        },
+        "DOI": "10.1126/science.adh2586",
+        "type": "journal-article",
+        "created": {
+          "date-parts": [
+            [
+              2023,
+              7,
+              13
+            ]
+          ],
+          "date-time": "2023-07-13T13:55:32Z",
+          "timestamp": 1689256532000
+        },
+        "page": "187-192",
+        "update-policy": "https://doi.org/10.34133/aaas_crossmark",
+        "source": "Crossref",
+        "is-referenced-by-count": 2089,
+        "title": [
+          "Experimental evidence on the productivity effects of generative artificial intelligence"
+        ],
+        "prefix": "10.1126",
+        "volume": "381",
+        "author": [
+          {
+            "authenticated-orcid": true,
+            "given": "Shakked",
+            "family": "Noy",
+            "sequence": "first",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "authenticated-orcid": true,
+            "given": "Whitney",
+            "family": "Zhang",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "member": "221",
+        "container-title": [
+          "Science"
+        ],
+        "original-title": [],
+        "language": "en",
+        "score": 1,
+        "resource": {
+          "primary": {
+            "URL": "https://www.science.org/doi/10.1126/science.adh2586"
+          }
+        },
+        "subtitle": [],
+        "short-title": [],
+        "issued": {
+          "date-parts": [
+            [
+              2023,
+              7,
+              14
+            ]
+          ]
+        },
+        "references-count": 31,
+        "journal-issue": {
+          "issue": "6654",
+          "published-print": {
+            "date-parts": [
+              [
+                2023,
+                7,
+                14
+              ]
+            ]
+          }
+        },
+        "URL": "https://doi.org/10.1126/science.adh2586",
+        "ISSN": [
+          "0036-8075",
+          "1095-9203"
+        ],
+        "issn-type": [
+          {
+            "value": "0036-8075",
+            "type": "print"
+          },
+          {
+            "value": "1095-9203",
+            "type": "electronic"
+          }
+        ],
+        "subject": [],
+        "published": {
+          "date-parts": [
+            [
+              2023,
+              7,
+              14
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "fixtureUrl": "https://api.crossref.org/works/10.1257/aer.20160696",
+      "itemIndex": null,
+      "record": {
+        "reference-count": 33,
+        "publisher": "American Economic Association",
+        "issue": "6",
+        "short-container-title": [
+          "American Economic Review"
+        ],
+        "published-print": {
+          "date-parts": [
+            [
+              2018,
+              6,
+              1
+            ]
+          ]
+        },
+        "DOI": "10.1257/aer.20160696",
+        "type": "journal-article",
+        "created": {
+          "date-parts": [
+            [
+              2018,
+              6,
+              7
+            ]
+          ],
+          "date-time": "2018-06-07T13:15:15Z",
+          "timestamp": 1528377315000
+        },
+        "page": "1488-1542",
+        "source": "Crossref",
+        "is-referenced-by-count": 2875,
+        "title": [
+          "The Race between Man and Machine: Implications of Technology for Growth, Factor Shares, and Employment"
+        ],
+        "prefix": "10.1257",
+        "volume": "108",
+        "author": [
+          {
+            "given": "Daron",
+            "family": "Acemoglu",
+            "sequence": "first",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Pascual",
+            "family": "Restrepo",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "member": "11",
+        "container-title": [
+          "American Economic Review"
+        ],
+        "original-title": [],
+        "language": "en",
+        "score": 1,
+        "resource": {
+          "primary": {
+            "URL": "https://pubs.aeaweb.org/doi/10.1257/aer.20160696"
+          }
+        },
+        "subtitle": [],
+        "short-title": [],
+        "issued": {
+          "date-parts": [
+            [
+              2018,
+              6,
+              1
+            ]
+          ]
+        },
+        "references-count": 33,
+        "journal-issue": {
+          "issue": "6",
+          "published-print": {
+            "date-parts": [
+              [
+                2018,
+                6,
+                1
+              ]
+            ]
+          }
+        },
+        "URL": "https://doi.org/10.1257/aer.20160696",
+        "ISSN": [
+          "0002-8282"
+        ],
+        "issn-type": [
+          {
+            "value": "0002-8282",
+            "type": "print"
+          }
+        ],
+        "subject": [],
+        "published": {
+          "date-parts": [
+            [
+              2018,
+              6,
+              1
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "fixtureUrl": "https://api.crossref.org/works?rows=6&query.bibliographic=The%20honest%20machine%3A%20Provenance%20signals%20and%20student%20reasoning%20in%20hybrid%20classrooms%20Velasquez%202023",
+      "itemIndex": 4,
+      "record": {
+        "edition-number": "1",
+        "reference-count": 49,
+        "publisher": "The Royal Society of Chemistry",
+        "isbn-type": [
+          {
+            "value": "9781839164910",
+            "type": "print"
+          },
+          {
+            "value": "9781839164910",
+            "type": "print"
+          },
+          {
+            "value": "9781839167799",
+            "type": "electronic"
+          },
+          {
+            "value": "9781839167782",
+            "type": "electronic"
+          }
+        ],
+        "published-print": {
+          "date-parts": [
+            [
+              2022,
+              12,
+              21
+            ]
+          ]
+        },
+        "DOI": "10.1039/9781839167782-00159",
+        "type": "book-chapter",
+        "created": {
+          "date-parts": [
+            [
+              2022,
+              12,
+              21
+            ]
+          ],
+          "date-time": "2022-12-21T07:50:26Z",
+          "timestamp": 1671609026000
+        },
+        "page": "159-178",
+        "source": "Crossref",
+        "is-referenced-by-count": 1,
+        "title": [
+          "Flipped Classrooms in Organic Chemistry—A Closer Look at Student Reasoning Through Discourse Analysis of a Group Activity"
+        ],
+        "prefix": "10.1039",
+        "author": [
+          {
+            "given": "Suazette R.",
+            "family": "Mooring",
+            "sequence": "first",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Nikita L.",
+            "family": "Burrows",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Sujani",
+            "family": "Gamage",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "member": "292",
+        "container-title": [
+          "Student Reasoning in Organic Chemistry"
+        ],
+        "language": "en",
+        "score": 25.368584,
+        "resource": {
+          "primary": {
+            "URL": "https://books.rsc.org/books/book/2035/chapter/4653735/Flipped-Classrooms-in-Organic-Chemistry-A-Closer"
+          }
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2022,
+              12,
+              21
+            ]
+          ]
+        },
+        "ISBN": [
+          "9781839164910",
+          "9781839164910",
+          "9781839167799",
+          "9781839167782"
+        ],
+        "references-count": 49,
+        "URL": "https://doi.org/10.1039/9781839167782-00159",
+        "published": {
+          "date-parts": [
+            [
+              2022,
+              12,
+              21
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "fixtureUrl": "https://api.crossref.org/works?rows=6&query.bibliographic=The%20need%20to%20belong%3A%20Desire%20for%20interpersonal%20attachments%20as%20a%20fundamental%20human%20motivation%20Kahneman%20Tversky%201995",
+      "itemIndex": 2,
+      "record": {
+        "reference-count": 37,
+        "publisher": "Informa UK Limited",
+        "issue": "4",
+        "short-container-title": [
+          "Thinking &amp; Reasoning"
+        ],
+        "published-print": {
+          "date-parts": [
+            [
+              2024,
+              10,
+              1
+            ]
+          ]
+        },
+        "DOI": "10.1080/13546783.2024.2402129",
+        "type": "journal-article",
+        "created": {
+          "date-parts": [
+            [
+              2024,
+              9,
+              26
+            ]
+          ],
+          "date-time": "2024-09-26T06:18:18Z",
+          "timestamp": 1727331498000
+        },
+        "page": "531-547",
+        "update-policy": "https://doi.org/10.1080/tandf_crossmark_01",
+        "source": "Crossref",
+        "is-referenced-by-count": 2,
+        "title": [
+          "Kahneman, Tversky, and Kahneman-Tversky: three ways of thinking"
+        ],
+        "prefix": "10.1080",
+        "volume": "30",
+        "author": [
+          {
+            "given": "P. N.",
+            "family": "Johnson-Laird",
+            "sequence": "first",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "member": "301",
+        "published-online": {
+          "date-parts": [
+            [
+              2024,
+              9,
+              26
+            ]
+          ]
+        },
+        "container-title": [
+          "Thinking &amp; Reasoning"
+        ],
+        "language": "en",
+        "score": 34.812813,
+        "resource": {
+          "primary": {
+            "URL": "https://www.tandfonline.com/doi/full/10.1080/13546783.2024.2402129"
+          }
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2024,
+              9,
+              26
+            ]
+          ]
+        },
+        "references-count": 37,
+        "journal-issue": {
+          "issue": "4",
+          "published-print": {
+            "date-parts": [
+              [
+                2024,
+                10,
+                1
+              ]
+            ]
+          }
+        },
+        "URL": "https://doi.org/10.1080/13546783.2024.2402129",
+        "ISSN": [
+          "1354-6783",
+          "1464-0708"
+        ],
+        "issn-type": [
+          {
+            "value": "1354-6783",
+            "type": "print"
+          },
+          {
+            "value": "1464-0708",
+            "type": "electronic"
+          }
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2024,
+              9,
+              26
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "fixtureUrl": "https://api.crossref.org/works?rows=6&query.bibliographic=Trust%20decay%20in%20algorithmic%20tutoring%3A%20Evidence%20from%2014%20universities%20Okonjo%20Reyes%202022",
+      "itemIndex": 0,
+      "record": {
+        "reference-count": 0,
+        "publisher": "Universidad de Navarra",
+        "short-container-title": [
+          "Communication &amp; Society"
+        ],
+        "DOI": "10.15581/003.39.1.030",
+        "type": "journal-article",
+        "created": {
+          "date-parts": [
+            [
+              2026,
+              6,
+              12
+            ]
+          ],
+          "date-time": "2026-06-12T10:45:04Z",
+          "timestamp": 1781261104000
+        },
+        "page": "445-463",
+        "source": "Crossref",
+        "is-referenced-by-count": 0,
+        "title": [
+          "Algorithmic Truthfulness, Community Notes, and Trust in Greenwashing Claims: Evidence from Aspirational Fashion and Sustainable Luxury Brands"
+        ],
+        "prefix": "10.15581",
+        "author": [
+          {
+            "authenticated-orcid": false,
+            "given": "Aitor",
+            "family": "Gil-García",
+            "sequence": "first",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "authenticated-orcid": false,
+            "given": "África",
+            "family": "Presol-Herrero",
+            "sequence": "additional",
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "member": "6226",
+        "published-online": {
+          "date-parts": [
+            [
+              2026,
+              6,
+              12
+            ]
+          ]
+        },
+        "container-title": [
+          "Communication &amp; Society"
+        ],
+        "score": 27.551502,
+        "resource": {
+          "primary": {
+            "URL": "https://revistas.unav.edu/index.php/communication-and-society/article/view/54203"
+          }
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2026,
+              6,
+              12
+            ]
+          ]
+        },
+        "references-count": 0,
+        "URL": "https://doi.org/10.15581/003.39.1.030",
+        "ISSN": [
+          "2386-7876"
+        ],
+        "issn-type": [
+          {
+            "value": "2386-7876",
+            "type": "electronic"
+          }
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2026,
+              6,
+              12
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "fixtureUrl": "https://api.crossref.org/works?rows=6&query.bibliographic=The%20honest%20machine%3A%20Provenance%20signals%20and%20student%20reasoning%20in%20hybrid%20classrooms%20Velasquez%202023",
+      "itemIndex": 2,
+      "record": {
+        "reference-count": 0,
+        "publisher": "IATED",
+        "published-print": {
+          "date-parts": [
+            [
+              2022,
+              3
+            ]
+          ]
+        },
+        "DOI": "10.21125/inted.2022.1033",
+        "type": "proceedings-article",
+        "created": {
+          "date-parts": [
+            [
+              2022,
+              3,
+              25
+            ]
+          ],
+          "date-time": "2022-03-25T11:40:59Z",
+          "timestamp": 1648208459000
+        },
+        "page": "3704-3704",
+        "source": "Crossref",
+        "is-referenced-by-count": 0,
+        "title": [
+          "MACHINE TRANSLATION AS A MEDIUM AND TOOL FOR INTERNATIONAL STUDENT PARTICIPATION IN FACE-TO-FACE, ONLINE AND HYBRID MULTILINGUAL CLASSROOMS"
+        ],
+        "prefix": "10.21125",
+        "volume": "1",
+        "author": [
+          {
+            "given": "Chrysoula",
+            "family": "Panagiotidou",
+            "sequence": "first",
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          }
+        ],
+        "member": "8703",
+        "event": {
+          "name": "16th International Technology, Education and Development Conference",
+          "start": {
+            "date-parts": [
+              [
+                2022,
+                3,
+                7
+              ]
+            ]
+          },
+          "location": "Online Conference",
+          "end": {
+            "date-parts": [
+              [
+                2022,
+                3,
+                8
+              ]
+            ]
+          },
+          "acronym": "INTED2022"
+        },
+        "container-title": [
+          "INTED Proceedings",
+          "INTED2022 Proceedings"
+        ],
+        "score": 25.62433,
+        "resource": {
+          "primary": {
+            "URL": "https://library.iated.org/view/PANAGIOTIDOU2022MAC"
+          }
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2022,
+              3
+            ]
+          ]
+        },
+        "references-count": 0,
+        "URL": "https://doi.org/10.21125/inted.2022.1033",
+        "ISSN": [
+          "2340-1079"
+        ],
+        "issn-type": [
+          {
+            "type": "electronic",
+            "value": "2340-1079"
+          }
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2022,
+              3
+            ]
+          ]
+        }
+      }
+    }
+  ]
+}
