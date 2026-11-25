@@ -44,6 +44,8 @@ async function library(page: Page, level: string, dois: string[]) {
 }
 
 test('evidence: 13% is Verified, 31% fails, no AI and no network', async ({ page, context }) => {
+  // Stamps fade in. Contrast is measured on the finished page.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   const errors = watchErrors(page);
   await withAbstracts(page);
   await library(page, 'No AI', ['10.1093/qje/qju032', '10.1126/science.adh2586']);

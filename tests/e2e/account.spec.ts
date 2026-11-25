@@ -94,6 +94,7 @@ test('change passphrase, backup, restore, delete account', async ({ page }) => {
   await page.goto('/#/projects');
   await page.getByLabel('What are you researching?').fill('Kept in the backup file');
   await page.getByRole('button', { name: 'Start project' }).click();
+  await expect(page.getByRole('heading', { name: 'Plan the search' })).toBeVisible();
   await page.goto('/#/account');
   await page.getByLabel('Passphrase for this file').fill(NEWER);
   const [file] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Download backup' }).click()]);
@@ -143,6 +144,7 @@ test('guest, then an account that keeps the guest work', async ({ page }) => {
   await page.getByRole('link', { name: 'New project' }).click();
   await page.getByLabel('What are you researching?').fill('Started before signing up');
   await page.getByRole('button', { name: 'Start project' }).click();
+  await expect(page.getByRole('heading', { name: 'Plan the search' })).toBeVisible();
   await page.getByRole('link', { name: 'Guest: sign in' }).click();
   await create(page, 'Chen');
   await expect(page.getByRole('heading', { name: 'Hello, Chen' })).toBeVisible();
@@ -152,7 +154,7 @@ test('guest, then an account that keeps the guest work', async ({ page }) => {
 
 test('a sign-in link can never send you to another site', async ({ page }) => {
   await fresh(page);
-  for (const next of ['https://evil.example/', '//evil.example', '/p/../../x', 'javascript:alert(1)']) {
+  for (const next of ['https://evil.example/', '//evil.example', '/p/../../x', 'javascript:alert(1)', '/home%E0%A4%A']) {
     await page.goto(`/#/signin?next=${encodeURIComponent(next)}`);
     await page.reload();
     await page.getByRole('button', { name: 'Continue as guest' }).click();

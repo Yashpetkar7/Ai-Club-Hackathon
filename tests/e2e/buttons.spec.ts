@@ -9,6 +9,8 @@ import { mockRegistries } from './mock';
  */
 test.skip(process.env.AUDIT !== '1', 'slow: run with AUDIT=1');
 test.setTimeout(45 * 60_000);
+// Hundreds of short-lived windows: tracing each one is slow and fills the disk.
+test.use({ trace: 'off', actionTimeout: 15_000 });
 
 const ABSTRACT: Record<string, string> = JSON.parse(readFileSync('tests/unit/fixtures/abstracts.json', 'utf8'));
 const step = (page: Page, name: string | RegExp) => page.getByLabel('Your trail').getByRole('link', { name }).click();
@@ -23,7 +25,7 @@ async function prepare(page: Page): Promise<string> {
   await expect(page.getByText(/works found/)).toBeVisible({ timeout: 60_000 });
   await step(page, /Library/);
   for (const [i, d] of ['10.1093/qje/qju032', '10.1126/science.adh2586', '10.1086/261763'].entries()) {
-    if (i) await page.getByRole('button', { name: 'Add a source' }).click();
+    if (!(await page.getByLabel('DOI, DOI link or title').isVisible())) await page.getByRole('button', { name: 'Add a source' }).click();
     await page.getByLabel('DOI, DOI link or title').fill(d);
     await page.getByRole('button', { name: 'Check and add', exact: true }).click();
     await expect(page.getByText(new RegExp(`of ${i + 1} ready to cite`))).toBeVisible({ timeout: 20_000 });
@@ -62,6 +64,7 @@ async function act(page: Page, n: number): Promise<{ name: string; did: string }
     rel: e.getAttribute('rel') ?? '',
     off: (e as HTMLButtonElement).disabled === true,
     current: e.hasAttribute('aria-current'),
+    pressed: e.getAttribute('aria-pressed') === 'true',
     checked: (e as HTMLInputElement).checked === true,
     name: (e.getAttribute('aria-label') || (e.tagName === 'SELECT' || e.tagName === 'INPUT' ? (e.closest('label')?.textContent ?? e.id) : e.textContent) || '').trim().replace(/\s+/g, ' ').slice(0, 60),
   }));
@@ -71,19 +74,21 @@ async function act(page: Page, n: number): Promise<{ name: string; did: string }
   if (/^https?:/.test(info.href) && !info.blank) return { name, did: 'opens a source' };
   if (info.current) return { name, did: 'this is the page you are on' };
   if (info.type === 'radio' && info.checked) return { name, did: 'already chosen' };
-  await page.evaluate(() => {
+  const handle = await el.elementHandle();
+  await page.evaluate((clicked) => {
     const w = window as any;
     w.__did = [];
     const say = (s: string) => w.__did.push(s);
     new MutationObserver((m) => m.length && say('changed the page')).observe(document.body, { childList: true, subtree: true, attributes: true, characterData: true });
     window.addEventListener('hashchange', () => say('went to another page'));
     window.addEventListener('scroll', () => say('scrolled'), { passive: true });
-    document.addEventListener('focusin', () => say('moved focus'));
+    // A click focuses the button itself. That is not the button doing something.
+    document.addEventListener('focusin', (e) => e.target !== clicked && e.target !== document.body && say('moved focus'));
     document.addEventListener('toggle', () => say('opened or closed'), true);
     const orig = window.fetch;
     window.fetch = (...a) => { say('asked a registry'); return orig(...a); };
     if (navigator.clipboard) navigator.clipboard.writeText = async () => say('copied');
-  });
+  }, handle);
   let extra = '';
   page.once('download', () => (extra = 'saved a file'));
   if (info.tag === 'SELECT') {
@@ -92,10 +97,15 @@ async function act(page: Page, n: number): Promise<{ name: string; did: string }
     const other = opts.find((o) => o !== now);
     if (other === undefined) return { name, did: 'only one choice for now' };
     await el.selectOption(other);
+    await page.waitForTimeout(700);
     if ((await el.inputValue().catch(() => other)) === other) extra ||= 'changed the choice';
   } else if (info.type === 'checkbox' || info.type === 'radio') {
     await el.click({ force: true, timeout: 4000 });
     extra ||= 'ticked';
+  } else if (info.name === 'Skip to content') {
+    // For keyboards: it is off screen until Tab reaches it.
+    await el.focus();
+    await page.keyboard.press('Enter');
   } else await el.click({ timeout: 6000 });
   await page.waitForTimeout(450);
   if (!extra) extra = await page.evaluate(() => ((window as any).__did as string[])[0] ?? '').catch(() => 'went to another page');
@@ -103,6 +113,7 @@ async function act(page: Page, n: number): Promise<{ name: string; did: string }
     await page.waitForTimeout(1500);
     extra ||= await page.evaluate(() => ((window as any).__did as string[])[0] ?? '').catch(() => 'went to another page');
   }
+  if (!extra && info.pressed) return { name, did: 'already chosen' };
   return { name, did: extra || 'NOTHING' };
 }
 
@@ -118,10 +129,12 @@ test('every control on every page does something', async ({ browser, page }) => 
     await mockRegistries(p);
     return { ctx, p, errors };
   };
+  // ROUTES=/signin,library  runs only pages that end with these.
+  const only = process.env.ROUTES?.split(',');
   const bad: string[] = [];
   const seen = new Map<string, string>();
   let total = 0;
-  for (const r of routes) {
+  for (const r of routes.filter((x) => !only || only.some((o) => x.endsWith(o)))) {
     const ready = async (p: Page) => {
       await p.goto(`/#${r}`);
       await p.waitForSelector(r === '/' ? 'h1' : 'main h1', { timeout: 20_000 });
@@ -130,15 +143,21 @@ test('every control on every page does something', async ({ browser, page }) => 
     };
     const first = await open();
     await ready(first.p);
-    const n = await first.p.locator(CONTROLS).count();
+    const all = await first.p.locator(CONTROLS).evaluateAll((els) => els.map((e, i) => ({ i, bar: !!e.closest('header') && !e.closest('main'), key: `${e.tagName}|${e.getAttribute('aria-label') ?? ''}|${(e.textContent ?? '').trim().slice(0, 40)}|${e.getAttribute('href')?.replace(/\/\/.*/, '') ?? ''}` })));
     await first.ctx.close();
-    for (let i = 0; i < n; i++) {
-      // The bar at the top is the same everywhere: check it on one page only.
+    // The bar at the top is the same everywhere, so it is clicked on two pages. Of many twins, two are clicked.
+    const twins = new Map<string, number>();
+    const todo = all.filter((c) => {
+      if (c.bar && r !== '/home' && r !== '/') return false;
+      const k = (twins.get(c.key) ?? 0) + 1;
+      twins.set(c.key, k);
+      return k <= 2;
+    });
+    const n = all.length;
+    const one = async (i: number) => {
       const { ctx, p, errors } = await open();
       try {
         await ready(p);
-        const inBar = await p.locator(CONTROLS).nth(i).evaluate((e) => !!e.closest('header') && !e.closest('main'));
-        if (inBar && r !== '/home' && r !== '/') continue;
         const { name, did } = await act(p, i);
         total++;
         seen.set(`${r.replace(id, ':id')} ${name} #${i}`, did);
@@ -149,8 +168,10 @@ test('every control on every page does something', async ({ browser, page }) => 
       } finally {
         await ctx.close();
       }
-    }
-    console.log(`${r.replace(id, ':id')}: ${n} controls`);
+    };
+    let at = 0;
+    await Promise.all(Array.from({ length: 4 }, async () => { while (at < todo.length) await one(todo[at++]!.i); }));
+    console.log(`${r.replace(id, ':id')}: ${todo.length} of ${n} clicked`);
   }
   const kinds: Record<string, number> = {};
   for (const d of seen.values()) kinds[d] = (kinds[d] ?? 0) + 1;

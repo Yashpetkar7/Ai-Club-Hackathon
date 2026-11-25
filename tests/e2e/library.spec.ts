@@ -137,6 +137,7 @@ test('house rules: policy map, and delete everything asks first', async ({ page 
   await page.goto('/#/projects');
   await page.getByLabel('What are you researching?').fill('A question to delete');
   await page.getByRole('button', { name: 'Start project' }).click();
+  await expect(page.getByRole('heading', { name: 'Plan the search' })).toBeVisible();
   await page.goto('/#/rules');
   await expect(page.getByText('s10(h)(ix)')).toBeVisible();
   await axe(page, 'rules');

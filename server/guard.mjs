@@ -31,3 +31,12 @@ export async function guardAi(req) {
   if (typeof body.task !== 'string') return no(400, 'unknown task');
   return { req: new Request(req.url, { method: 'POST', headers: { 'content-type': 'application/json' }, body: text }) };
 }
+
+/** Other sites may not use our proxy, and one network may not use it without end. */
+export function guardRegistry(req) {
+  const site = req.headers.get('sec-fetch-site');
+  if (site && site !== 'same-origin' && site !== 'none') return Response.json({ error: 'cross-site' }, { status: 403 });
+  const ip = (req.headers.get('x-forwarded-for') ?? 'local').split(',')[0].trim();
+  if (tooMany(`reg:${ip}`, 1500, 10 * 60 * 1000)) return Response.json({ error: 'busy' }, { status: 429, headers: { 'retry-after': '15' } });
+  return null;
+}

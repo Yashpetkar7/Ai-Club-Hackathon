@@ -5,7 +5,12 @@ import css from './SignIn.module.css';
 
 /** The page after signing in. Only our own pages, so a link can never send someone elsewhere. */
 export const nextFrom = (path: string): string => {
-  const n = decodeURIComponent(path.split('?next=')[1] ?? '');
+  let n = '';
+  try {
+    n = decodeURIComponent(path.split('?next=')[1] ?? '');
+  } catch {
+    /* a broken address goes home */
+  }
   return /^\/(home|projects|account|p\/[\w-]+(\/[a-z]+)?)$/.test(n) ? n : '/home';
 };
 

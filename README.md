@@ -20,6 +20,9 @@ Optional free keys go in `.env.local` (copy `.env.example`). The site works with
 ```bash
 npm run verify   # types, unit tests, build
 npm run e2e      # the whole journey in Chrome, with accessibility scans
+AUDIT=1 npx playwright test tests/e2e/buttons.spec.ts   # clicks every control on every page
+MODEL=1 npx playwright test tests/e2e/model.spec.ts     # the real support model on 104 claims
+LIVE=1 npx vitest run tests/unit/real-lists.test.ts     # reference lists of published papers
 ```
 
 Unit tests replay recorded answers from Crossref, OpenAlex, DataCite and doi.org, so they run offline.
@@ -30,9 +33,12 @@ Unit tests replay recorded answers from Crossref, OpenAlex, DataCite and doi.org
 | Check any text, list, BibTeX, RIS or DOI | Works, live |
 | Projects, Plan (gate 1), Find (gate 2) | Works, live |
 | 3D landing with a live check | Works; complete without 3D |
-| Library, Write, Export | In progress |
-| Evidence, Ask | In progress |
-| Integrity Lab, House rules, AI statement | In progress |
+| Accounts on this device, dashboard, Back on every page | Works; signing out encrypts the library |
+| The team: nine agents, three gates, run live | Works; AI agents only with a free key and at the right level |
+| Library, Read and compare, Map | Works |
+| Evidence (claim against exact sentence), Challenge, Ask | Works without AI; optional support model on the device |
+| Write, Review, Export (APA 7, Harvard, MLA, Chicago, IEEE; Word, BibTeX, RIS) | Works |
+| Integrity Lab, House rules, AI statement, evidence report | Works |
 
 ## What it does not do
 It does not write assignments, call sources fake, or promise that a verified claim is true. Verified means the source says it. Registries miss many books, reports and regional journals, so "Not found" lists where we looked and nothing more.

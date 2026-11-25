@@ -18,6 +18,7 @@ export const unb64 = (s: string): Uint8Array<ArrayBuffer> => Uint8Array.from(ato
 export interface Secret { proof: string; key: CryptoKey }
 
 export async function stretch(passphrase: string, salt: Uint8Array<ArrayBuffer>, iterations = ITERATIONS): Promise<Secret> {
+  if (!globalThis.crypto?.subtle) throw new Error('Accounts need a secure address (https, or this computer). Continue as guest instead.');
   const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(passphrase.normalize('NFKC')), 'PBKDF2', false, ['deriveBits']);
   const bits = new Uint8Array(await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations }, base, 512));
   const proof = b64(await crypto.subtle.digest('SHA-256', bits.slice(0, 32)));

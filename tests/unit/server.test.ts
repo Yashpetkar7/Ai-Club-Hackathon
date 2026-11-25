@@ -36,3 +36,25 @@ describe('AI gateway guard', () => {
 describe('registry proxy', () => {
   it.each(['https://evil.example/', 'http://api.crossref.org/works', 'https://doi.org/10.1/x', 'file:///etc/passwd', 'not a url'])('refuses %s', async (u) => expect([400, 403]).toContain((await route(new Request(`http://localhost/api/registry?url=${encodeURIComponent(u)}`))).status));
 });
+
+describe('registry proxy answers are data and stay on the list', () => {
+  afterEach(() => vi.restoreAllMocks());
+  const ask = (u: string, headers: Record<string, string> = {}): Promise<Response> => route(new Request(`http://localhost/api/registry?url=${encodeURIComponent(u)}`, { headers }));
+  it('a page sent back by a registry cannot run as a page here', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response('<script>alert(1)</script>', { headers: { 'content-type': 'text/html' } }));
+    const r = await ask('https://api.crossref.org/works/10.1/evil');
+    expect(r.headers.get('content-type')).toMatch(/^application\/json/);
+    expect(r.headers.get('x-content-type-options')).toBe('nosniff');
+    expect(r.headers.get('content-security-policy')).toContain('sandbox');
+  });
+  it('a redirect off the list is refused', async () => {
+    const res = new Response('{}');
+    Object.defineProperty(res, 'redirected', { value: true });
+    Object.defineProperty(res, 'url', { value: 'https://169.254.169.254/latest' });
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(res);
+    expect((await ask('https://api.crossref.org/works/10.1/away')).status).toBe(403);
+  });
+  it.each(['https://www.ebi.ac.uk/x', 'https://openlibrary.org/x', 'https://api.crossref.org.evil.example/x', 'https://api.crossref.org@evil.example/x'])('only the four registries: %s', async (u) => expect((await ask(u)).status).toBe(403));
+  it('other sites may not use it', async () => expect((await ask('https://api.crossref.org/works/10.1/a', { 'sec-fetch-site': 'cross-site' })).status).toBe(403));
+});
+
