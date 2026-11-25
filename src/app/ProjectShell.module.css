@@ -26,3 +26,4 @@
   .steps small { display: none; }
   .main { padding: 24px 20px 80px; }
 }
+.nextprev { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid var(--line); padding-top: 20px; margin-top: 8px; }

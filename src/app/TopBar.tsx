@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
+import { useSession } from '@/auth/accounts';
 import css from './TopBar.module.css';
-import { Link } from './router';
+import { goBack, Link } from './router';
 
 const NAV = [
-  { to: '/check', key: 'check', label: 'Check' },
+  { to: '/home', key: 'home', label: 'Home' },
   { to: '/projects', key: 'projects', label: 'Projects' },
+  { to: '/check', key: 'check', label: 'Check' },
   { to: '/lab', key: 'lab', label: 'Integrity Lab' },
   { to: '/rules', key: 'rules', label: 'House rules' },
 ];
@@ -19,6 +21,7 @@ const saved = (): 'light' | 'dark' => {
 
 export function TopBar({ section }: { section: string }) {
   const [theme, setTheme] = useState(saved);
+  const session = useSession();
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     try {
@@ -30,6 +33,9 @@ export function TopBar({ section }: { section: string }) {
   return (
     <header className={css.bar}>
       <div className={`wrap ${css.in}`}>
+        <button type="button" className={css.back} onClick={goBack}>
+          <span aria-hidden="true">←</span> Back
+        </button>
         <Link to="/" className={css.mark}>
           Paper Trail
         </Link>
@@ -49,6 +55,9 @@ export function TopBar({ section }: { section: string }) {
         <button type="button" className={css.lamp} aria-pressed={theme === 'dark'} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
           {theme === 'dark' ? 'Lights on' : 'Lights off'}
         </button>
+        <Link to={session.kind === 'account' ? '/account' : '/signin'} className={css.who} aria-current={section === 'account' || section === 'signin' ? 'page' : undefined}>
+          {session.kind === 'account' ? session.name : session.kind === 'guest' ? 'Guest: sign in' : 'Sign in'}
+        </Link>
       </div>
     </header>
   );

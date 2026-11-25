@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { continueAsGuest, currentSession } from '@/auth/accounts';
 import { registries } from '@/core/registries';
 import { parseReference } from '@/core/verify/parse';
 import { checkReference } from '@/core/verify/verdict';
@@ -37,6 +38,7 @@ const STEPS: Step[] = [
   { say: 'Two are real. One is retracted, one DOI belongs to another paper, and one is in no registry we searched.', ms: 9000, run: () => document.querySelector<HTMLElement>('[role="status"]')?.scrollIntoView({ block: 'center', behavior: 'smooth' }) },
   { say: 'A project starts with a question and the AI level the assessment allows. You approve the searches first.', ms: 8000, run: (c) => go(`/p/${c.pid}/plan`) },
   { say: 'These are real papers in a sample project. The map draws a line only where one paper really cites another or they share references.', ms: 9000, run: (c) => go(`/p/${c.pid}/map`) },
+  { say: 'The team: nine agents with one job each, three gates, and nobody but you can open one.', ms: 8000, run: (c) => go(`/p/${c.pid}/team`) },
   { say: 'The Challenger looks for evidence against you and shows the exact sentence.', ms: 9000, run: (c) => go(`/p/${c.pid}/challenge`) },
   { say: 'The Integrity Lab tests our own checker in front of you.', ms: 7000, run: () => go('/lab') },
   { say: 'House rules: who does what, and what nobody can do. That is the tour.', ms: 7000, run: () => go('/rules') },
@@ -49,6 +51,8 @@ export function Tour() {
 
   useEffect(() => {
     const start = () => {
+      // The tour is for anyone, so it uses the guest library when nobody is signed in.
+      if (currentSession().kind === 'none') continueAsGuest();
       setNote('Looking up the sample sources…');
       setAt(-1);
       sampleProject()

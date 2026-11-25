@@ -41,6 +41,7 @@ const FINDING = /\b(results?|findings?|found|find|reveal(s|ed)?|show(s|ed|n)?|in
 
 /** A past-tense result, a percentage or a reporting word. Without one, a sentence is background, not evidence. */
 const RESULT = /\b(rose|fell|improved|increased|decreased|declined|reduced|raised|lowered|worsened|harmed|enhanced|boosted|grew|dropped|did not|does not|no (significant )?(effect|difference|association|relationship|impact))\b|\d\s?%/i;
+export const RESULT_WORDS = RESULT;
 export const isFinding = (s: string): boolean => !isAim(s) && (FINDING.test(s) || RESULT.test(s));
 
 export interface SentenceAt { text: string; start: number; end: number }
@@ -48,6 +49,16 @@ export interface SentenceAt { text: string; start: number; end: number }
 /** Cuts text into sentences and keeps where each one sits, so a quote is always an exact slice. */
 export function sentences(text: string): SentenceAt[] {
   const out: SentenceAt[] = [];
+  // Some registries drop the space after a full stop: "home.Working". A zero-width cut keeps every position right.
+  const cuts = [...text.matchAll(/[\p{Ll}\d)\]]{2}[.!?](?=\p{Lu}\p{Ll}+\s)/gu)].map((m) => m.index + m[0].length);
+  if (cuts.length) {
+    let from = 0;
+    for (const to of [...cuts, text.length]) {
+      out.push(...sentences(text.slice(from, to)).map((s) => ({ ...s, start: s.start + from, end: s.end + from })));
+      from = to;
+    }
+    return out;
+  }
   // A sentence may end with a closing quote mark or bracket after its full stop.
   const re = /[^.!?]+(?:[.!?](?!["\u201d\u2019)\]]*(?:\s+[\p{Lu}"\u201c(]|\s*$))[^.!?]*)*[.!?]*["\u201d\u2019)\]]*/gu;
   for (const m of text.matchAll(re)) {
@@ -66,6 +77,8 @@ export function closestSentence(text: string, claim: string): (SentenceAt & { sc
   if (want.size < 2) return null;
   let best: (SentenceAt & { score: number }) | null = null;
   for (const s of sentences(text)) {
+    // A very long run is a badly stored abstract. It matches everything and says nothing.
+    if (s.text.length > 600) continue;
     const have = new Set(contentWords(s.text).map(stem));
     let hit = 0;
     for (const w of want) if (have.has(w)) hit++;

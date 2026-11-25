@@ -1,6 +1,6 @@
 import type { FieldDiff, RawReference, RegistryRecord } from '@/core/contracts';
 import { POLICY } from '@/policy/policy';
-import { cleanTitle, familyKey, sameFamily, titleContained, titleInText, titleScore, tokens } from './normalise';
+import { addedWords, cleanTitle, familyKey, sameFamily, titleContained, titleInText, titleScore, tokens } from './normalise';
 
 export interface Comparison {
   title: number;
@@ -25,6 +25,11 @@ export function compare(ref: RawReference, rec: RegistryRecord): Comparison {
   if (ref.title) {
     title = titleScore(ref.title, rec.title);
     if (title < th.titleMatch && (titleContained(ref.title, rec.title) || titleContained(rec.title, ref.title))) title = Math.max(title, 0.95);
+    // Found by our own Integrity Lab: invented words added to a real title used to pass.
+    const added = addedWords(ref.title, rec.title, [rec.container, rec.publisher, ...rec.authors.map((a) => a.family)].filter(Boolean).join(' '));
+    if (title >= th.titleMatch && added.length) title = th.titleMatch - 0.01;
+    // Only spelling, spacing or hyphens differ.
+    else if (title < th.titleMatch && !added.length && !addedWords(rec.title, ref.title).length) title = 0.95;
   }
   if (!ref.title && titleInText(rec.title, ref.raw)) title = 1;
 

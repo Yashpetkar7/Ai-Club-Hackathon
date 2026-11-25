@@ -14,7 +14,10 @@ export interface StepProps {
 }
 
 const load = {
+  team: () => import('@/pages/Team'),
   library: () => import('@/pages/Library'),
+  read: () => import('@/pages/Read'),
+  review: () => import('@/pages/Review'),
   evidence: () => import('@/pages/Evidence'),
   challenge: () => import('@/pages/Challenge'),
   map: () => import('@/pages/Map'),
@@ -22,6 +25,9 @@ const load = {
   write: () => import('@/pages/Write'),
   export: () => import('@/pages/Export'),
 };
+const Team = lazy(() => load.team().then((m) => ({ default: m.Team })));
+const Read = lazy(() => load.read().then((m) => ({ default: m.Read })));
+const Review = lazy(() => load.review().then((m) => ({ default: m.Review })));
 const Library = lazy(() => load.library().then((m) => ({ default: m.Library })));
 const Evidence = lazy(() => load.evidence().then((m) => ({ default: m.Evidence })));
 const Challenge = lazy(() => load.challenge().then((m) => ({ default: m.Challenge })));
@@ -44,14 +50,17 @@ async function warm(style: CitationStyle): Promise<void> {
 }
 
 const STEPS: { key: string; label: string; gate?: string; Page: ComponentType<StepProps> }[] = [
+  { key: 'team', label: 'Team', Page: Team },
   { key: 'plan', label: 'Plan', gate: 'You approve the plan', Page: Plan },
   { key: 'find', label: 'Find', gate: 'You keep or skip each source', Page: Find },
   { key: 'library', label: 'Library', Page: Library },
+  { key: 'read', label: 'Read', Page: Read },
   { key: 'map', label: 'Map', Page: MapPage },
   { key: 'evidence', label: 'Evidence', gate: 'You accept each claim', Page: Evidence },
   { key: 'challenge', label: 'Challenge', Page: Challenge },
   { key: 'ask', label: 'Ask', Page: Ask },
   { key: 'write', label: 'Write', Page: Write },
+  { key: 'review', label: 'Review', Page: Review },
   { key: 'export', label: 'Export', Page: Export },
 ];
 
@@ -81,7 +90,10 @@ export function ProjectShell({ projectId, step }: { projectId: string; step: str
     );
 
   const now = STEPS.findIndex((s) => s.key === step);
-  const { Page } = STEPS[now] ?? STEPS[0]!;
+  const at = now < 0 ? 1 : now;
+  const { Page } = STEPS[at]!;
+  const before = STEPS[at - 1];
+  const after = STEPS[at + 1];
   // Filled means the student did it, never just that the page was opened.
   const done: Record<string, boolean> = { plan: !!project.plan?.approvedAt, find: n > 0, library: approved > 0, evidence: decided > 0 };
 
@@ -91,7 +103,7 @@ export function ProjectShell({ projectId, step }: { projectId: string; step: str
         <p className={css.q}>{project.question}</p>
         <ol className={css.steps}>
           {STEPS.map((s) => (
-            <li key={s.key} data-state={s.key === (STEPS[now]?.key ?? 'plan') ? 'now' : done[s.key] ? 'done' : 'next'} data-gate={!!s.gate}>
+            <li key={s.key} data-state={s.key === STEPS[at]!.key ? 'now' : done[s.key] ? 'done' : 'next'} data-gate={!!s.gate}>
               <Link to={`/p/${project.id}/${s.key}`} aria-current={s.key === step ? 'step' : undefined}>
                 {s.label}
                 {s.key === 'library' && n > 0 ? ` (${n})` : ''}
@@ -119,6 +131,26 @@ export function ProjectShell({ projectId, step }: { projectId: string; step: str
         <Suspense fallback={<p className="soft">Loading…</p>}>
           <Page project={project} />
         </Suspense>
+        <nav className={css.nextprev} aria-label="Steps">
+          {before ? (
+            <Link to={`/p/${project.id}/${before.key}`} className="btn">
+              <span aria-hidden="true">←</span> {before.label}
+            </Link>
+          ) : (
+            <Link to="/projects" className="btn">
+              <span aria-hidden="true">←</span> Projects
+            </Link>
+          )}
+          {after ? (
+            <Link to={`/p/${project.id}/${after.key}`} className="btn">
+              {after.label} <span aria-hidden="true">→</span>
+            </Link>
+          ) : (
+            <Link to="/home" className="btn">
+              Home <span aria-hidden="true">→</span>
+            </Link>
+          )}
+        </nav>
       </main>
     </div>
   );

@@ -1,5 +1,8 @@
 import { Component, lazy, Suspense, useEffect, useRef, type ReactNode } from 'react';
+import { resume, touch, useSession } from '@/auth/accounts';
+import { forgetTeam } from '@/agents/team';
 import { Check } from '@/pages/Check';
+import { Home } from '@/pages/Home';
 import { Projects } from '@/pages/Projects';
 import { ProjectShell } from './ProjectShell';
 import { CommandPalette } from './CommandPalette';
@@ -9,6 +12,8 @@ import { TopBar } from './TopBar';
 
 const Landing = lazy(() => import('@/landing/Landing').then((m) => ({ default: m.Landing })));
 const Lab = lazy(() => import('@/pages/Lab').then((m) => ({ default: m.Lab })));
+const SignIn = lazy(() => import('@/pages/SignIn').then((m) => ({ default: m.SignIn })));
+const Account = lazy(() => import('@/pages/Account').then((m) => ({ default: m.Account })));
 const Rules = lazy(() => import('@/pages/Rules').then((m) => ({ default: m.Rules })));
 
 class Boundary extends Component<{ children: ReactNode; resetKey: string }, { error: Error | null }> {
@@ -38,6 +43,17 @@ export function App() {
   const { path, parts } = useRoute();
   const first = useRef(true);
   const section = parts[0] ?? '';
+  const session = useSession();
+  const who = session.kind === 'account' ? session.id : session.kind;
+
+  useEffect(() => {
+    void resume();
+    const names = ['pointerdown', 'keydown'] as const;
+    names.forEach((n) => window.addEventListener(n, touch, { passive: true }));
+    return () => names.forEach((n) => window.removeEventListener(n, touch));
+  }, []);
+  // Nothing found for one person may show for the next.
+  useEffect(() => forgetTeam, [who]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -52,8 +68,13 @@ export function App() {
     }
   }, [path]);
 
+  const PRIVATE = ['home', 'projects', 'p', 'account'];
   let page: ReactNode;
-  if (section === '') page = <Landing />;
+  if (session.kind === 'loading') page = <main className="wrap page" aria-busy="true"><p className="soft">Opening…</p></main>;
+  else if (section === 'signin' || (PRIVATE.includes(section) && session.kind === 'none')) page = <SignIn path={section === 'signin' ? path : `/signin?next=${encodeURIComponent(path)}`} />;
+  else if (section === '') page = <Landing />;
+  else if (section === 'home') page = <Home />;
+  else if (section === 'account') page = <Account />;
   else if (section === 'check') page = <Check />;
   else if (section === 'projects') page = <Projects />;
   else if (section === 'p' && parts[1]) page = <ProjectShell projectId={parts[1]} step={parts[2] ?? 'plan'} />;
@@ -78,7 +99,7 @@ export function App() {
       <CommandPalette />
       <Tour />
       <Boundary resetKey={path}>
-        <Suspense fallback={<main className="wrap page" aria-busy="true"><p className="soft">Loading…</p></main>}>{page}</Suspense>
+        <Suspense key={who} fallback={<main className="wrap page" aria-busy="true"><p className="soft">Loading…</p></main>}>{page}</Suspense>
       </Boundary>
     </>
   );

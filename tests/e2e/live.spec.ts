@@ -8,6 +8,7 @@ test('live: sample check and a real search', async ({ page }) => {
   test.setTimeout(150_000);
   const errors = watchErrors(page);
   await page.setViewportSize({ width: 1440, height: 900 });
+  await page.addInitScript(() => localStorage.setItem('pt-session', 'guest'));
   await page.goto('/#/check');
   await page.getByRole('button', { name: 'Try a sample' }).click();
   await expect(page.getByText('5 references checked')).toBeVisible({ timeout: 60_000 });

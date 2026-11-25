@@ -3,9 +3,11 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vitest/config';
 // @ts-expect-error plain JS so it also runs on Node without a build step
 import { apiDevPlugin } from './server/dev-plugin.mjs';
+// @ts-expect-error plain JS, shared with the server
+import { csp } from './server/headers.mjs';
 
 export default defineConfig({
-  plugins: [react(), apiDevPlugin()],
+  plugins: [react(), apiDevPlugin(), { name: 'page-policy', apply: 'build', transformIndexHtml: () => [{ tag: 'meta', attrs: { 'http-equiv': 'Content-Security-Policy', content: csp }, injectTo: 'head-prepend' }] }],
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   server: { port: 5173, strictPort: false },
   // Prepared up front, so opening a page for the first time never reloads the site.

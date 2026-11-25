@@ -35,3 +35,4 @@
   .result { grid-template-columns: minmax(0, 1fr); }
   .right { position: static; }
 }
+.own { background: var(--mute-bg); color: var(--mute); padding: 8px 12px; max-width: none; }

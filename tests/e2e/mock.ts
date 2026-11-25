@@ -11,6 +11,9 @@ const openAlexWorks = Object.entries(store)
 
 export async function mockRegistries(page: Page): Promise<string[]> {
   const unknown: string[] = [];
+  await page.addInitScript(() => {
+    if (!sessionStorage.getItem('pt-test-no-guest')) localStorage.setItem('pt-session', 'guest');
+  });
   await page.route('**/api/health', (r) => r.fulfill({ json: { ok: true, ai: true, openalexKey: false } }));
   await page.route('**/api/registry?*', (r) => {
     const url = new URL(r.request().url()).searchParams.get('url') ?? '';

@@ -241,7 +241,7 @@ export function Landing() {
             <Link to="/lab">Integrity Lab</Link>
             <Link to="/rules">House rules</Link>
           </nav>
-          <Link to="/projects" className={css.btn}>
+          <Link to="/home" className={css.btn}>
             Open workspace
           </Link>
         </div>

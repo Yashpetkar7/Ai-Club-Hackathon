@@ -295,7 +295,7 @@ export function Lab() {
             </tr>)}</tbody>
           </table>
         </div>
-        <p className={css.note}>Current checker limitation: a secondary lookup error can accompany a Confirmed result. We preserve the actual verdict and show incomplete coverage separately. An invented input that was confirmed remains a miss even when another lookup failed.</p>
+        <p className={css.note}>If the second registry does not answer, the checker says One registry only and the case counts as unresolved here, never as a success. An invented input that was accepted stays a miss even when another lookup failed.</p>
       </section>
 
       <section className="stack" aria-labelledby="lab-cases-heading" aria-busy={shownRun?.status === 'running' && !isSample}>

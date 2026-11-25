@@ -21,6 +21,7 @@ const LEAVES: [string, string][] = [
   ['Search words and reference details', 'Go to Crossref, OpenAlex, DataCite and doi.org when you press Find, Check or Challenge.'],
   ['A question, a claim or numbered passages from sources you kept', 'Go to an AI service only at level 1 or higher, only when you press that button, and only if the site has a key.'],
   ['The support model', 'Downloads to your device once, when you ask for it. Your claim is not sent.'],
+  ['Your account name and passphrase', 'Never leave this browser. The passphrase is never stored. Signing out encrypts your library with it.'],
   ['Your library, notes, PDFs, draft and log', 'Never leave this browser, unless you export them.'],
 ];
 const WHO: [string, string][] = [
@@ -131,7 +132,7 @@ export function Rules() {
       </section>
       <section className={css.danger}>
         <h2>Delete everything</h2>
-        <p>Removes every project, source, claim, draft and log entry from this browser. Nobody else has a copy, so it cannot be undone.</p>
+        <p>Removes every project, source, claim, draft and log entry from the library you have open now. Nobody else has a copy, so it cannot be undone. To remove an account as well, open Account.</p>
         {asking ? (
           <div className="row" role="alert">
             <button
@@ -141,7 +142,7 @@ export function Rules() {
                 void deleteEverything().then(
                   () => {
                     setAsking(false);
-                    setSaid('Everything was deleted from this browser.');
+                    setSaid('Everything in this library was deleted.');
                   },
                   () => setSaid('That did not work. Your data is still here.'),
                 )

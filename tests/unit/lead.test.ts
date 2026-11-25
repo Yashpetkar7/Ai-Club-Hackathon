@@ -176,3 +176,13 @@ describe('source balance', () => {
     expect(b).toMatchObject({ total: 3, withRecord: 2, oldest: 1999, newest: 2023, openAccess: 1 });
   });
 });
+
+describe('sentences', () => {
+  it('keeps positions when the space after a full stop is missing', async () => {
+    const { sentences } = await import('@/core/challenge/challenge');
+    const t = 'Remote rules halted the spread of COVID-19.Working at home adds stress for some people.Several studies show mixed results, e.g. in the U.S. economy.';
+    const out = sentences(t);
+    expect(out).toHaveLength(3);
+    for (const x of out) expect(t.slice(x.start, x.end)).toBe(x.text);
+  });
+});

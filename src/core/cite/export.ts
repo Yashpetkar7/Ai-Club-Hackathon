@@ -107,11 +107,4 @@ export async function toDocx(o: { sources: Source[]; style: CitationStyle; files
   return new Document({ creator: 'Paper Trail', title: cleanTitle(o.question), sections: [{ children: body }] });
 }
 
-export function saveFile(name: string, data: Blob | string, type = 'text/plain;charset=utf-8'): void {
-  const url = URL.createObjectURL(typeof data === 'string' ? new Blob([data], { type }) : data);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = name;
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 5000);
-}
+export { saveFile } from './save';

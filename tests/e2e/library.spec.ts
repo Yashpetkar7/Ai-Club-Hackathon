@@ -147,7 +147,7 @@ test('house rules: policy map, and delete everything asks first', async ({ page 
   await page.goto('/#/rules');
   await page.getByRole('button', { name: 'Delete everything' }).click();
   await page.getByRole('button', { name: 'Yes, delete everything' }).click();
-  await expect(page.getByText('Everything was deleted from this browser.')).toBeVisible();
+  await expect(page.getByText('Everything in this library was deleted.')).toBeVisible();
   await page.goto('/#/projects');
   await expect(page.getByText('A question to delete')).toHaveCount(0);
   await page.setViewportSize({ width: 375, height: 812 });

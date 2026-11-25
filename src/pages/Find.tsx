@@ -2,7 +2,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from '@/app/router';
 import type { StepProps } from '@/app/ProjectShell';
-import type { ReferenceCheck, RegistryRecord } from '@/core/contracts';
+import type { RegistryRecord } from '@/core/contracts';
 import { registries, searchPapers } from '@/core/registries';
 import { cleanTitle } from '@/core/verify/normalise';
 import { checkReference } from '@/core/verify/verdict';
@@ -10,22 +10,13 @@ import { record as log } from '@/log/log';
 import { policyIssues } from '@/policy/apply';
 import { addSource, skipSource } from '@/store/actions';
 import { db } from '@/store/db';
+import { hitCache, planKeyOf, type Hit } from '@/agents/team';
 import { PdfDrop } from '@/ui/PdfDrop';
 import { VerdictStamp } from '@/ui/Stamp';
 import css from './Find.module.css';
 
-interface Hit {
-  key: string;
-  record: RegistryRecord;
-  query: string;
-  check?: ReferenceCheck;
-  choice?: 'kept' | 'skipped';
-}
-
-const hitCache = new Map<string, { hits: Hit[]; notes: string[] }>();
-
 export function Find({ project }: StepProps) {
-  const planKey = `${project.id}|${project.plan?.approvedAt ?? ''}`;
+  const planKey = planKeyOf(project);
   const [hits, setHits] = useState<Hit[]>(hitCache.get(planKey)?.hits ?? []);
   const [notes, setNotes] = useState<string[]>(hitCache.get(planKey)?.notes ?? []);
   const [state, setState] = useState<'idle' | 'searching' | 'checking' | 'done' | 'failed'>(hitCache.has(planKey) ? 'done' : 'idle');

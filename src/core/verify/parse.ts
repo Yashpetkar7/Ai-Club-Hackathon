@@ -9,7 +9,24 @@ import { findDoi, tokens } from './normalise';
 const YEAR_PAREN = /\((\d{4})[a-z]?(?:,[^)]*)?\)/;
 const ANY_YEAR = /\b(1[89]\d{2}|20\d{2})\b/g;
 const QUOTED_TITLE = /[“"]([^”"]{8,300}?)[,.?!]?[”"]/;
+/** Harvard puts titles in single quotes. The closing one is followed by a comma or a full stop, so ’s inside a title is safe. */
+const SINGLE_QUOTED = /^[‘'](.{8,300}?)[’'](?=[,.]|\s*$)/u;
 const NUMBERED = /^\s*(?:\[\d{1,3}\]|\d{1,3}[.)])\s+/;
+
+/** arXiv gives every preprint a DOI, so "arXiv:2203.02155" can be looked up like any other work. */
+const ARXIV = [/arxiv\.org\/(?:abs|pdf)\/(\d{4})\.(\d{4,5})/i, /\barxiv\s*:\s*(\d{4})\.?(\d{4,5})(?:v\d+)?\b/i];
+const arxivDoi = (s: string): string | undefined => {
+  for (const re of ARXIV) {
+    const m = s.match(re);
+    if (m) return `10.48550/arxiv.${m[1]}.${m[2]}`;
+  }
+  return undefined;
+};
+
+/** "Hagendorff T, Fabi S, Kosinski M. Title. Journal" */
+const VANCOUVER = /^((?:[\p{Lu}][\p{L}’'\-]+(?:\s[\p{Lu}][\p{L}’'\-]+)?\s\p{Lu}{1,3}(?:,\s+|(?=\.)))+(?:et al)?)\.\s+(.{6,300}?)[.?!](?:\s|$)/u;
+/** "Leahy, S. & Mishra, P. Title. Journal" and "Ouyang, L. et al. Title (2022)" */
+const NATURE = /^((?:[\p{Lu}][\p{L}’'\- ]+,\s+(?:\p{Lu}\.[\s\-]*)+(?:,\s*|&\s*|and\s+)*)+(?:et al\.\s+)?)(.{6,300}?)(?:[.?!](?:\s|$)|\s*\((?:19|20)\d{2}\)|$)/u;
 
 /** "Bloom, N., Liang, J., & Ying, Z. J." or "Bloom N, Liang J" or "N. Bloom, J. Liang and Z. Ying" */
 export function parseAuthors(s: string): string[] {
@@ -51,13 +68,27 @@ export function parseReference(line: string): RawReference {
     .replace(/https?:\/\/[^\s]+/gi, '')
     .replace(/\bdoi\s*:?\s*/gi, '')
     .replace(/\b10\.\d{4,9}\/\S+/g, '')
+    .replace(/\[preprint\]\.?/gi, '')
+    .replace(/\barxiv(?:\s+preprint)?(?:\s+arxiv)?\s*:?\s*(?:\d{4}\.?\d{4,5}(?:v\d+)?)?(?:\s*\[[\w.-]+\])?\.?/gi, '')
+    .replace(/\b(?:accessed|available (?:from|online|at))\b:?.*$/i, '')
+    .replace(/\s+/g, ' ')
     .trim();
   const ref: RawReference = { raw };
-  if (doi) ref.doi = doi;
+  const arxiv = doi ? undefined : arxivDoi(raw);
+  if (doi ?? arxiv) ref.doi = (doi ?? arxiv)!;
   if (url && !/doi\.org/i.test(url)) ref.url = url;
 
   const y = body.match(YEAR_PAREN);
-  if (y && y.index !== undefined && y.index < 400) {
+  // The year comes last in Nature style, so the title is before it.
+  const yearLast = !!y && y.index !== undefined && body.slice(y.index + y[0].length).replace(/[.,;:\s]/g, '').length < 12;
+  const named = yearLast || !y ? (body.match(VANCOUVER) ?? body.match(NATURE)) : null;
+  if (named) {
+    const authors = /\p{Lu}\./u.test(named[1]!) ? parseAuthors(named[1]!.replace(/&/g, ',')) : named[1]!.split(/,\s*/).map((a) => a.replace(/\s\p{Lu}{1,3}$/u, '').replace(/^et al$/i, '').trim()).filter((a) => a.length > 1);
+    if (authors.length) ref.authors = authors;
+    ref.title = named[2]!.replace(/\s*\[[^\]]*\]$/, '').trim();
+    const years = [...body.slice(named[0].length - 8).matchAll(ANY_YEAR)].map((m) => Number(m[1]));
+    if (years.length) ref.year = years[years.length - 1]!;
+  } else if (y && y.index !== undefined && y.index < 400) {
     ref.year = Number(y[1]);
     const before = body.slice(0, y.index);
     const after = body.slice(y.index + y[0].length).replace(/^[.,:\s]+/, '');
@@ -65,7 +96,7 @@ export function parseReference(line: string): RawReference {
       const authors = parseAuthors(before);
       if (authors.length) ref.authors = authors;
     }
-    const quoted = after.match(QUOTED_TITLE) ?? before.match(QUOTED_TITLE);
+    const quoted = after.match(SINGLE_QUOTED) ?? after.match(QUOTED_TITLE) ?? before.match(QUOTED_TITLE);
     if (quoted) ref.title = quoted[1]!.trim();
     else {
       const stop = after.match(/^(.{6,300}?[^A-Z.])(?:[.?!]\s+(?=[\p{Lu}\d])|[.?!]$|$)/u);
@@ -136,7 +167,9 @@ const BARE_DOI = /^(?:https?:\/\/(?:dx\.)?doi\.org\/|doi:\s*)?10\.\d{4,9}\/\S+$/
 const looksLikeReference =(l: string): boolean => {
   const n = tokens(l).length;
   if (n < 5 || l.length > 900) return false;
-  if (findDoi(l)) return true;
+  if (findDoi(l) || arxivDoi(l)) return true;
+  const bare = l.replace(NUMBERED, '');
+  if (/\b(?:19|20)\d{2}\b/.test(l) && (VANCOUVER.test(bare) || NATURE.test(bare))) return true;
   if (NUMBERED.test(l) && (YEAR_PAREN.test(l) || QUOTED_TITLE.test(l))) return true;
   return /^[\p{Lu}\p{L}][^()]{1,260}\((?:\d{4})[a-z]?(?:,[^)]*)?\)\.?\s+\S/u.test(l) && /[.,]/.test(l.slice(0, l.indexOf('(')));
 };
@@ -194,7 +227,8 @@ export function extractReferences(text: string): Extracted {
     else prose.push(p);
   }
   if (!refs.length && parts.length === 1 && tokens(t).length >= 4 && tokens(t).length <= 40 && !/\(\p{L}[^)]*,\s*\d{4}[a-z]?\)/u.test(t)) {
-    refs.push({ raw: t, title: t, ...(findDoi(t) ? { doi: findDoi(t)! } : {}) });
+    const r = parseReference(t);
+    refs.push(r.title && r.authors?.length ? r : { raw: t, title: t, ...(findDoi(t) ? { doi: findDoi(t)! } : {}) });
   }
   const seen = new Set(refs.map((r) => r.doi).filter(Boolean));
   for (const p of prose) {

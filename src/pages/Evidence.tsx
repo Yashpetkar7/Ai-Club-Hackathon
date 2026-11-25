@@ -1,5 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { Link } from '@/app/router';
 import type { StepProps } from '@/app/ProjectShell';
 import { titleOf } from '@/core/cite/preflight';
@@ -13,6 +13,7 @@ import { record as log } from '@/log/log';
 import { POLICY } from '@/policy/policy';
 import { editSource } from '@/store/actions';
 import { db } from '@/store/db';
+import { CLAIM_HANDOFF } from '@/pages/Read';
 import { ClaimStamp, VerdictStamp } from '@/ui/Stamp';
 import css from './Evidence.module.css';
 
@@ -52,6 +53,22 @@ export function Evidence({ project }: StepProps) {
   const [said, setSaid] = useState('');
   const [was, setWas] = useState<string | null>(null);
   const [fetching, setFetching] = useState(false);
+
+  const handed = useRef<{ sourceId: string; text: string } | null>(null);
+  useEffect(() => {
+    // Kept in a ref because React mounts effects twice in development.
+    try {
+      const raw = sessionStorage.getItem(CLAIM_HANDOFF);
+      if (raw) handed.current = JSON.parse(raw) as { sourceId: string; text: string };
+      sessionStorage.removeItem(CLAIM_HANDOFF);
+    } catch {
+      /* storage blocked: start empty */
+    }
+    if (handed.current) {
+      setSourceId(handed.current.sourceId);
+      setClaim(handed.current.text);
+    }
+  }, []);
 
   const kept = sources ?? [];
   const source: Source | undefined = kept.find((s) => s.id === sourceId) ?? kept.find((s) => s.text) ?? kept[0];
@@ -115,7 +132,7 @@ export function Evidence({ project }: StepProps) {
       });
       setSaid(decision === 'rejected' ? 'Rejected. It stays in the log.' : `Saved as ${CLAIM_TEXT[c.label].label}.`);
       setRanked(null);
-      setClaim('');
+      setClaim((now) => (now === claim ? '' : now));
       setReason('');
       setWas(null);
     } catch (e) {
@@ -261,6 +278,7 @@ export function Evidence({ project }: StepProps) {
                 </tr>
               </tbody>
             </table>
+            {judged.wordForWord && claim.trim().split(/\s+/).length >= 8 && <p className={css.own}>These are the source’s own words. Put them in quotation marks, or say it in your own words.</p>}
             {!judged.wordForWord && passage && <ModelBox state={model} />}
             <div className={css.decide}>
               <p>

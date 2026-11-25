@@ -1,0 +1,15 @@
+.page { grid-template-columns: minmax(0, 1fr) minmax(0, 440px); gap: 64px; align-items: start; padding-top: 64px; }
+.side { display: grid; gap: 18px; }
+.side ul { margin: 0; padding-left: 1.2em; display: grid; gap: 8px; }
+.forms { display: grid; gap: 16px; }
+.tabs { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); background: var(--sheet); }
+.tabs button { border: 0; background: none; padding: 11px; cursor: pointer; color: var(--soft); }
+.tabs button[aria-pressed='true'] { background: var(--accent); color: var(--on-accent); font-weight: 600; }
+.form { padding: 24px; display: grid; gap: 16px; }
+.form label { display: grid; gap: 5px; }
+.tick { grid-template-columns: auto 1fr; align-items: center; }
+.form .tick { display: flex; gap: 9px; }
+.form > button { justify-content: center; }
+.error { color: var(--bad); font-weight: 600; }
+.guest { display: grid; gap: 10px; justify-items: start; padding: 6px 2px; color: var(--soft); }
+@media (max-width: 860px) { .page { grid-template-columns: minmax(0, 1fr); gap: 32px; padding-top: 36px; } }

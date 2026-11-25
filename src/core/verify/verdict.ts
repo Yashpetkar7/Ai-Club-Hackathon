@@ -49,7 +49,7 @@ export async function checkReference(ref: RawReference, reg: Registries, now: ()
   });
 
   const judge = async (rec: RegistryRecord, viaDoi: boolean): Promise<ReferenceCheck> => {
-    const c = compare(ref, rec);
+    let c = compare(ref, rec);
     let record = rec;
     let second: 'answered' | 'silent' | 'none' = 'none';
     if (rec.doi) {
@@ -65,6 +65,11 @@ export async function checkReference(ref: RawReference, reg: Registries, now: ()
           openalexId: oa.value.openalexId,
           retracted: rec.retracted || oa.value.retracted,
         } as RegistryRecord;
+        // One registry may hold a longer title than the other. The student is right if either has their words.
+        if (c.title < th.titleMatch && c.title >= 0.6 && oa.value.title) {
+          const other = compare(ref, { ...rec, title: oa.value.title });
+          if (other.title >= th.titleMatch) c = other;
+        }
       }
     }
     const bareDoi = viaDoi && !ref.title && !ref.authors?.length && tokens(ref.raw).length <= 8;

@@ -1,0 +1,12 @@
+.page { max-width: 980px; }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: start; }
+.box { background: var(--sheet); border: 1px solid var(--line); padding: 22px; display: grid; gap: 12px; justify-items: start; min-width: 0; }
+.box h2 { font-size: 1.3rem; }
+.box label { display: grid; gap: 4px; width: 100%; max-width: 420px; }
+.box[data-danger='true'] { border: 2px solid var(--bad); }
+.stackbox { display: grid; gap: 12px; min-width: 0; }
+.file { display: grid; gap: 4px; }
+.file input { max-width: 100%; }
+.tick { display: flex; gap: 9px; align-items: baseline; }
+.error { color: var(--bad); font-weight: 600; max-width: none; }
+@media (max-width: 760px) { .two { grid-template-columns: minmax(0, 1fr); } }
