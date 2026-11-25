@@ -11,7 +11,7 @@ import { record as log } from '@/log/log';
 import { DraftCheck } from '@/pages/DraftCheck';
 import { citable, setStyle } from '@/store/actions';
 import { db } from '@/store/db';
-import { ClaimStamp } from '@/ui/Stamp';
+import { ClaimStamp, NotVerified, SourceStamp } from '@/ui/Stamp';
 import css from './Write.module.css';
 
 /** In-text citations for a set of sources. IEEE drafts carry author and year, and get numbers on export. */
@@ -151,7 +151,9 @@ export function Write({ project }: StepProps) {
               <h2>Not in your library ({check.unknown.length})</h2>
               <ul className={css.bad}>
                 {check.unknown.map((u) => (
-                  <li key={u}>{u}</li>
+                  <li key={u}>
+                    {u} <NotVerified />
+                  </li>
                 ))}
               </ul>
               <p className="soft">Add the source, or take the citation out.</p>
@@ -162,7 +164,9 @@ export function Write({ project }: StepProps) {
               <h2>In your library, not approved ({check.notCitable.length})</h2>
               <ul className={css.warnList}>
                 {check.notCitable.map((x) => (
-                  <li key={x.source.id}>{x.text}</li>
+                  <li key={x.source.id}>
+                    {x.text} <SourceStamp s={x.source} />
+                  </li>
                 ))}
               </ul>
               <Link to={`/p/${project.id}/library`}>Decide in the library</Link>
@@ -174,7 +178,7 @@ export function Write({ project }: StepProps) {
             <ul>
               {check.cited.map((c) => (
                 <li key={c.source.id}>
-                  {titleOf(c.source)} <span className="soft">{c.times > 1 ? `${c.times} times` : 'once'}</span>
+                  {titleOf(c.source)} <span className="soft">{c.times > 1 ? `${c.times} times` : 'once'}</span> <SourceStamp s={c.source} />
                   {c.source.keptWithReason && <small className={css.note}>Kept with your reason</small>}
                 </li>
               ))}
@@ -185,7 +189,9 @@ export function Write({ project }: StepProps) {
               <h2>Never cited ({check.neverCited.length})</h2>
               <ul>
                 {check.neverCited.map((s) => (
-                  <li key={s.id}>{titleOf(s)}</li>
+                  <li key={s.id}>
+                    {titleOf(s)} <SourceStamp s={s} />
+                  </li>
                 ))}
               </ul>
             </section>
@@ -255,7 +261,7 @@ function Picker({ sources, inText, onPick, onClose }: { sources: Source[]; inTex
       <ul id="cite-list" role="listbox" aria-label="Sources you can cite" className={css.options}>
         {list.map((s, i) => (
           <li key={s.id} id={`cite-${s.id}`} role="option" aria-selected={i === now} onMouseEnter={() => setAt(i)} onClick={() => pick(s)}>
-            <strong>{inText.get(s.id) ?? 'Formatting…'}</strong> {titleOf(s)}
+            <strong>{inText.get(s.id) ?? 'Formatting…'}</strong> {titleOf(s)} <SourceStamp s={s} />
           </li>
         ))}
       </ul>

@@ -16,7 +16,7 @@ import { approveSource, citable, editSource, removeSource } from '@/store/action
 import { db } from '@/store/db';
 import { PdfDrop } from '@/ui/PdfDrop';
 import { Receipt } from '@/ui/Receipt';
-import { Stamp, VerdictStamp } from '@/ui/Stamp';
+import { SourceStamp } from '@/ui/Stamp';
 import css from './Library.module.css';
 
 type Status = 'all' | 'citable' | 'waiting';
@@ -42,15 +42,6 @@ export function KeyRow({ s }: { s: Source }) {
         </li>
       ))}
     </ul>
-  );
-}
-
-function SourceMark({ s }: { s: Source }) {
-  if (s.check) return <VerdictStamp verdict={s.check.verdict} />;
-  return (
-    <Stamp tone="mute" mark="~">
-      {s.origin === 'web' ? 'Web page, not checked' : 'Not checked'}
-    </Stamp>
   );
 }
 
@@ -186,7 +177,7 @@ export function Library({ project }: StepProps) {
                         {s.record?.container ? ` · ${s.record.container}` : ''}
                       </span>
                       <span className={css.marks}>
-                        <SourceMark s={s} />
+                        <SourceStamp s={s} />
                         {s.record?.notices?.some((x) => x.kind === 'concern') && <span className={css.flag}>Expression of concern</span>}
                         {s.record?.notices?.some((x) => x.kind === 'correction') && <span className={css.flag}>Corrected</span>}
                         {!!s.retractedRefs?.items.length && <span className={css.flag}>Cites retracted work</span>}
@@ -258,7 +249,7 @@ function Detail({ s, folders, onClose }: { s: Source; folders: string[]; onClose
         </Receipt>
       ) : (
         <div className={`card ${css.web}`}>
-          <SourceMark s={s} />
+          <SourceStamp s={s} />
           <p>{s.origin === 'web' ? 'This is a web page you added. No registry covers web pages, so nothing here was checked for you.' : 'This has not been checked yet.'}</p>
           {s.raw?.url && (
             <a href={s.raw.url} target="_blank" rel="noreferrer">

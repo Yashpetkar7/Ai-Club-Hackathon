@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { go } from '@/app/router';
 import { accountNames, continueAsGuest, guestHasWork, MIN_PASSPHRASE, signIn, signUp, signUpProblems } from '@/auth/accounts';
+import { canSave } from '@/auth/cloud';
 import css from './SignIn.module.css';
 
 /** The page after signing in. Only our own pages, so a link can never send someone elsewhere. */
@@ -25,6 +26,7 @@ export function SignIn({ path }: { path: string }) {
   const [error, setError] = useState('');
   const [names, setNames] = useState<string[]>([]);
   const [guestWork, setGuestWork] = useState(false);
+  const [saves, setSaves] = useState<boolean | null>(null);
   const next = nextFrom(path);
 
   useEffect(() => {
@@ -34,6 +36,7 @@ export function SignIn({ path }: { path: string }) {
         if (!n.length) setMode('up');
       })
       .catch(() => setError('This browser is blocking storage, so accounts cannot work here. You can still check references.'));
+    void canSave().then(setSaves, () => undefined);
     void guestHasWork().then(setGuestWork, () => undefined);
   }, []);
 
@@ -64,7 +67,13 @@ export function SignIn({ path }: { path: string }) {
     <main className={`wrap page ${css.page}`} id="main" tabIndex={-1}>
       <section className={css.side}>
         <h1>{mode === 'in' ? 'Sign in' : 'Create your account'}</h1>
-        <p>An account saves your work, so you can open it on another computer.</p>
+        <p>
+          {saves === false
+            ? 'An account keeps your work locked on this device. This copy of the site has no server that can save it for another computer.'
+            : saves
+              ? 'An account saves your work, so you can open it on another computer.'
+              : 'An account keeps your work locked with your passphrase.'}
+        </p>
         <ul>
           <li>Your library is locked with your passphrase before it is saved. We cannot read it.</li>
           <li>Each person on a shared laptop gets their own library.</li>

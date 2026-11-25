@@ -21,12 +21,17 @@
 .who:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
 :global(.skip) { position: absolute; left: -999px; top: 0; z-index: 50; background: var(--sheet); color: var(--ink); padding: 10px 16px; }
 :global(.skip:focus) { left: 10px; top: 10px; }
+.menu .onPhone { display: none; }
 @media (max-width: 860px) {
   .nav { order: 5; flex: 1 0 100%; margin-left: 8px; }
   .mark { flex: 1; }
 }
 @media (max-width: 620px) {
-  .in { gap: 4px 8px; }
+  .in { gap: 2px 8px; padding-block: 4px; }
+  .lamp { display: none; }
+  .menu .onPhone { display: block; }
+  .nav { flex: 1 0 auto; gap: 4px 16px; }
+  .who ~ a { order: 6; }
   .lamp, .back, .who { padding: 5px 9px; font-size: 0.86rem; }
   .who { max-width: 128px; }
 }

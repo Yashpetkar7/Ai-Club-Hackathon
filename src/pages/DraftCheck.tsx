@@ -9,7 +9,7 @@ import { locatorOf, pageText } from '@/core/pdf/pages';
 import { record as log } from '@/log/log';
 import { POLICY } from '@/policy/policy';
 import { citable } from '@/store/actions';
-import { Stamp } from '@/ui/Stamp';
+import { SourceStamp, Stamp } from '@/ui/Stamp';
 import css from './DraftCheck.module.css';
 
 const SHOWN = 25;
@@ -166,6 +166,7 @@ export function DraftCheck({ project, text, sources, cite, onChange, area }: Pro
                               {i.page ? ` · ${pageText(i.page)}` : i.source.textOrigin === 'abstract' ? ' · abstract' : ''}
                             </span>
                             <blockquote>{i.passage}</blockquote>
+                            <SourceStamp s={i.source} />
                           </div>
                         )}
                       </div>

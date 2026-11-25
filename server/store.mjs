@@ -73,6 +73,8 @@ let opened = null;
 /** Opens the store once. Null when this host has no disk to write to, and then the site saves in the browser only. */
 export async function openStore(dir = resolve(process.env.DATA_DIR ?? 'data'), prefer = process.env.STORE) {
   if (opened?.dir === dir) return opened.store;
+  // Vercel keeps no disk between requests. Saving there would lose work, so it is refused and the page says so.
+  if (process.env.VERCEL) return null;
   try {
     mkdirSync(dir, { recursive: true });
     let store = null;

@@ -80,6 +80,9 @@ export function TopBar({ section }: { section: string }) {
                   {m.label}
                 </Link>
               ))}
+              <button type="button" className={css.onPhone} onClick={() => { close(); window.dispatchEvent(new Event('pt:palette')); }}>
+                Search
+              </button>
               <button type="button" onClick={() => { close(); window.dispatchEvent(new Event('pt:tour')); }}>
                 Take the tour
               </button>
