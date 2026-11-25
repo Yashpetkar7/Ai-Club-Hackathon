@@ -64,6 +64,38 @@ describe('short registry titles', () => {
   });
 });
 
+describe('reference layouts students paste', () => {
+  it.each([
+    ['Ouyang, L. et al. Training language models to follow instructions with human feedback (2022). arXiv:2203.02155.', { doi: '10.48550/arxiv.2203.02155', title: 'Training language models to follow instructions with human feedback', year: 2022, first: 'Ouyang' }],
+    ['Kingma, D. P., & Welling, M. (2013). Auto-Encoding Variational Bayes. arXiv preprint arXiv:1312.6114', { doi: '10.48550/arxiv.1312.6114', title: 'Auto-Encoding Variational Bayes', year: 2013, first: 'Kingma' }],
+    ['Bubeck S, Chandrasekaran V, Eldan R, et al. Sparks of artificial general intelligence: Early experiments with gpt-4. arXiv preprint arXiv:230312712. 2023;.', { doi: '10.48550/arxiv.2303.12712', title: 'Sparks of artificial general intelligence: Early experiments with gpt-4', year: 2023, first: 'Bubeck' }],
+    ['Chan, C. K. Y., & Tsi, L. H. Y. (2023). The AI Revolution in Education: Will AI Replace or Assist Teachers in Higher Education? [Preprint]. arXiv. https://arxiv.org/abs/2305.01185', { doi: '10.48550/arxiv.2305.01185', title: 'The AI Revolution in Education: Will AI Replace or Assist Teachers in Higher Education?', year: 2023, first: 'Chan' }],
+    ['Bickerton D. The Pace of Syntactic Acquisition. In: Proceedings of the Annual Meetings of the Berkeley Linguistics Society. vol. 17; 1991. p. 41–52.', { title: 'The Pace of Syntactic Acquisition', first: 'Bickerton' }],
+    ['Leahy, S. & Mishra, P. TPACK and the Cambrian explosion of AI. In Society for Information Technology & Teacher Education International Conference, 2465–2469 (AACE, 2023).', { title: 'TPACK and the Cambrian explosion of AI', first: 'Leahy' }],
+  ])('%s', (line, want) => {
+    const r = parseReference(line);
+    expect(r.title).toBe(want.title);
+    expect(r.authors?.[0]).toBe(want.first);
+    if ('doi' in want) expect(r.doi).toBe(want.doi);
+    if ('year' in want) expect(r.year).toBe(want.year);
+  });
+});
+
+describe('words added to a real title are never the same title (found by the Integrity Lab, 25 November 2026)', () => {
+  const rec = { registry: 'crossref' as const, id: 'x', year: 1995, retracted: false, authors: [{ family: 'Baumeister' }], title: 'The need to belong: Desire for interpersonal attachments as a fundamental human motivation' };
+  const score = (title: string) => compare({ raw: '', title, authors: ['Baumeister'], year: 1995 }, rec).title;
+  it.each([
+    `${rec.title}: a comparison of classroom settings`,
+    `${rec.title}: a replication across learning communities`,
+    `${rec.title} in digital teams`,
+    'The need to belong: Desire for interpersonal attachments as a fundamental digital motivation',
+  ])('%s', (x) => expect(score(x)).toBeLessThan(0.9));
+  it.each([rec.title, 'The need to belong', 'The Need to Belong: Desire for Interpersonal Attachments as a Fundamental Human Motivation.', 'The need to belong: desire for inter-personal attachments as a fundamental human motivation', 'The need to belong: Desire for interpersonal attachment as a fundamental human motivation'])('still the same: %s', (x) => expect(score(x)).toBeGreaterThanOrEqual(0.9));
+  it('a word turned to its opposite is not spelling', () => expect(compare({ raw: '', title: 'Remote work and the decrease of output in large firms across ten countries' }, { ...rec, title: 'Remote work and the increase of output in large firms across ten countries' }).title).toBeLessThan(0.9));
+  it('Harvard single quotes, with an apostrophe inside', () => expect(parseReference('Lee, K. (2020) ‘Students’ views on the school’s plan’, Journal of Plans, 3(1), pp. 1–9.').title).toBe('Students’ views on the school’s plan'));
+  it('spelling on two sides of the Atlantic is one title', () => expect(compare({ raw: '', title: 'Organisational behaviour in the centre of programme design' }, { ...rec, title: 'Organizational behavior in the center of program design' }).title).toBeGreaterThanOrEqual(0.9));
+});
+
 describe('names from every language are compared fairly', () => {
   const base = { registry: 'crossref' as const, id: 'x', title: 'A study of reading habits in four cities', year: 2022, retracted: false };
   it.each([
@@ -105,6 +137,39 @@ describe('a registry that does not answer is never a pass and never a "not found
     expect(c.verdict).toBe('could-not-check');
     expect(c.reasons).toContain('REGISTRY_UNREACHABLE');
     expect(c.trace.every((t) => t.status === 'error')).toBe(true);
+  });
+});
+
+describe('one registry is not enough for green', () => {
+  const rec = { registry: 'crossref' as const, id: '10.1234/x', doi: '10.1234/x', title: 'A study of reading habits in four cities', authors: [{ family: 'Noy' }], year: 2022, retracted: false };
+  const line = 'Noy, S. (2022). A study of reading habits in four cities. Journal of Reading, 1(1). https://doi.org/10.1234/x';
+  const none = async () => null;
+  const fail = async (): Promise<never> => { throw new Error('network error'); };
+  const base: Registries = { crossrefByDoi: async () => rec, openalexByDoi: async () => ({ ...rec, registry: 'openalex' }), dataciteByDoi: none, doiExists: async () => true, crossrefSearch: async () => [rec] };
+  it('both answer: confirmed', async () => expect((await checkReference(parseReference(line), base)).verdict).toBe('confirmed'));
+  it('the second answers that it has no record: confirmed, and the receipt says so', async () => {
+    const c = await checkReference(parseReference(line), { ...base, openalexByDoi: none });
+    expect(c.verdict).toBe('confirmed');
+    expect(c.trace.find((x) => x.registry === 'openalex')?.status).toBe('not-found');
+  });
+  it.each([['full reference', line], ['bare DOI', '10.1234/x']])('the second is down, %s: one registry only', async (_n, l) => {
+    const c = await checkReference(extractReferences(l).references[0]!, { ...base, openalexByDoi: fail });
+    expect(c.verdict).toBe('one-registry');
+    expect(c.reasons).toEqual(['SECOND_REGISTRY_UNREACHABLE']);
+  });
+  it('a problem found by one registry stands even when the other is down', async () => {
+    expect((await checkReference(parseReference(line.replace('2022', '2012')), { ...base, openalexByDoi: fail })).verdict).toBe('details-differ');
+    expect((await checkReference(parseReference(line), { ...base, crossrefByDoi: async () => ({ ...rec, retracted: true }), openalexByDoi: fail })).verdict).toBe('retracted');
+  });
+  it('DataCite works get a second look too', async () => {
+    const dc = { ...base, crossrefByDoi: none, dataciteByDoi: async () => ({ ...rec, registry: 'datacite' as const }) };
+    expect((await checkReference(parseReference(line), dc)).verdict).toBe('confirmed');
+    expect((await checkReference(parseReference(line), { ...dc, openalexByDoi: async () => ({ ...rec, registry: 'openalex' as const, retracted: true }) })).verdict).toBe('retracted');
+    expect((await checkReference(parseReference(line), { ...dc, openalexByDoi: fail })).verdict).toBe('one-registry');
+  });
+  it('a DOI we could not look up is not excused by a title match with another DOI', async () => {
+    const c = await checkReference(parseReference(line.replace('10.1234/x', '10.1234/other')), { ...base, crossrefByDoi: fail, dataciteByDoi: fail });
+    expect(c.verdict).toBe('could-not-check');
   });
 });
 

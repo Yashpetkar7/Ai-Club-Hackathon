@@ -1,0 +1,35 @@
+.status { border-block: 1px solid var(--line); padding-block: 14px; font-weight: 600; max-width: none; }
+.note, .coverage { background: var(--mute-bg); color: var(--mute); padding: 10px 14px; max-width: none; overflow-wrap: anywhere; }
+.error { color: var(--bad); background: var(--bad-bg); padding: 10px 14px; max-width: none; overflow-wrap: anywhere; }
+.recording { display: grid; gap: var(--s2); padding: 20px; min-width: 0; }
+.recording h2 { color: var(--mute); }
+.list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s2); min-width: 0; }
+.case { padding: 18px 20px; display: grid; gap: 10px; min-width: 0; }
+.case h3 { overflow-wrap: anywhere; }
+.case[data-outcome='missed'], .case[data-outcome='false-alarm'] { border-color: var(--bad); }
+.reference { max-width: none; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.6; }
+.invented { color: var(--warn); font-weight: 600; }
+.sample { color: var(--mute); background: var(--mute-bg); border: 1px solid var(--line); padding: 1px 7px; font-size: 0.82rem; font-weight: 700; }
+.neutral { color: var(--mute); border: 1px solid var(--line); padding: 3px 10px; overflow-wrap: anywhere; }
+.misses { border-top: 1px solid var(--bad); padding-top: var(--s3); }
+.miss { padding: 16px 20px; display: grid; gap: 8px; border-color: var(--bad); min-width: 0; }
+.miss > strong { color: var(--bad); }
+.tableScroll { min-width: 0; max-width: 100%; overflow-x: auto; border: 1px solid var(--line); background: var(--sheet); }
+.table { border-collapse: collapse; width: 100%; min-width: 74rem; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+.table caption { text-align: left; padding: 12px 14px; color: var(--soft); }
+.table th, .table td { text-align: left; padding: 10px 14px; border-top: 1px solid var(--line); vertical-align: top; }
+.table thead th { background: var(--raise); font-weight: 600; }
+.table tbody th { font-weight: 600; white-space: nowrap; }
+.details { border-top: 1px solid var(--line); padding-top: 10px; min-width: 0; }
+.details summary { cursor: pointer; color: var(--accent); font-weight: 600; width: fit-content; max-width: 100%; }
+.details[open] summary { margin-bottom: 12px; }
+.details ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; min-width: 0; }
+.details li, .details a { overflow-wrap: anywhere; }
+.provenance { margin: 0; display: grid; gap: 4px; min-width: 0; }
+.provenance dt { font-weight: 600; overflow-wrap: anywhere; }
+.provenance dd { margin: 0 0 10px; overflow-wrap: anywhere; }
+.comparison { margin: 0; display: grid; gap: 12px; min-width: 0; }
+.comparison > div { border-top: 1px solid var(--line); padding-top: 8px; }
+.comparison dt { font-weight: 600; }
+.comparison dd { margin: 4px 0 0; overflow-wrap: anywhere; }
+@media (max-width: 620px) { .case, .recording, .miss { padding: 16px; } }

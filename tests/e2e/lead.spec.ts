@@ -165,25 +165,80 @@ test('palette: keyboard only, finds pages and projects', async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
-test('tour: drives the real app, is marked SAMPLE, and stops on a touch', async ({ page }) => {
+test('tour: from the front page, signed out, on the real pages, and a touch only pauses it', async ({ page }) => {
+  test.setTimeout(90_000);
   const errors = watchErrors(page);
+  await page.addInitScript(() => {
+    localStorage.removeItem('pt-session');
+    sessionStorage.setItem('pt-test-no-guest', '1');
+  });
   await mockRegistries(page);
-  await page.goto('/#/projects');
-  await page.getByRole('button', { name: 'Tour' }).click();
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Play the 60-second tour' }).click();
   const bar = page.getByLabel('Tour', { exact: true });
-  await expect(bar).toContainText('polished paragraph', { timeout: 20_000 });
+  // It starts at once, not after a wait.
+  await expect(bar).toContainText('five references', { timeout: 4000 });
   await expect(bar.getByText('SAMPLE', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Check references' })).toBeVisible();
   await expect(page.getByText(/Checked \d of 5|5 references checked/)).toBeVisible({ timeout: 15_000 });
+  await axe(page, 'tour');
+  // It moves on by itself.
+  await expect(bar).toContainText('The verdicts', { timeout: 15_000 });
+  // Scrolling pauses. The bar stays, and Resume goes on.
+  await page.mouse.move(400, 300);
+  await page.mouse.wheel(0, 200);
+  await expect(bar.getByRole('button', { name: 'Resume' })).toBeVisible();
+  for (const h of ['Plan the search', 'Library', 'Evidence', 'Write', 'Export', 'The team']) {
+    await bar.getByRole('button', { name: 'Next' }).click();
+    await expect(page.getByRole('heading', { name: h, exact: true })).toBeVisible({ timeout: 15_000 });
+    if (h === 'Evidence') await expect(page.getByLabel('Your claim')).toHaveValue(/13% performance increase/);
+  }
+  await expect(bar.getByText('8 of 8')).toBeVisible();
+  await bar.getByRole('button', { name: 'Previous' }).click();
+  await expect(page.getByRole('heading', { name: 'Export', exact: true })).toBeVisible();
   await bar.getByRole('button', { name: 'Next' }).click();
-  await bar.getByRole('button', { name: 'Next' }).click();
-  await expect(page.getByRole('heading', { name: 'Plan the search' })).toBeVisible();
-  await bar.getByRole('button', { name: 'Next' }).click();
-  await expect(page.getByRole('heading', { name: 'Map', exact: true })).toBeVisible();
-  await page.getByRole('heading', { name: 'Map', exact: true }).click();
+  await bar.getByRole('button', { name: 'Start my project' }).click();
   await expect(bar).toBeHidden();
-  await page.goto('/#/projects');
+  await expect(page.getByRole('heading', { name: 'Projects', exact: true })).toBeVisible();
   await expect(page.getByText('SAMPLE: Does remote work')).toHaveCount(1);
+  // Again, from the menu, and ended halfway.
+  await page.getByText('More', { exact: true }).click();
+  await page.getByRole('button', { name: 'Take the tour' }).click();
+  await expect(bar).toContainText('five references');
+  await bar.getByRole('button', { name: 'End tour' }).click();
+  await expect(bar).toBeHidden();
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(1);
   expect(errors).toEqual([]);
+});
+
+test('front page: the bar is solid once the page has moved, so nothing shows through it', async ({ page }) => {
+  await mockRegistries(page);
+  await page.goto('/');
+  const bar = page.locator('header').first();
+  await expect(bar).toHaveAttribute('data-moved', 'false');
+  await page.mouse.wheel(0, 160);
+  await expect(bar).toHaveAttribute('data-moved', 'true');
+  await expect.poll(() => bar.evaluate((e) => Number((getComputedStyle(e).backgroundColor.match(/[\d.]+\)$/)?.[0] ?? '1)').replace(')', '')))).toBeGreaterThan(0.94);
+});
+
+test('how it works: plain page, readable on a phone', async ({ page }) => {
+  await mockRegistries(page);
+  await page.goto('/#/home');
+  await page.getByText('More', { exact: true }).click();
+  await page.getByRole('link', { name: 'How it works', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'How it works', exact: true })).toBeVisible();
+  for (const t of ['Three keys', 'Six steps', 'Six helpers', 'What the labels mean', 'Where your work is saved']) await expect(page.getByRole('heading', { name: t })).toBeVisible();
+  await axe(page, 'guide');
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(1);
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.getByText('More', { exact: true }).click();
+  await axe(page, 'more menu');
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('link', { name: 'House rules' })).toBeHidden();
+  // The words "Ctrl K" are gone. The shortcut still works.
+  await expect(page.getByText('Ctrl K')).toHaveCount(0);
 });
 
 test('evidence report downloads as one safe page', async ({ page }) => {

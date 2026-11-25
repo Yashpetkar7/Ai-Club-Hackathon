@@ -12,13 +12,16 @@ interface Item {
 }
 
 const PAGES: Item[] = [
+  { key: 'p-desk', label: 'Home', kind: 'Page', to: '/home' },
   { key: 'p-check', label: 'Check references', kind: 'Page', to: '/check' },
   { key: 'p-projects', label: 'Projects', kind: 'Page', to: '/projects' },
+  { key: 'p-guide', label: 'How it works', kind: 'Page', to: '/guide' },
   { key: 'p-lab', label: 'Integrity Lab', kind: 'Page', to: '/lab' },
   { key: 'p-rules', label: 'House rules', kind: 'Page', to: '/rules' },
+  { key: 'p-account', label: 'Account', kind: 'Page', to: '/account' },
   { key: 'p-home', label: 'Start page', kind: 'Page', to: '/' },
 ];
-const STEPS = ['Plan', 'Find', 'Library', 'Map', 'Evidence', 'Challenge', 'Ask', 'Write', 'Export'];
+const STEPS = ['Team', 'Plan', 'Find', 'Library', 'Read', 'Map', 'Evidence', 'Challenge', 'Ask', 'Write', 'Review', 'Export'];
 
 export function CommandPalette() {
   const dialog = useRef<HTMLDialogElement>(null);

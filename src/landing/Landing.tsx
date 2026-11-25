@@ -1,3 +1,4 @@
+import { useLiveQuery } from 'dexie-react-hooks';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { go, Link } from '@/app/router';
 import type { RawReference, ReferenceCheck } from '@/core/contracts';
@@ -7,6 +8,8 @@ import { checkReference } from '@/core/verify/verdict';
 import { EXAMPLES } from '@/fixtures/sample';
 import { HANDOFF } from '@/pages/Check';
 import { AGENTS, AI_LEVELS } from '@/policy/policy';
+import { addSource } from '@/store/actions';
+import { db } from '@/store/db';
 import { Receipt } from '@/ui/Receipt';
 import css from './Landing.module.css';
 import { LAMP_TITLES } from './titles';
@@ -128,8 +131,10 @@ export function Landing() {
   const [result, setResult] = useState<{ raw: RawReference; check: ReferenceCheck } | 'busy' | 'none' | null>(null);
   const [claim, setClaim] = useState<13 | 31>(31);
   const [level, setLevel] = useState(2);
-  const [touring, setTouring] = useState(false);
+  const [moved, setMoved] = useState(false);
   const run = useRef(0);
+  const latest = useLiveQuery(() => db.projects.orderBy('createdAt').last(), []);
+  const [savedTo, setSavedTo] = useState('');
 
   useEffect(() => {
     document.documentElement.dataset.theme = 'light';
@@ -139,6 +144,12 @@ export function Landing() {
   useEffect(() => {
     broken.current = claim === 31 ? 1 : 0;
   }, [claim]);
+  useEffect(() => {
+    const on = () => setMoved(window.scrollY > 12);
+    on();
+    window.addEventListener('scroll', on, { passive: true });
+    return () => window.removeEventListener('scroll', on);
+  }, []);
 
   const set = (i: number) => (el: HTMLElement | null) => {
     room.chapters.current[i] = el;
@@ -162,50 +173,10 @@ export function Landing() {
     }
     const mine = ++run.current;
     setResult('busy');
+    setSavedTo('');
     const c = await checkReference(raw, registries);
     if (run.current === mine) setResult({ raw, check: c });
   }
-
-  const scrollTo = useCallback(
-    (i: number) => {
-      const el = room.chapters.current[i];
-      if (!el) return;
-      const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const top = el.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({ top: i === 0 ? 0 : i === 5 ? top + 40 : top + el.offsetHeight / 2 - window.innerHeight / 2, behavior: still ? 'auto' : 'smooth' });
-    },
-    [room.chapters],
-  );
-
-  useEffect(() => {
-    if (!touring) return;
-    const steps: [number, () => void][] = [
-      [5000, () => scrollTo(0)],
-      [7000, () => scrollTo(1)],
-      [8000, () => scrollTo(2)],
-      [6500, () => { setClaim(31); scrollTo(3); }],
-      [5500, () => setClaim(13)],
-      [6000, () => { setLevel(2); scrollTo(4); }],
-      [4500, () => setLevel(0)],
-      [8000, () => scrollTo(5)],
-    ];
-    let i = 0;
-    let timer = 0;
-    const stop = () => setTouring(false);
-    const next = () => {
-      const s = steps[i++];
-      if (!s) return stop();
-      s[1]();
-      timer = window.setTimeout(next, s[0]);
-    };
-    next();
-    const ev = ['wheel', 'touchstart', 'keydown'] as const;
-    ev.forEach((n) => window.addEventListener(n, stop, { passive: true }));
-    return () => {
-      window.clearTimeout(timer);
-      ev.forEach((n) => window.removeEventListener(n, stop));
-    };
-  }, [touring, scrollTo]);
 
   const broke = claim === 31;
   return (
@@ -225,17 +196,17 @@ export function Landing() {
         </div>
       ))}
 
-      <header className={css.nav}>
+      <header className={css.nav} data-moved={moved}>
         <div className={css.gut}>
           <Link to="/" className={css.mark}>
             Paper Trail
           </Link>
           <nav aria-label="Main">
+            <Link to="/guide">How it works</Link>
             <Link to="/check">Check</Link>
             <Link to="/lab">Integrity Lab</Link>
-            <Link to="/rules">House rules</Link>
           </nav>
-          <Link to="/projects" className={css.btn}>
+          <Link to="/home" className={css.btn}>
             Open workspace
           </Link>
         </div>
@@ -295,6 +266,20 @@ export function Landing() {
                   {result === 'none' && <p className={css.small}>No reference found in that. Paste a DOI, a title or a full reference.</p>}
                   {result && typeof result === 'object' && (
                     <Receipt check={result.check} raw={result.raw} live>
+                      {latest ? (
+                        <button
+                          type="button"
+                          className="btn"
+                          disabled={!!savedTo}
+                          onClick={() => void addSource(latest.id, 'check', { raw: result.raw, check: result.check }).then(() => setSavedTo(latest.question))}
+                        >
+                          {savedTo ? `Saved to: ${savedTo.slice(0, 40)}` : `Save to: ${latest.question.slice(0, 40)}`}
+                        </button>
+                      ) : (
+                        <Link to="/projects" className="btn">
+                          Start a project to save this
+                        </Link>
+                      )}
                       <Link to="/check" className="btn">
                         Check a whole list
                       </Link>
@@ -309,8 +294,8 @@ export function Landing() {
                 </a>
                 . Titles under the lamp are real papers whose DOIs we resolved.
               </p>
-              <button type="button" className={css.tour} onClick={() => setTouring(!touring)}>
-                {touring ? 'Stop the tour' : 'Play the 60-second tour'}
+              <button type="button" className={css.tour} onClick={() => window.dispatchEvent(new Event('pt:tour'))}>
+                Play the 60-second tour
               </button>
             </div>
           </div>
@@ -454,7 +439,7 @@ export function Landing() {
               </ul>
             </div>
             <p className={css.foot}>
-              Team 1, SP Jain AI Club Hackathon 2026. Built with AI assistance; the prompt log is in the repository. Your library stays in this browser.
+              Team 1, SP Jain AI Club Hackathon 2026. Built with AI assistance; the prompt log is in the repository. Your library is locked before it is saved.
             </p>
           </div>
         </section>

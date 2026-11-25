@@ -74,7 +74,7 @@ describe('Challenger', () => {
   it.each([
     ['Working from home improves performance', 'Home working led to a rise in performance and gains in output', 'same'],
     ['Working from home improves performance', 'Productivity fell by a fifth among home workers', 'other'],
-    ['Working from home improves performance', 'We find no significant effect on output', 'other'],
+    ['Working from home improves performance', 'We find no significant effect of home working on output', 'other'],
     ['Working from home improves performance', 'Working from home did not improve performance', 'other'],
     ['Working from home improves performance', 'Hours rose while output per hour fell', 'unclear'],
     ['Working from home is common', 'Output increased', 'unclear'],
@@ -90,6 +90,16 @@ describe('Challenger', () => {
     ['Remote work improves employee productivity', 'Remote working has several benefits, including better productivity.', 'unclear'],
     ['ChatGPT improves student learning performance', 'We found that using ChatGPT does not present a significant impact on students\u2019 learning performance.', 'other'],
     ['Remote work improves employee productivity', 'Results show remote work had no significant negative impact on employee productivity.', 'unclear'],
+    ['ChatGPT improves student learning performance', 'These results imply that it either does not matter much for their test performance or is cancelled out by positive uses of AI in the aggregate.', 'unclear'],
+    ['ChatGPT improves student learning performance', 'The findings showed that students held a moderately positive view of ChatGPT.', 'unclear'],
+    ['ChatGPT improves student learning performance', 'We found little impact of ChatGPT on test scores.', 'other'],
+    ['Remote work improves employee productivity', 'Work discipline has a positive and significant effect on employee productivity, which is 66.70%.', 'unclear'],
+    ['ChatGPT improves student learning performance', 'The results show that activity-based learning improved students\u2019 performance.', 'unclear'],
+    ['Remote work improves employee productivity', 'Telework significantly increased productivity.', 'same'],
+    ['Working from home improves employee performance', 'Findings reveal that the impact of the WFH model on employee productivity and performance depend on a host of factors, with a majority reporting a positive impact and few documenting no difference or a negative impact.', 'unclear'],
+    ['Working from home improves employee performance', 'The results show that several aspects must be considered when designing a workspace at home so that employees improve their performance.', 'unclear'],
+    ['Working from home improves employee performance', 'The result of the study may provide a positive recommendation to improve employee performance when working from home.', 'unclear'],
+    ['Remote working improves employee performance', 'This study shows that Transformational Leadership has no significant impact on Employee Performance, and Remote Working has a significant impact on Employee Performance.', 'unclear'],
     ['Remote work improves employee productivity', 'The evidence shows that remote work boosts productivity and engagement.', 'same'],
     ['Remote work improves employee productivity', 'Results show that remote work reduced employee productivity.', 'other'],
   ] as const)('real wording: %s / %s is %s', (c, s, want) => expect(side(c, s)).toBe(want));
@@ -164,5 +174,15 @@ describe('source balance', () => {
   it('counts only what the records say', () => {
     const b = balance([src(), src({ record: rec({ year: 1999, container: 'J', openAccessUrl: 'https://x' }) }), src({ record: undefined as never })]);
     expect(b).toMatchObject({ total: 3, withRecord: 2, oldest: 1999, newest: 2023, openAccess: 1 });
+  });
+});
+
+describe('sentences', () => {
+  it('keeps positions when the space after a full stop is missing', async () => {
+    const { sentences } = await import('@/core/challenge/challenge');
+    const t = 'Remote rules halted the spread of COVID-19.Working at home adds stress for some people.Several studies show mixed results, e.g. in the U.S. economy.';
+    const out = sentences(t);
+    expect(out).toHaveLength(3);
+    for (const x of out) expect(t.slice(x.start, x.end)).toBe(x.text);
   });
 });

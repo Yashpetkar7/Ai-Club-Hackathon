@@ -11,7 +11,7 @@ const PAIRS: [string[], string[]][] = [
 const UP = new Set(PAIRS[0]![0]);
 const DOWN = new Set(PAIRS[0]![1]);
 const NEGATE = new Set(['no', 'not', 'never', 'without', 'nor', 'neither', 'cannot', 'didnt', 'doesnt', 'dont', 'isnt', 'wasnt', 'fails', 'failed', 'lack', 'insignificant']);
-const STOP = new Set('a an the and or of in on at to for from by with that this these those is are was were be been it its their they we our as than also can may might will would should could does do did has have had between among across into over under about how what which who when where while if then such both each most some any all very much many more less study studies paper research results findings find found show shows showed effect effects'.split(' '));
+const STOP = new Set('always never every everyone definitely clearly really simply significantly strongly generally often a an the and or of in on at to for from by with that this these those is are was were be been it its their they we our as than also can may might will would should could does do did has have had between among across into over under about how what which who when where while if then such both each most some any all very much many more less study studies paper research results findings find found show shows showed effect effects'.split(' '));
 const OPPOSITE: Record<string, string> = { improve: 'reduce', improves: 'reduces', improved: 'reduced', increase: 'decrease', increases: 'decreases', increased: 'decreased', raises: 'lowers', raised: 'lowered', boosts: 'harms', boosted: 'harmed', benefits: 'harms', better: 'worse', higher: 'lower', lifted: 'lowered', reduce: 'increase', reduces: 'increases', reduced: 'increased', decrease: 'increase', decreases: 'increases', decreased: 'increased', lowers: 'raises', lowered: 'raised', harms: 'benefits', worse: 'better', lower: 'higher' };
 
 export const contentWords = (s: string): string[] => tokens(s).filter((w) => w.length > 2 && !STOP.has(w) && !UP.has(w) && !DOWN.has(w) && !/^\d+$/.test(w));
@@ -31,12 +31,17 @@ export const isAim = (s: string): boolean =>
   /\b(this|the|our|present) (\w+ ){0,3}(study|paper|research|article|work|review|inquiry)\b[^.]{0,60}\b(investigat|examin|explor|aim|seek|evaluat|assess|analy[sz]|tries|attempt|stud(y|ies)|focus|review|identif)/i.test(s) ||
   /\b(aims?|purpose|objective|goal)s? (of|is|was|to)\b|\bwill (evaluate|examine|investigate|assess|explore)\b|\bwe (aim|seek|examine|investigate|explore|study)\b|\bthe question of\b|\b(whether|creating the question)\b/i.test(s) ||
   /^(purpose|objectives?|aims?|background)\b/i.test(s.trim()) ||
+  /\bwe report (on )?(the )?results of\b/i.test(s) ||
   /\bstud(y|ies) (investigated|examined|explored|assessed|evaluated)\b/i.test(s);
 
+/** Says what ought to be done, or that the answer depends. Neither side may claim it. */
+const ADVICE = /\b(must|should|need to|needs to|ought to) be\b|\bit is (important|recommended|suggested)\b|\bso that\b|\bgood idea\b|\brecommend(ed|ation|ations|s)?\b/i;
+const DEPENDS = /\bdepend(s|ed|ing)? (up)?on\b|\bvar(y|ies|ied) (by|across|with)\b|\bmixed (results|evidence|findings)\b|\binconclusive\b/i;
 const FINDING = /\b(results?|findings?|found|find|reveal(s|ed)?|show(s|ed|n)?|indicat(e|es|ed)|evidence|demonstrat(e|es|ed)|significant(ly)?|led to|conclude[sd]?|suggest(s|ed)?)\b/i;
 
 /** A past-tense result, a percentage or a reporting word. Without one, a sentence is background, not evidence. */
 const RESULT = /\b(rose|fell|improved|increased|decreased|declined|reduced|raised|lowered|worsened|harmed|enhanced|boosted|grew|dropped|did not|does not|no (significant )?(effect|difference|association|relationship|impact))\b|\d\s?%/i;
+export const RESULT_WORDS = RESULT;
 export const isFinding = (s: string): boolean => !isAim(s) && (FINDING.test(s) || RESULT.test(s));
 
 export interface SentenceAt { text: string; start: number; end: number }
@@ -44,7 +49,18 @@ export interface SentenceAt { text: string; start: number; end: number }
 /** Cuts text into sentences and keeps where each one sits, so a quote is always an exact slice. */
 export function sentences(text: string): SentenceAt[] {
   const out: SentenceAt[] = [];
-  const re = /[^.!?]+(?:[.!?](?!\s+[\p{Lu}"\u201c(]|\s*$)[^.!?]*)*[.!?]*/gu;
+  // Some registries drop the space after a full stop: "home.Working". A zero-width cut keeps every position right.
+  const cuts = [...text.matchAll(/[\p{Ll}\d)\]]{2}[.!?](?=\p{Lu}\p{Ll}+\s)/gu)].map((m) => m.index + m[0].length);
+  if (cuts.length) {
+    let from = 0;
+    for (const to of [...cuts, text.length]) {
+      out.push(...sentences(text.slice(from, to)).map((s) => ({ ...s, start: s.start + from, end: s.end + from })));
+      from = to;
+    }
+    return out;
+  }
+  // A sentence may end with a closing quote mark or bracket after its full stop.
+  const re = /[^.!?]+(?:[.!?](?!["\u201d\u2019)\]]*(?:\s+[\p{Lu}"\u201c(]|\s*$))[^.!?]*)*[.!?]*["\u201d\u2019)\]]*/gu;
   for (const m of text.matchAll(re)) {
     const lead = m[0].length - m[0].trimStart().length;
     const t = m[0].trim();
@@ -61,17 +77,20 @@ export function closestSentence(text: string, claim: string): (SentenceAt & { sc
   if (want.size < 2) return null;
   let best: (SentenceAt & { score: number }) | null = null;
   for (const s of sentences(text)) {
+    // A very long run is a badly stored abstract. It matches everything and says nothing.
+    if (s.text.length > 600) continue;
     const have = new Set(contentWords(s.text).map(stem));
     let hit = 0;
     for (const w of want) if (have.has(w)) hit++;
     const score = hit / want.size;
     // A finding beats a statement of purpose, even when the purpose repeats more of the words.
-    const rank = score + (isFinding(s.text) ? 0.25 : 0) - (isAim(s.text) ? 0.5 : 0);
+    const rank = score + (isFinding(s.text) ? 0.25 : 0) + (isFinding(s.text) && /\d\s?%/.test(s.text) ? 0.1 : 0) - (isAim(s.text) ? 0.5 : 0);
     if (hit >= 2 && score >= 0.34 && (!best || rank > best.score)) best = { ...s, score: rank };
   }
   return best;
 }
 
+const NULL_RESULT = /\b(does|did|do|may) not matter\b|\blittle (or no )?(effect|impact|difference|evidence)\b|\bcancell?ed out\b|\b(is|are|was|were) offset by\b|\bno better\b/i;
 const NO_EFFECT = /\b(no|not|nor|neither|without)\b[^.]{0,28}\b(significant(ly)?|measurable|clear)?\s*(effect|difference|association|relationship|impact|evidence)\b/i;
 
 export type Lean = 'up' | 'down' | 'none' | 'mixed';
@@ -91,6 +110,10 @@ export function lean(s: string, near?: Set<string>): Lean {
     else if (d > 0) up++;
     else down++;
   });
+  // "A has no significant impact and B has a significant impact" says two things about two subjects.
+  if (NO_EFFECT.test(s) && /\b(has|have|had|having) (a |an )?((positive|negative|strong|direct) )*(and )?significant(ly)? ((positive|negative|direct) )*(effect|impact|influence)/i.test(s)) return 'mixed';
+  // A null result beside a direction word is not support for either side.
+  if (NULL_RESULT.test(s)) return up || down ? 'mixed' : 'none';
   if (up && down) return 'mixed';
   if (up) return 'up';
   if (down) return 'down';
@@ -98,12 +121,48 @@ export function lean(s: string, near?: Set<string>): Lean {
   return noGain || NO_EFFECT.test(s) ? 'none' : 'mixed';
 }
 
+/** Words that can stand for the same outcome. Short on purpose. */
+const SAME_OUTCOME = ['performance', 'productivity', 'output', 'efficiency', 'grade', 'score', 'achievement', 'outcome', 'attainment'].map((w) => w.replace(/s$/, ''));
+
+/** What the claim says changed: the last subject word after its direction word. "Positive view of ChatGPT" is not better performance. */
+export function outcomeWords(claim: string): Set<string> {
+  const t = tokens(claim);
+  const at = t.findIndex((w) => UP.has(w) || DOWN.has(w));
+  const after = contentWords(t.slice(at + 1).join(' '));
+  const all = contentWords(claim);
+  const last = (at >= 0 && after.length ? after : all).at(-1);
+  if (!last) return new Set();
+  const s = stem(last);
+  return new Set(SAME_OUTCOME.map(stem).includes(s) ? SAME_OUTCOME.map(stem) : [s]);
+}
+
+/** Words too broad to say what a claim is about, when a sharper one stands beside them. */
+const BROAD = new Set(['work', 'working', 'use', 'using', 'tool', 'tools', 'system', 'systems', 'practice', 'practices', 'investing', 'investment', 'employee', 'employees', 'student', 'students']);
+const SAME_SUBJECT = [
+  ['remote', 'remotely', 'telework', 'teleworking', 'telecommuting', 'home', 'wfh', 'hybrid'],
+  ['chatgpt', 'genai', 'gai', 'generative', 'ai', 'gpt', 'llm', 'llms', 'chatbot', 'chatbots'],
+];
+
+/** True when the sentence is about what the claim is about. "Work discipline" is not "remote work". */
+export function sameSubject(claim: string, sentence: string): boolean {
+  const t = tokens(claim);
+  const at = t.findIndex((w) => UP.has(w) || DOWN.has(w));
+  const words = contentWords(t.slice(0, at < 0 ? t.length : at).join(' '));
+  const sharp = words.filter((w) => !BROAD.has(w));
+  const need = sharp.length ? sharp : words;
+  if (!need.length) return true;
+  const raw = new Set(tokens(sentence));
+  const have = new Set([...raw].map(stem));
+  const met = need.filter((w) => have.has(stem(w)) || SAME_SUBJECT.some((g) => g.includes(w) && g.some((x) => raw.has(x))));
+  return met.length >= Math.ceil(need.length * 0.6);
+}
+
 export type Side = 'same' | 'other' | 'unclear';
 
 export function side(claim: string, sentence: string): Side {
-  if (!isFinding(sentence)) return 'unclear';
+  if (!isFinding(sentence) || ADVICE.test(sentence) || DEPENDS.test(sentence) || !sameSubject(claim, sentence)) return 'unclear';
   const a = lean(claim);
-  const b = lean(sentence, new Set(contentWords(claim).map(stem)));
+  const b = lean(sentence, outcomeWords(claim));
   if (a === 'mixed' || b === 'mixed') return 'unclear';
   return a === b ? 'same' : 'other';
 }

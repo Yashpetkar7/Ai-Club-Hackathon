@@ -8,6 +8,8 @@ export function policyIssues(rec: RegistryRecord | undefined, policy: Policy = P
   if (policy.minYear && (rec.year ?? 0) < policy.minYear) out.push(rec.year ? `Published in ${rec.year}. House rules ask for ${policy.minYear} or later.` : `No year given. House rules ask for ${policy.minYear} or later.`);
   const type = TYPE_ALIAS[rec.type ?? ''] ?? rec.type;
   if (type && !policy.allowedTypes.includes(type)) out.push(`This is listed as "${type}", which house rules do not allow.`);
+  const concern = policy.flagConcerns ? rec.notices?.find((x) => x.kind === 'concern') : undefined;
+  if (concern) out.push(`The journal has published an expression of concern about this work${concern.on ? ` (${concern.on})` : ''}.`);
   if (policy.peerReviewedOnly && !PEER_REVIEWED.has(type ?? '')) out.push('House rules ask for journal or conference papers. This is not listed as one.');
   return out;
 }
@@ -24,7 +26,11 @@ export function policyLines(p: Policy = POLICY): string[] {
     p.minYear ? `Sources must be from ${p.minYear} or later.` : 'Sources may be from any year.',
     p.peerReviewedOnly ? 'Only journal and conference papers.' : 'Journal papers, conference papers, books, reports, preprints and web pages.',
     p.blockRetracted ? 'Retracted work is blocked unless you keep it with a written reason.' : 'Retracted work is flagged.',
+    p.flagConcerns ? 'A work under an expression of concern needs a written reason too. Corrections are shown.' : 'Expressions of concern and corrections are shown.',
+    p.draftCheck.copied ? 'Your draft can be compared with the sources in your own library, to find words that need quotation marks or a citation.' : 'The copied-text check is off.',
+    p.draftCheck.language ? 'A rule-based writing check may correct slips when you click. It is not AI and never rewrites a sentence.' : 'The writing check is off.',
     `At most ${p.maxAiCallsPerProject} AI calls per project.`,
+    'The AI level is your own declaration. The server refuses AI above it, and every change is logged. It prevents accidents. It does not police cheating.',
     `Keeping anything outside these rules needs a reason of at least ${p.overrideReasonMinChars} characters.`,
   ];
 }

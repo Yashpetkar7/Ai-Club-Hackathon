@@ -2,30 +2,23 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from '@/app/router';
 import type { StepProps } from '@/app/ProjectShell';
-import type { ReferenceCheck, RegistryRecord } from '@/core/contracts';
+import type { RegistryRecord } from '@/core/contracts';
+import { alreadyHave } from '@/core/library/duplicates';
+import { titleOf } from '@/core/cite/preflight';
 import { registries, searchPapers } from '@/core/registries';
 import { cleanTitle } from '@/core/verify/normalise';
 import { checkReference } from '@/core/verify/verdict';
 import { record as log } from '@/log/log';
 import { policyIssues } from '@/policy/apply';
-import { addSource } from '@/store/actions';
+import { addSource, skipSource } from '@/store/actions';
 import { db } from '@/store/db';
+import { hitCache, planKeyOf, type Hit } from '@/agents/team';
 import { PdfDrop } from '@/ui/PdfDrop';
 import { VerdictStamp } from '@/ui/Stamp';
 import css from './Find.module.css';
 
-interface Hit {
-  key: string;
-  record: RegistryRecord;
-  query: string;
-  check?: ReferenceCheck;
-  choice?: 'kept' | 'skipped';
-}
-
-const hitCache = new Map<string, { hits: Hit[]; notes: string[] }>();
-
 export function Find({ project }: StepProps) {
-  const planKey = `${project.id}|${project.plan?.approvedAt ?? ''}`;
+  const planKey = planKeyOf(project);
   const [hits, setHits] = useState<Hit[]>(hitCache.get(planKey)?.hits ?? []);
   const [notes, setNotes] = useState<string[]>(hitCache.get(planKey)?.notes ?? []);
   const [state, setState] = useState<'idle' | 'searching' | 'checking' | 'done' | 'failed'>(hitCache.has(planKey) ? 'done' : 'idle');
@@ -80,7 +73,7 @@ export function Find({ project }: StepProps) {
       while (next < list.length && runId.current === mine) {
         const h = list[next++]!;
         const rec = h.record;
-        const check = await checkReference({ raw: rec.title, title: rec.title, authors: rec.authors.slice(0, 6).map((a) => a.family), ...(rec.year ? { year: rec.year } : {}), ...(rec.doi ? { doi: rec.doi } : {}) }, registries);
+        const check = await checkReference({ raw: cleanTitle(rec.title), title: cleanTitle(rec.title), authors: rec.authors.slice(0, 6).map((a) => a.family), ...(rec.year ? { year: rec.year } : {}), ...(rec.doi ? { doi: rec.doi } : {}) }, registries);
         if (runId.current !== mine) return;
         setHits((cur) => cur.map((c) => (c.key === h.key ? { ...c, check: check.record ? { ...check, record: { ...check.record, abstract: check.record.abstract ?? rec.abstract } as RegistryRecord } : check } : c)));
       }
@@ -91,7 +84,7 @@ export function Find({ project }: StepProps) {
 
   async function keep(h: Hit) {
     if (!h.check) return;
-    await addSource(project.id, 'search', { record: h.record, check: h.check, approve: h.check.verdict === 'confirmed' && !policyIssues(h.record).length });
+    await addSource(project.id, 'search', { record: h.record, check: h.check, approve: h.check.verdict === 'confirmed' && !policyIssues(h.check.record ?? h.record).length });
     setHits((cur) => cur.map((c) => (c.key === h.key ? { ...c, choice: 'kept' } : c)));
   }
 
@@ -110,7 +103,7 @@ export function Find({ project }: StepProps) {
     <>
       <div className="stack">
         <h1>Find sources</h1>
-        <p className="soft">Every result came from a scholarly registry. The Checker then looks each one up again in a second registry before you decide.</p>
+        <p className="soft">Real papers from scholarly registries, each looked up twice. Keep the ones you want.</p>
       </div>
       <div className={css.bar} role="status" aria-live="polite">
         <strong>
@@ -141,6 +134,7 @@ export function Find({ project }: StepProps) {
         {hits.map((h) => {
           const isKept = h.choice === 'kept' || keptDois.has(h.record.doi);
           const abs = h.record.abstract ?? h.check?.record?.abstract;
+          const twin = isKept ? undefined : alreadyHave(h.check?.record ?? h.record, kept ?? []);
           return (
             <li key={h.key} className={`card ${css.hit}`} data-choice={isKept ? 'kept' : h.choice}>
               <div className="stack">
@@ -164,11 +158,12 @@ export function Find({ project }: StepProps) {
                     </button>
                   )}
                 </div>
-                {policyIssues(h.record).map((x) => (
+                {policyIssues(h.check?.record ?? h.record).map((x) => (
                   <p key={x} className={css.note}>
                     {x}
                   </p>
                 ))}
+                {twin && <p className={css.note}>You may already have this: {titleOf(twin)}{twin.record?.container ? `, ${twin.record.container}` : ''}.</p>}
                 {show === h.key && abs && <p className={css.abs}>{abs}</p>}
               </div>
               <div className={css.acts}>
@@ -183,7 +178,7 @@ export function Find({ project }: StepProps) {
                     <button className="btn main" type="button" disabled={!h.check} onClick={() => void keep(h)}>
                       Keep
                     </button>
-                    <button className="btn" type="button" onClick={() => setHits((c) => c.map((x) => (x.key === h.key ? { ...x, choice: 'skipped' } : x)))}>
+                    <button className="btn" type="button" onClick={() => { setHits((c) => c.map((x) => (x.key === h.key ? { ...x, choice: 'skipped' } : x))); void skipSource(project.id, h.record.title); }}>
                       Skip
                     </button>
                   </>

@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { continueAsGuest, currentSession } from '@/auth/accounts';
 import { registries } from '@/core/registries';
 import { parseReference } from '@/core/verify/parse';
 import { checkReference } from '@/core/verify/verdict';
 import { SAMPLE_TEXT } from '@/fixtures/sample';
 import { HANDOFF } from '@/pages/Check';
+import { CLAIM_HANDOFF } from '@/pages/Read';
 import { addSource, approvePlan, createProject } from '@/store/actions';
 import { db } from '@/store/db';
 import { go } from './router';
@@ -12,96 +14,159 @@ import css from './Tour.module.css';
 const SAMPLE_QUESTION = 'SAMPLE: Does remote work improve employee productivity?';
 const SAMPLE_DOIS = ['10.1093/qje/qju032', '10.1126/science.adh2586', '10.1038/s41598-023-41032-5'];
 
-/** One sample project, reused. Its sources are looked up live, so nothing in it is canned. */
+/** One sample project, reused. It is there at once, and its sources are looked up live while the first steps play. */
 async function sampleProject(): Promise<string> {
   const old = await db.projects.filter((p) => p.question === SAMPLE_QUESTION).first();
   const p = old ?? (await createProject(SAMPLE_QUESTION, 'apa', 1));
   if (!p.plan?.approvedAt) await approvePlan(p.id, { queries: ['remote work employee productivity'] });
+  return p.id;
+}
+async function fillSample(projectId: string): Promise<void> {
   await Promise.all(
     SAMPLE_DOIS.map(async (doi) => {
       const check = await checkReference(parseReference(doi), registries);
-      if (check.verdict === 'confirmed') await addSource(p.id, 'doi', { check, raw: { raw: doi, doi }, approve: true });
+      if (check.verdict === 'confirmed') await addSource(projectId, 'doi', { check, raw: { raw: doi, doi }, approve: true });
     }),
   );
-  return p.id;
 }
 
-interface Step {
-  say: string;
-  ms: number;
-  run: (ctx: { pid: string }) => void | Promise<void>;
-}
+interface Step { title: string; say: string; ms: number; run: (pid: string) => void | Promise<void> }
+
+const keep = (key: string, value: string): void => {
+  try {
+    sessionStorage.setItem(key, value);
+  } catch {
+    /* storage blocked: the page opens empty */
+  }
+};
 
 const STEPS: Step[] = [
-  { say: 'A polished paragraph with five references. Each one is being looked up in live registries. No AI takes part.', ms: 11000, run: () => { sessionStorage.setItem(HANDOFF, SAMPLE_TEXT); go('/projects'); setTimeout(() => go('/check'), 30); } },
-  { say: 'Two are real. One is retracted, one DOI belongs to another paper, and one is in no registry we searched.', ms: 9000, run: () => document.querySelector<HTMLElement>('[role="status"]')?.scrollIntoView({ block: 'center', behavior: 'smooth' }) },
-  { say: 'A project starts with a question and the AI level the assessment allows. You approve the searches first.', ms: 8000, run: (c) => go(`/p/${c.pid}/plan`) },
-  { say: 'These are real papers in a sample project. The map draws a line only where one paper really cites another or they share references.', ms: 9000, run: (c) => go(`/p/${c.pid}/map`) },
-  { say: 'The Challenger looks for evidence against you and shows the exact sentence.', ms: 9000, run: (c) => go(`/p/${c.pid}/challenge`) },
-  { say: 'The Integrity Lab tests our own checker in front of you.', ms: 7000, run: () => go('/lab') },
-  { say: 'House rules: who does what, and what nobody can do. That is the tour.', ms: 7000, run: () => go('/rules') },
+  {
+    title: 'Check references',
+    say: 'This paragraph has five references. Each one is being looked up in real library databases. No AI takes part.',
+    ms: 10_000,
+    run: () => {
+      keep(HANDOFF, SAMPLE_TEXT);
+      go('/projects');
+      setTimeout(() => go('/check'), 30);
+    },
+  },
+  { title: 'The verdicts', say: 'Two are real. One was retracted, one DOI belongs to another paper, and one is in no database we searched.', ms: 8000, run: () => document.querySelector<HTMLElement>('[role="status"]')?.scrollIntoView({ block: 'center', behavior: 'smooth' }) },
+  { title: '1. Plan', say: 'A project starts with your question. Nothing is searched until you approve the searches.', ms: 7000, run: (p) => go(`/p/${p}/plan`) },
+  { title: '3. Library', say: 'Papers you keep land here. A paper can be cited only when it was found, checked and approved by you.', ms: 8000, run: (p) => go(`/p/${p}/library`) },
+  {
+    title: '4. Evidence',
+    say: 'Type what you want to say. We show the exact sentence in the paper, or tell you it is not there.',
+    ms: 8000,
+    run: async (p) => {
+      const s = (await db.sources.where('projectId').equals(p).toArray()).find((x) => x.record?.doi === SAMPLE_DOIS[0]);
+      if (s) keep(CLAIM_HANDOFF, JSON.stringify({ sourceId: s.id, text: 'Home working led to a 13% performance increase.' }));
+      go(`/p/${p}/evidence`);
+    },
+  },
+  { title: '5. Write', say: 'You write it yourself. We add citations from your library and flag copied words and wrong quotations.', ms: 8000, run: (p) => go(`/p/${p}/write`) },
+  { title: '6. Export', say: 'Take your reference list in APA 7 or four other styles, with an honest statement of any AI you used.', ms: 7000, run: (p) => go(`/p/${p}/export`) },
+  { title: 'The agents', say: 'Nine helpers with one job each. They stop at three gates, and only you can open a gate.', ms: 7000, run: (p) => go(`/p/${p}/team`) },
 ];
 
+/** A guided minute on the real site. Scrolling or clicking pauses it. It never disappears on its own. */
 export function Tour() {
   const [at, setAt] = useState(-1);
+  const [paused, setPaused] = useState(false);
   const [pid, setPid] = useState('');
   const [note, setNote] = useState('');
+  const live = useRef(false);
+  live.current = at >= 0 && !paused;
 
   useEffect(() => {
     const start = () => {
-      setNote('Looking up the sample sources…');
-      setAt(-1);
+      // The tour is for anyone, so it uses the guest library when nobody is signed in.
+      if (currentSession().kind !== 'account') continueAsGuest();
+      setNote('');
+      setPaused(false);
       sampleProject()
         .then((id) => {
           setPid(id);
-          setNote('');
           setAt(0);
+          void fillSample(id).catch(() => undefined);
         })
-        .catch(() => setNote('The tour needs the registries, and none answered. Try again in a minute.'));
+        .catch(() => setNote('This browser is blocking storage, so the tour cannot make its sample project. You can still check references.'));
     };
     window.addEventListener('pt:tour', start);
     return () => window.removeEventListener('pt:tour', start);
   }, []);
 
   useEffect(() => {
-    if (at < 0) return;
-    const s = STEPS[at];
-    if (!s) {
-      setAt(-1);
-      return;
-    }
-    try {
-      void s.run({ pid });
-    } catch {
-      /* storage blocked: the page still opens */
-    }
-    const timer = setTimeout(() => setAt((c) => c + 1), s.ms);
-    const stop = (e: Event) => {
-      if (!(e.target instanceof Element && e.target.closest('[data-tour]'))) setAt(-1);
-    };
-    // Any touch, click, wheel or key outside the bar hands control back.
-    const names = ['pointerdown', 'wheel', 'keydown'] as const;
-    names.forEach((n) => window.addEventListener(n, stop, { passive: true }));
-    return () => {
-      clearTimeout(timer);
-      names.forEach((n) => window.removeEventListener(n, stop));
-    };
+    if (at < 0 || !pid) return;
+    void Promise.resolve(STEPS[at]?.run(pid)).catch(() => undefined);
   }, [at, pid]);
 
-  if (at < 0 && !note) return null;
-  return (
-    <aside className={css.bar} data-tour role="status" aria-live="polite" aria-label="Tour">
-      <span className="sample">SAMPLE</span>
-      <p>{note || STEPS[at]?.say}</p>
-      {at >= 0 && <span className={css.n}>{at + 1} of {STEPS.length}</span>}
-      {at >= 0 && (
-        <button className="btn" type="button" onClick={() => setAt((c) => c + 1)}>
-          Next
+  useEffect(() => {
+    if (at < 0 || paused) return;
+    const last = at === STEPS.length - 1;
+    const timer = setTimeout(() => (last ? setPaused(true) : setAt(at + 1)), STEPS[at]!.ms);
+    return () => clearTimeout(timer);
+  }, [at, paused]);
+
+  useEffect(() => {
+    const hold = (e: Event) => {
+      if (live.current && !(e.target instanceof Element && e.target.closest('[data-tour]'))) setPaused(true);
+    };
+    const names = ['pointerdown', 'wheel', 'keydown'] as const;
+    names.forEach((n) => window.addEventListener(n, hold, { passive: true }));
+    return () => names.forEach((n) => window.removeEventListener(n, hold));
+  }, []);
+
+  const close = () => {
+    setAt(-1);
+    setNote('');
+  };
+  if (note)
+    return (
+      <aside className={css.bar} data-tour role="status" aria-label="Tour">
+        <p>{note}</p>
+        <button className="btn" type="button" onClick={close}>
+          Close
         </button>
-      )}
-      <button className="btn" type="button" onClick={() => { setAt(-1); setNote(''); }}>
-        Stop
-      </button>
+      </aside>
+    );
+  const s = STEPS[at];
+  if (!s) return null;
+  const end = at === STEPS.length - 1;
+  return (
+    <aside className={css.bar} data-tour aria-label="Tour">
+      <div className={css.say} role="status" aria-live="polite">
+        <strong>
+          {s.title} <span className="sample">SAMPLE</span>
+        </strong>
+        <p>{s.say}</p>
+      </div>
+      <div className={css.acts}>
+        <span className={css.n}>
+          {at + 1} of {STEPS.length}
+        </span>
+        <button className="btn" type="button" disabled={at === 0} onClick={() => setAt(at - 1)}>
+          Previous
+        </button>
+        {end ? (
+          <button className="btn main" type="button" onClick={() => { close(); go('/projects'); }}>
+            Start my project
+          </button>
+        ) : (
+          <>
+            <button className="btn" type="button" aria-pressed={paused} onClick={() => setPaused(!paused)}>
+              {paused ? 'Resume' : 'Pause'}
+            </button>
+            <button className="btn main" type="button" onClick={() => setAt(at + 1)}>
+              Next
+            </button>
+          </>
+        )}
+        <button className="btn quiet" type="button" onClick={close}>
+          End tour
+        </button>
+      </div>
+      <span className={css.line} aria-hidden="true" key={`${at}${paused}`} data-run={!paused && !end} style={{ animationDuration: `${s.ms}ms` }} />
     </aside>
   );
 }

@@ -18,6 +18,8 @@ test('landing: says what it is, checks a reference, and 3D is optional', async (
   await expect(page.locator('[data-verdict="wrong-paper"]')).toContainText('The Race between Man and Machine', { timeout: 15_000 });
   expect(errors).toEqual([]);
 
+  await expect(page.getByRole('link', { name: 'Start a project to save this' })).toBeVisible();
+
   await page.goto('/?nogl');
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   await page.getByRole('button', { name: '13%' }).click();
@@ -76,20 +78,53 @@ test('journey: question, plan, gate 1, find, keep, library', async ({ page }) =>
   expect(errors).toEqual([]);
 });
 
-test('phone width: nothing scrolls sideways', async ({ page }) => {
-  await page.setViewportSize({ width: 375, height: 812 });
+test('OpenAlex down: nothing turns green, and Check again recovers', async ({ page }) => {
+  const errors = watchErrors(page);
   await mockRegistries(page);
-  for (const path of ['/?nogl', '/#/check', '/#/projects', '/#/rules', '/#/lab']) {
-    await page.goto(path);
-    await page.waitForTimeout(400);
-    const over = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-    expect(over, path).toBeLessThanOrEqual(1);
+  let up = false;
+  await page.route(/\/api\/registry\?url=https%3A%2F%2Fapi\.openalex\.org/, (r) => (up ? r.fallback() : r.fulfill({ status: 503, json: {} })));
+  await page.goto('/#/check');
+  await page.getByLabel('Text to check').fill('10.1126/science.adh2586');
+  await page.getByRole('button', { name: 'Check', exact: true }).click();
+  await expect(page.locator('article[data-verdict=one-registry]')).toContainText('a retraction could be missed', { timeout: 40_000 });
+  await expect(page.locator('.t-ok')).toHaveCount(0);
+  await axe(page, 'one registry');
+  up = true;
+  await page.getByRole('button', { name: 'Check again' }).last().click();
+  await expect(page.locator('article[data-verdict=confirmed]')).toBeVisible({ timeout: 20_000 });
+  expect(errors).toEqual([]);
+});
+
+test('phone and tablet width: nothing scrolls sideways', async ({ page }) => {
+  await mockRegistries(page);
+  for (const [width, height] of [[375, 812], [768, 1024], [1024, 768]] as const) {
+    await page.setViewportSize({ width, height });
+    for (const path of ['/?nogl', '/#/check', '/#/projects', '/#/rules', '/#/lab']) {
+      await page.goto(path);
+      await page.waitForTimeout(300);
+      const over = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+      expect(over, `${path} at ${width}`).toBeLessThanOrEqual(1);
+    }
+  }
+  await page.goto('/#/projects');
+  await page.getByLabel('What are you researching?').fill('Does remote work improve productivity?');
+  await page.getByRole('button', { name: 'Start project' }).click();
+  await expect(page.getByRole('heading', { name: 'Plan the search' })).toBeVisible();
+  const id = page.url().split('/p/')[1]!.split('/')[0];
+  for (const [width, height] of [[375, 812], [768, 1024], [1024, 768]] as const) {
+    await page.setViewportSize({ width, height });
+    for (const s of ['plan', 'find', 'library', 'map', 'evidence', 'challenge', 'ask', 'write', 'export']) {
+      await page.goto(`/#/p/${id}/${s}`);
+      await page.waitForTimeout(200);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth), `${s} at ${width}`).toBeLessThanOrEqual(1);
+    }
   }
 });
 
 test('dark theme keeps readable contrast', async ({ page }) => {
   await mockRegistries(page);
   await page.goto('/#/check');
+  await page.getByText('More', { exact: true }).click();
   await page.getByRole('button', { name: 'Lights off' }).click();
   await axe(page, 'check dark');
 });

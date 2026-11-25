@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from '@/app/router';
 import type { StepProps } from '@/app/ProjectShell';
 import { balance } from '@/core/report/balance';
+import { MissingPapers } from '@/pages/MissingPapers';
 import { buildGraph, layout } from '@/map/graph';
 import { db } from '@/store/db';
 import css from './Map.module.css';
@@ -137,6 +138,7 @@ export function MapPage({ project }: StepProps) {
               </tbody>
             </table>
           </div>
+          <MissingPapers project={project} sources={sources ?? []} />
           <section className="stack" aria-label="Source balance">
             <h2>Source balance</h2>
             <p>

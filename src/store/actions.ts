@@ -1,4 +1,5 @@
 import { exportable, VERDICT_TEXT, type AiLevel, type CitationStyle, type Project, type RawReference, type ReferenceCheck, type RegistryRecord, type SearchPlan, type Source, type SourceOrigin } from '@/core/contracts';
+import { cleanTitle } from '@/core/verify/normalise';
 import { record as log } from '@/log/log';
 import { sourceIssues } from '@/policy/apply';
 import { POLICY } from '@/policy/policy';
@@ -34,10 +35,9 @@ export async function approvePlan(projectId: string, plan: SearchPlan): Promise<
 /** Found by a registry turns the first key. Plain code turns the second. The student turns the third in approveSource. */
 export async function addSource(projectId: string, origin: SourceOrigin, input: { record?: RegistryRecord; raw?: RawReference; check?: ReferenceCheck; approve?: boolean; folder?: string }): Promise<Source> {
   const rec = input.check?.record ?? input.record;
-  if (rec?.doi) {
-    const dup = (await db.sources.where('projectId').equals(projectId).toArray()).find((s) => s.record?.doi === rec.doi);
-    if (dup) return dup;
-  }
+  const same = (s: Source): boolean => (rec?.doi ? s.record?.doi === rec.doi : rec ? s.record?.id === rec.id : origin === 'web' ? !!input.raw?.url && s.raw?.url === input.raw.url : !s.record && !!input.raw && s.raw?.raw === input.raw.raw);
+  const dup = (await db.sources.where('projectId').equals(projectId).toArray()).find(same);
+  if (dup) return dup;
   const s: Source = {
     id: newId(),
     projectId,
@@ -78,8 +78,33 @@ export async function removeSource(sourceId: string): Promise<void> {
   await log(s.projectId, 'student', 'source.removed', s.record?.title ?? s.raw?.raw.slice(0, 120) ?? sourceId);
 }
 
-export async function editSource(sourceId: string, patch: Pick<Partial<Source>, 'folder' | 'tags' | 'notes' | 'text' | 'textOrigin'>): Promise<void> {
+export async function editSource(sourceId: string, patch: Pick<Partial<Source>, 'folder' | 'tags' | 'notes' | 'text' | 'textOrigin' | 'citeTitle' | 'pdfPages'>): Promise<void> {
+  const s = await db.sources.get(sourceId);
+  if (!s) return;
+  // The student may fix capitals. Changing the words would cite a work that does not exist.
+  if (patch.citeTitle !== undefined && patch.citeTitle.toLowerCase() !== cleanTitle(s.record?.title ?? s.raw?.title ?? '').toLowerCase()) throw new Error('Only capital letters may change. The words must stay as the registry has them.');
   await db.sources.update(sourceId, patch);
+  const what = Object.keys(patch).filter((k) => k !== 'textOrigin' && k !== 'pdfPages').join(', ');
+  await log(s.projectId, 'student', 'source.edited', `${s.record?.title ?? s.raw?.raw.slice(0, 120) ?? sourceId} | ${what}`);
+}
+
+/** Ask the registries again. A worse answer takes the student's approval back, unless they wrote a reason. */
+export async function recheckSource(sourceId: string, check: ReferenceCheck): Promise<void> {
+  const s = await db.sources.get(sourceId);
+  if (!s) return;
+  const rec = check.record ?? s.record;
+  const checked = check.verdict === 'confirmed';
+  const keys = { found: !!rec, checked, approved: s.keys.approved && (checked || !!s.keptWithReason) };
+  await db.sources.update(sourceId, { check, keys, ...(rec ? { record: rec } : {}), ...(!s.text && rec?.abstract ? { text: rec.abstract, textOrigin: 'abstract' as const } : {}) });
+  await log(s.projectId, 'code', 'source.rechecked', `${rec?.title ?? s.raw?.raw.slice(0, 120)} [${VERDICT_TEXT[check.verdict].label}]`);
+}
+
+/** A source the student looked at and left out. */
+export const skipSource = (projectId: string, title: string): Promise<unknown> => log(projectId, 'student', 'source.skipped', title);
+
+/** What the student did with suggestions from an AI. Counts for the AI-use statement come only from these entries. */
+export async function recordAiDecision(projectId: string, task: 'plan' | 'read' | 'challenge', d: { kept: string[]; changed: string[]; rejected: string[] }): Promise<void> {
+  await log(projectId, 'student', `ai.${task}.decided`, JSON.stringify(d));
 }
 
 /** What may be cited: all three keys, or kept with a written reason (shown as such). */

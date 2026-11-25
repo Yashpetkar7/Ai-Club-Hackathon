@@ -66,6 +66,41 @@ export function titleContained(short: string, long: string): boolean {
   return false;
 }
 
+const SMALL = new Set('a an the and or of in on at to for from by with without as is are be its their into via versus vs'.split(' '));
+
+/** Edits between two words. Small differences are spelling. "Increase" and "decrease" are not, so the first letter must agree. */
+function near(a: string, b: string): boolean {
+  if (a === b) return true;
+  if (a[0] !== b[0]) return false;
+  const max = Math.min(a.length, b.length) >= 6 ? 2 : 1;
+  if (Math.abs(a.length - b.length) > max || Math.min(a.length, b.length) < 4) return false;
+  let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    const row = [i];
+    for (let j = 1; j <= b.length; j++) row[j] = Math.min(prev[j]! + 1, row[j - 1]! + 1, prev[j - 1]! + (a[i - 1] === b[j - 1] ? 0 : 1));
+    prev = row;
+  }
+  return prev[b.length]! <= max;
+}
+
+/**
+ * Words the student's title has and the registry's does not. Leaving out a subtitle is common and fine.
+ * Adding one turns a real paper into one that does not exist, so it never counts as the same title.
+ */
+export function addedWords(given: string, registry: string, also = ''): string[] {
+  const left = tokens(cleanTitle(registry).replace(/-/g, ' '));
+  const joined = left.join('');
+  // A journal or author that ran on into the title when we read the reference is not an invented word.
+  const other = new Set(tokens(also));
+  const out: string[] = [];
+  for (const w of tokens(cleanTitle(given).replace(/-/g, ' '))) {
+    const i = left.findIndex((x) => near(w, x));
+    if (i >= 0) left.splice(i, 1);
+    else if (!SMALL.has(w) && !other.has(w) && !/^\d+$/.test(w) && !(w.length >= 5 && joined.includes(w))) out.push(w);
+  }
+  return out;
+}
+
 /**
  * True when the registry title appears word for word inside free text.
  * Used only when we could not work out which words are the title. Short titles never count:

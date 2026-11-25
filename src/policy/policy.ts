@@ -9,13 +9,15 @@ export const POLICY: Policy = {
   minYear: null,
   peerReviewedOnly: false,
   blockRetracted: true,
+  flagConcerns: true,
+  draftCheck: { copied: true, language: true },
   maxAiCallsPerProject: 40,
   overrideReasonMinChars: 12,
   thresholds: { titleMatch: 0.9, titlePossible: 0.75, yearTolerance: 1, supportVerified: 0.9, contradiction: 0.9 },
   styles: ['apa', 'harvard', 'mla', 'chicago', 'ieee'],
 };
 
-export type AgentId = 'planner' | 'scout' | 'checker' | 'reader' | 'quote-guard' | 'challenger' | 'clerk';
+export type AgentId = 'planner' | 'scout' | 'checker' | 'analyst' | 'reader' | 'quote-guard' | 'challenger' | 'reviewer' | 'clerk';
 
 export interface AgentSpec {
   id: AgentId;
@@ -31,9 +33,11 @@ export const AGENTS: AgentSpec[] = [
   { id: 'planner', name: 'Planner', kind: 'ai', minLevel: 1, does: 'Turns your question into search terms.', cannot: 'See or write references.' },
   { id: 'scout', name: 'Scout', kind: 'code', minLevel: 0, does: 'Queries scholarly registries.', cannot: 'Generate text.' },
   { id: 'checker', name: 'Checker', kind: 'code', minLevel: 0, does: 'Compares every field and issues the verdict.', cannot: 'Be overruled by AI.' },
+  { id: 'analyst', name: 'Analyst', kind: 'code', minLevel: 0, does: 'Sorts a paper\u2019s own sentences into aim, method, findings and limits.', cannot: 'Write a sentence of its own.' },
   { id: 'reader', name: 'Reader', kind: 'ai', minLevel: 2, does: 'Points at passages in sources you kept.', cannot: 'Return words that are not in the source.' },
   { id: 'quote-guard', name: 'Quote guard', kind: 'code', minLevel: 0, does: 'Rejects any quote that is not an exact match.', cannot: 'Let a paraphrase through as a quote.' },
   { id: 'challenger', name: 'Challenger', kind: 'ai', minLevel: 3, does: 'Looks for evidence against you and flags overclaims.', cannot: 'Edit or delete your claims.' },
+  { id: 'reviewer', name: 'Reviewer', kind: 'code', minLevel: 0, does: 'Reads the whole project, compares your draft with your sources, and lists what a marker could question.', cannot: 'Approve your work.' },
   { id: 'clerk', name: 'Clerk', kind: 'code', minLevel: 0, does: 'Formats references and writes the AI-use statement from the log.', cannot: 'Include anything missing a key.' },
 ];
 

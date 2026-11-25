@@ -19,7 +19,7 @@ interface Item {
   saved?: boolean;
 }
 
-const ORDER: Verdict[] = ['confirmed', 'details-differ', 'wrong-paper', 'retracted', 'not-found', 'could-not-check'];
+const ORDER: Verdict[] = ['confirmed', 'one-registry', 'details-differ', 'wrong-paper', 'retracted', 'not-found', 'could-not-check'];
 export const HANDOFF = 'pt-check-text';
 
 export function Check() {
@@ -77,6 +77,13 @@ export function Check() {
     }
   }
 
+  async function again(it: Item) {
+    const mine = run.current;
+    setItems((cur) => cur?.map((c) => (c.id === it.id ? { id: c.id, ref: c.ref } : c)) ?? cur);
+    const check = await checkReference(it.ref, registries);
+    if (run.current === mine) setItems((cur) => cur?.map((c) => (c.id === it.id ? { ...c, check } : c)) ?? cur);
+  }
+
   async function save(it: Item) {
     const pid = projectId || projects[0]?.id;
     if (!pid || !it.check) return;
@@ -92,7 +99,7 @@ export function Check() {
     <main className="wrap page" id="main" tabIndex={-1}>
       <div className="stack">
         <h1>Check references</h1>
-        <p className="soft">Paste a paragraph, a reference list, BibTeX, RIS or a DOI. Every reference is looked up in Crossref, OpenAlex, DataCite and doi.org. No AI takes part in this check.</p>
+        <p className="soft">Paste a paragraph, a reference list or a DOI. We look each one up in Crossref and OpenAlex and tell you which are real. No AI takes part.</p>
       </div>
 
       <form
@@ -190,6 +197,11 @@ export function Check() {
             <div className={css.side}>
               {current?.check ? (
                 <Receipt key={current.id} check={current.check} raw={current.ref} live>
+                  {(current.check.verdict === 'one-registry' || current.check.verdict === 'could-not-check') && (
+                    <button className="btn main" type="button" onClick={() => void again(current)}>
+                      Check again
+                    </button>
+                  )}
                   {projects.length > 0 ? (
                     <>
                       <button className="btn" type="button" disabled={current.saved} onClick={() => void save(current)}>

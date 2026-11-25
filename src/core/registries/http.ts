@@ -28,29 +28,53 @@ async function takeTurn(lane: keyof typeof lanes | string): Promise<void> {
   if (at > now) await sleep(at - now);
 }
 
-let proxy: Promise<boolean> | null = null;
-/** True when our own server answers. Asked once per page load. */
-export function hasServer(): Promise<boolean> {
-  proxy ??= fetch('/api/health', { signal: AbortSignal.timeout(1500) })
-    .then(async (r) => r.ok && (await r.json()).ok === true)
-    .catch(() => false);
-  return proxy;
+let health: Promise<{ ok: boolean; noAi: boolean }> | null = null;
+/** Our own server's answer about itself. Asked once per page load. */
+function serverHealth(): Promise<{ ok: boolean; noAi: boolean }> {
+  health ??= fetch('/api/health', { signal: AbortSignal.timeout(1500) })
+    .then(async (r) => {
+      const j = r.ok ? await r.json() : {};
+      return { ok: j.ok === true, noAi: j.ok === true && j.ai === false };
+    })
+    .catch(() => ({ ok: false, noAi: false }));
+  return health;
+}
+export const hasServer = async (): Promise<boolean> => (await serverHealth()).ok;
+/** True only when the server has said it has no AI key. */
+export const hasNoAi = async (): Promise<boolean> => (await serverHealth()).noAi;
+
+let asking = 0;
+/** Asks the registries again instead of using answers from earlier today. */
+export async function withFreshAnswers<T>(run: () => Promise<T>): Promise<T> {
+  asking++;
+  try {
+    return await run();
+  } finally {
+    asking--;
+  }
 }
 
 async function once(url: string): Promise<Response> {
   if (await hasServer()) {
-    const viaServer = await fetch(`/api/registry?url=${encodeURIComponent(url)}`, { signal: AbortSignal.timeout(15000) });
+    const viaServer = await fetch(`/api/registry?url=${encodeURIComponent(url)}${asking ? '&fresh=1' : ''}`, { signal: AbortSignal.timeout(15000) });
     if (viaServer.status !== 502 && viaServer.status !== 403) return viaServer;
   }
   return fetch(url, { signal: AbortSignal.timeout(12000) });
 }
 
+/** A registry that says "come back in three hours" is believed, so the next search falls back at once. */
+const closedUntil = new Map<string, number>();
+const bucketOf = (url: string, lane: string): string => (/[?&]search=/.test(url) ? `${lane}:search` : lane);
+export const resetClosed = (): void => closedUntil.clear();
+
 /** Returns the JSON body, or null when the registry says the thing does not exist (404 or 410). */
 export async function getJson<T>(url: string, lane: string): Promise<T | null> {
-  if (cache.has(url)) {
+  if (!asking && cache.has(url)) {
     const v = cache.get(url);
     return v === MISSING ? null : (v as T);
   }
+  const bucket = bucketOf(url, lane);
+  if ((closedUntil.get(bucket) ?? 0) > Date.now()) throw new RegistryError('its free daily limit is used up');
   let last = 'no answer';
   for (let attempt = 0; attempt < 3; attempt++) {
     await takeTurn(lane);
@@ -67,8 +91,14 @@ export async function getJson<T>(url: string, lane: string): Promise<T | null> {
       }
       last = `HTTP ${res.status}`;
       if (res.status !== 429 && res.status < 500) break;
+      const wait = Number(res.headers.get('retry-after')) || 0;
+      if (res.status === 429 && wait > 20) {
+        closedUntil.set(bucket, Date.now() + Math.min(wait, 6 * 3600) * 1000);
+        throw new RegistryError('its free daily limit is used up');
+      }
       await sleep(Math.min(8000, (Number(res.headers.get('retry-after')) || 1.2 * (attempt + 1)) * 1000));
     } catch (e) {
+      if (e instanceof RegistryError) throw e;
       last = e instanceof Error && e.name === 'TimeoutError' ? 'timed out' : 'network error';
       await sleep(500 * (attempt + 1));
     }

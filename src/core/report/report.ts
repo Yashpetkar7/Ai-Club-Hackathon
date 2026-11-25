@@ -1,4 +1,5 @@
 import { CLAIM_TEXT, REASON_TEXT, VERDICT_TEXT, type Claim, type LogEvent, type Project, type Source } from '@/core/contracts';
+import { pageText } from '@/core/pdf/pages';
 import { cleanTitle } from '@/core/verify/normalise';
 import { verifyChain } from '@/log/log';
 import { citable } from '@/store/actions';
@@ -18,16 +19,17 @@ export async function buildReport(d: ReportData): Promise<string> {
     const v = s.check ? VERDICT_TEXT[s.check.verdict].label : 'Not checked';
     const why = s.check?.reasons.map((x) => REASON_TEXT[x]).join(' ') ?? '';
     const doi = r?.doi && /^10\.\d{4,9}\/[^\s"'<>]+$/.test(r.doi) ? `<a href="https://doi.org/${esc(encodeURI(r.doi))}" rel="noreferrer">${esc(r.doi)}</a>` : '';
-    return `<tr><td>${esc(r ? cleanTitle(r.title) : (s.raw?.title ?? s.raw?.raw ?? 'Untitled'))}<br><small>${esc([r?.authors.map((a) => a.family).join(', '), r?.year, r?.container].filter(Boolean).join(' · '))} ${doi}</small></td><td><b>${esc(v)}</b><br><small>${esc(why)}</small></td><td>${esc([s.keys.found && 'found', s.keys.checked && 'checked', s.keys.approved && 'approved'].filter(Boolean).join(', ') || 'none')}</td><td>${citable(s) ? 'yes' : 'no'}${s.keptWithReason ? `<br><small>Kept by the student: ${esc(s.keptWithReason)}</small>` : ''}</td></tr>`;
+    const later = [...(r?.notices ?? []).map((x) => `${x.label}${x.on ? ` (${x.on})` : ''}`), ...(s.retractedRefs?.items.length ? [`Cites retracted work: ${s.retractedRefs.items.map((x) => x.title).join('; ')}`] : [])].join('. ');
+    return `<tr><td>${esc(r ? cleanTitle(r.title) : (s.raw?.title ?? s.raw?.raw ?? 'Untitled'))}<br><small>${esc([r?.authors.map((a) => a.family).join(', '), r?.year, r?.container].filter(Boolean).join(' · '))} ${doi}</small></td><td><b>${esc(v)}</b><br><small>${esc(why)}${later ? `<br>${esc(later)}` : ''}</small></td><td>${esc([s.keys.found && 'found', s.keys.checked && 'checked', s.keys.approved && 'approved'].filter(Boolean).join(', ') || 'none')}</td><td>${citable(s) ? 'yes' : 'no'}${s.keptWithReason ? `<br><small>Kept by the student: ${esc(s.keptWithReason)}</small>` : ''}</td></tr>`;
   }).join('');
   const byId = new Map(d.sources.map((s) => [s.id, s]));
-  const claims = d.claims.map((c) => `<tr>${cell(c.text)}<td><b>${esc(CLAIM_TEXT[c.label].label)}</b><br><small>${esc(c.reasons.map((x) => REASON_TEXT[x]).join(' '))}</small></td><td>${c.passage ? `&ldquo;${esc(c.passage.text)}&rdquo;<br><small>${esc(byId.get(c.passage.sourceId)?.record?.title)}</small>` : 'No passage'}</td><td>${esc(c.decision ?? 'not decided')}${c.keptWithReason ? `<br><small>${esc(c.keptWithReason)}</small>` : ''}</td></tr>`).join('');
+  const claims = d.claims.map((c) => `<tr>${cell(c.text)}<td><b>${esc(CLAIM_TEXT[c.label].label)}</b><br><small>${esc(c.reasons.map((x) => REASON_TEXT[x]).join(' '))}</small></td><td>${c.passage ? `&ldquo;${esc(c.passage.text)}&rdquo;<br><small>${esc([byId.get(c.passage.sourceId)?.record?.title, c.passage.page ? pageText({ ...c.passage, page: c.passage.page }) : ''].filter(Boolean).join(' · '))}</small>` : 'No passage'}</td><td>${esc(c.decision ?? 'not decided')}${c.keptWithReason ? `<br><small>${esc(c.keptWithReason)}</small>` : ''}</td></tr>`).join('');
   const un = d.sources.filter((s) => !s.check || s.check.verdict === 'could-not-check').length;
   const noText = d.sources.filter((s) => !s.text).length;
   const ai = d.log.filter((e) => e.actor === 'ai');
   const not = [
     'Whether any source is correct. Verified means the source says it.',
-    'Plagiarism, and whether the writing is the student\u2019s own.',
+    'Text copied from anywhere outside the student\u2019s library, and whether the writing is the student\u2019s own.',
     un ? `${un} source(s) could not be checked or were never checked.` : '',
     noText ? `${noText} source(s) had no text we could read, so claims about them were not compared with their words.` : '',
     d.sources.some((s) => s.textOrigin === 'abstract') ? 'Where only an abstract was available, only the abstract was read.' : '',

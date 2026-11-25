@@ -9,7 +9,7 @@ export type AiLevel = 0 | 1 | 2 | 3;
 export type RegistryName = 'crossref' | 'openalex' | 'datacite' | 'doi.org';
 
 /** Verdict on whether a reference is real. Only code in core/verify may create one. */
-export type Verdict = 'confirmed' | 'details-differ' | 'wrong-paper' | 'retracted' | 'not-found' | 'could-not-check';
+export type Verdict = 'confirmed' | 'one-registry' | 'details-differ' | 'wrong-paper' | 'retracted' | 'not-found' | 'could-not-check';
 
 /** Label on a claim. Only code in core/claims may create one. */
 export type ClaimLabel = 'verified' | 'reported' | 'ai-reasoning' | 'disputed' | 'not-found';
@@ -25,6 +25,7 @@ export type ReasonCode =
   | 'NO_MATCH_IN_REGISTRIES'
   | 'RETRACTED'
   | 'REGISTRY_UNREACHABLE'
+  | 'SECOND_REGISTRY_UNREACHABLE'
   | 'NOT_ENOUGH_TO_SEARCH'
   | 'QUOTE_NOT_IN_SOURCE'
   | 'NUMBER_MISMATCH'
@@ -53,6 +54,16 @@ export interface Author {
   given?: string;
 }
 
+/** Something the journal or Retraction Watch published about a work after it came out. Read from Crossref. */
+export interface Notice {
+  kind: 'retraction' | 'concern' | 'correction';
+  label: string;
+  on?: string;
+  /** DOI of the notice itself. */
+  doi?: string;
+  by: 'publisher' | 'retraction-watch';
+}
+
 /** A record that came from a registry. The only thing a citation may be built from. */
 export interface RegistryRecord {
   registry: RegistryName;
@@ -61,6 +72,8 @@ export interface RegistryRecord {
   title: string;
   authors: Author[];
   year?: number;
+  /** Year of the printed issue. A paper online in 2014 and in a 2015 issue is cited as 2015. */
+  printYear?: number;
   container?: string;
   volume?: string;
   issue?: string;
@@ -75,6 +88,9 @@ export interface RegistryRecord {
   openalexId?: string;
   retracted: boolean;
   retractedOn?: string;
+  notices?: Notice[];
+  /** DOIs the publisher says are another version of this work, for example its preprint. */
+  versions?: string[];
 }
 
 export interface FieldDiff {
@@ -120,6 +136,8 @@ export interface Project {
   createdAt: string;
   /** Gate 1. Set when the student approves the search plan. */
   plan?: SearchPlan;
+  /** Pairs of source ids the student said are different works. */
+  notTheSame?: string[];
 }
 
 export interface SearchPlan {
@@ -141,9 +159,15 @@ export interface Source {
   folder?: string;
   tags: string[];
   notes: string;
+  /** The title with its capitals corrected by the student. Only letter case may differ from the registry. */
+  citeTitle?: string;
   /** Plain text we are allowed to read: abstract, open full text, or the student's own PDF. */
   text?: string;
   textOrigin?: 'abstract' | 'fulltext' | 'pdf' | 'web';
+  /** Pages in the student's PDF, so a quote can say where it is. */
+  pdfPages?: number;
+  /** Retracted works in this source's own reference list, and when we asked. */
+  retractedRefs?: { at: string; items: { id: string; title: string; doi?: string; year?: number }[] };
   /** Set when the student keeps a flagged source. Shown on every export. */
   keptWithReason?: string;
   addedAt: string;
@@ -155,6 +179,11 @@ export interface Passage {
   text: string;
   start: number;
   end: number;
+  /** Page of the PDF, and the printed page when both agree. Missing for abstracts. */
+  page?: number;
+  to?: number;
+  printed?: number;
+  printedTo?: number;
 }
 
 export interface ClaimChecks {
@@ -201,6 +230,10 @@ export interface Policy {
   minYear: number | null;
   peerReviewedOnly: boolean;
   blockRetracted: boolean;
+  /** A work under an expression of concern needs a written reason, like a retracted one. */
+  flagConcerns: boolean;
+  /** Checks on the student's own draft. Rule-based, no AI. */
+  draftCheck: { copied: boolean; language: boolean };
   maxAiCallsPerProject: number;
   overrideReasonMinChars: number;
   thresholds: {
@@ -225,6 +258,7 @@ export interface LabelText {
 
 export const VERDICT_TEXT: Record<Verdict, LabelText> = {
   confirmed: { label: 'Confirmed', tone: 'ok', mark: '✓', plain: 'A registry has this exact work.' },
+  'one-registry': { label: 'One registry only', tone: 'mute', mark: '1', plain: 'One registry has this exact work. The second did not answer, so a retraction could be missed. Check again before you rely on it.' },
   'details-differ': { label: 'Details differ', tone: 'warn', mark: '≠', plain: 'The work is real, but something you wrote does not match the registry.' },
   'wrong-paper': { label: 'Wrong paper', tone: 'bad', mark: '⇄', plain: 'The DOI is real and belongs to a different work.' },
   retracted: { label: 'Retracted', tone: 'bad', mark: '✕', plain: 'The publisher has withdrawn this work.' },
@@ -250,6 +284,7 @@ export const REASON_TEXT: Record<ReasonCode, string> = {
   NO_MATCH_IN_REGISTRIES: 'No registry we searched has a matching work.',
   RETRACTED: 'The publisher has retracted this work.',
   REGISTRY_UNREACHABLE: 'A registry did not answer.',
+  SECOND_REGISTRY_UNREACHABLE: 'The second registry did not answer.',
   NOT_ENOUGH_TO_SEARCH: 'There is not enough here to search with. Add a title or a DOI.',
   QUOTE_NOT_IN_SOURCE: 'These words are not in the source.',
   NUMBER_MISMATCH: 'A number does not match the source.',

@@ -10,7 +10,7 @@
     "prepare": "node scripts/setup-hooks.mjs",
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
-    "start": "vite build && node server/start.mjs",
+    "start": "vite build && node --disable-warning=ExperimentalWarning server/start.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",

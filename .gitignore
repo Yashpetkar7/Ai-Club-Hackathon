@@ -14,3 +14,6 @@ test-results
 *Rules_and_Regulations*.pdf
 # organisers' documents: not ours to republish
 docs/official/
+
+# Locked libraries saved by the server
+/data/

@@ -67,7 +67,7 @@ export function Projects() {
 
       <section className="stack" aria-label="Your projects">
         {projects === undefined && <p className="soft">Opening your library…</p>}
-        {projects?.length === 0 && <p className="soft">No projects yet. They stay in this browser and are never uploaded.</p>}
+        {projects?.length === 0 && <p className="soft">No projects yet.</p>}
         {projects?.map((p) => (
           <Link key={p.id} to={`/p/${p.id}/${p.plan?.approvedAt ? 'library' : 'plan'}`} className={`card ${css.item}`}>
             <strong>{p.question}</strong>

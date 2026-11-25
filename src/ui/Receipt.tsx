@@ -72,6 +72,25 @@ export function Receipt({ check, raw, children, live }: { check: ReferenceCheck;
           Retracted{r.retractedOn ? ` on ${r.retractedOn}` : ''}.{r.citedBy ? ` OpenAlex counts ${r.citedBy} citations to it.` : ''}
         </p>
       )}
+      {!!r?.notices?.length && (
+        <ul className={css.notices} aria-label="Published about this work later">
+          {r.notices.map((x) => (
+            <li key={`${x.kind}${x.doi ?? x.on ?? ''}`} data-kind={x.kind}>
+              <strong>{x.label}</strong>
+              {x.on ? `, ${x.on}` : ''}
+              {x.by === 'retraction-watch' ? ', from Retraction Watch' : ', from the publisher'}
+              {x.doi && (
+                <>
+                  {'. '}
+                  <a href={`https://doi.org/${x.doi}`} target="_blank" rel="noreferrer">
+                    Read the notice
+                  </a>
+                </>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
       <p className={css.asked}>
         {asked.map((x, i) => (
           <span key={x.registry}>

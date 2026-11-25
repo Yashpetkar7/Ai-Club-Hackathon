@@ -2,22 +2,11 @@ import { useState } from 'react';
 import { go } from '@/app/router';
 import type { StepProps } from '@/app/ProjectShell';
 import { askAi, SearchPhrases } from '@/core/aiClient';
+import { suggestQueries } from '@/core/suggest';
 import { record as log } from '@/log/log';
 import { agentAllowed } from '@/policy/policy';
-import { approvePlan } from '@/store/actions';
+import { approvePlan, recordAiDecision } from '@/store/actions';
 import css from './Plan.module.css';
-
-const STOP = new Set('a an the and or of in on at to for from by with without about into is are was were be been being do does did how what why when which who whom whose can could should would will may might must have has had it its this that these those there their they them we our you your i my me as than then so if not no yes also more most less least'.split(' '));
-
-/** A first guess made by plain code, so level 0 works too. The Planner agent can improve on it at level 1 and above. */
-export function suggestQueries(question: string): string[] {
-  const words = question.replace(/[^\p{L}\p{N}\s'-]/gu, ' ').split(/\s+/).filter(Boolean);
-  const key = words.filter((w) => !STOP.has(w.toLowerCase()));
-  const base = key.join(' ');
-  const out = [base];
-  if (key.length >= 2) out.push(`${base} meta-analysis`, `${base} limitations criticism`);
-  return [...new Set(out.filter(Boolean))];
-}
 
 export function Plan({ project }: StepProps) {
   const [queries, setQueries] = useState<string[]>(project.plan?.queries ?? suggestQueries(project.question));
@@ -25,6 +14,7 @@ export function Plan({ project }: StepProps) {
   const [error, setError] = useState('');
   const [note, setNote] = useState('');
   const [busy, setBusy] = useState(false);
+  const [fromAi, setFromAi] = useState<string[]>([]);
   const mayAsk = agentAllowed('planner', project.aiLevel);
 
   async function suggest() {
@@ -34,6 +24,7 @@ export function Plan({ project }: StepProps) {
     setBusy(false);
     if (r.ok && r.data.queries.length) {
       setQueries((cur) => [...new Set([...cur.filter(Boolean), ...r.data.queries])].slice(0, 5));
+      setFromAi((cur) => [...new Set([...cur, ...r.data.queries])]);
       setNote(`Suggested by AI (${r.model}). Change or remove anything before you approve.`);
       return;
     }
@@ -51,6 +42,10 @@ export function Plan({ project }: StepProps) {
     }
     try {
       await approvePlan(project.id, { queries, ...(fromYear ? { fromYear: y } : {}) });
+      if (fromAi.length) {
+        const final = queries.map((q) => q.trim());
+        await recordAiDecision(project.id, 'plan', { kept: fromAi.filter((q) => final.includes(q)), changed: [], rejected: fromAi.filter((q) => !final.includes(q)) });
+      }
       go(`/p/${project.id}/find`);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not save the plan.');

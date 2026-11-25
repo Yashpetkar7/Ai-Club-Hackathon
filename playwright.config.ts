@@ -7,5 +7,5 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
   use: { baseURL: 'http://127.0.0.1:5199', channel: process.env.PW_CHANNEL ?? 'chrome', trace: 'retain-on-failure' },
-  webServer: { command: 'npx vite --host 127.0.0.1 --port 5199 --strictPort', url: 'http://127.0.0.1:5199', reuseExistingServer: true, timeout: 60_000 },
+  webServer: { command: 'npx vite --host 127.0.0.1 --port 5199 --strictPort', url: 'http://127.0.0.1:5199', reuseExistingServer: true, timeout: 60_000, env: { DATA_DIR: 'test-results/e2e-data' } },
 });
