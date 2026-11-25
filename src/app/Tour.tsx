@@ -25,7 +25,7 @@ async function fillSample(projectId: string): Promise<void> {
   await Promise.all(
     SAMPLE_DOIS.map(async (doi) => {
       const check = await checkReference(parseReference(doi), registries);
-      if (check.verdict === 'confirmed') await addSource(projectId, 'doi', { check, raw: { raw: doi, doi }, approve: true });
+      if (check.verdict === 'confirmed') await addSource(projectId, 'doi', { check, raw: { raw: doi, doi } });
     }),
   );
 }
@@ -53,7 +53,7 @@ const STEPS: Step[] = [
   },
   { title: 'The verdicts', say: 'Two are real. One was retracted, one DOI belongs to another paper, and one is in no database we searched.', ms: 8000, run: () => document.querySelector<HTMLElement>('[role="status"]')?.scrollIntoView({ block: 'center', behavior: 'smooth' }) },
   { title: '1. Plan', say: 'A project starts with your question. Nothing is searched until you approve the searches.', ms: 7000, run: (p) => go(`/p/${p}/plan`) },
-  { title: '3. Library', say: 'Papers you keep land here. A paper can be cited only when it was found, checked and approved by you.', ms: 8000, run: (p) => go(`/p/${p}/library`) },
+  { title: '3. Library', say: 'These papers were found and checked. They wait for you: nothing can be cited until you press Approve.', ms: 8000, run: (p) => go(`/p/${p}/library`) },
   {
     title: '4. Evidence',
     say: 'Type what you want to say. We show the exact sentence in the paper, or tell you it is not there.',
@@ -65,7 +65,7 @@ const STEPS: Step[] = [
     },
   },
   { title: '5. Write', say: 'You write it yourself. We add citations from your library and flag copied words and wrong quotations.', ms: 8000, run: (p) => go(`/p/${p}/write`) },
-  { title: '6. Export', say: 'Take your reference list in APA 7 or four other styles, with an honest statement of any AI you used.', ms: 7000, run: (p) => go(`/p/${p}/export`) },
+  { title: '6. Export', say: 'Only sources you approved come out, in APA 7 or four other styles, with an honest statement of any AI you used.', ms: 7000, run: (p) => go(`/p/${p}/export`) },
   { title: 'The agents', say: 'Nine helpers with one job each. They stop at three gates, and only you can open a gate.', ms: 7000, run: (p) => go(`/p/${p}/team`) },
 ];
 

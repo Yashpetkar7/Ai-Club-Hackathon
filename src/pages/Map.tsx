@@ -6,6 +6,7 @@ import { balance } from '@/core/report/balance';
 import { MissingPapers } from '@/pages/MissingPapers';
 import { buildGraph, layout } from '@/map/graph';
 import { db } from '@/store/db';
+import { SourceStamp } from '@/ui/Stamp';
 import css from './Map.module.css';
 
 export function MapPage({ project }: StepProps) {
@@ -73,6 +74,10 @@ export function MapPage({ project }: StepProps) {
     shared: graph.shared.filter((s) => s.a === n.id || s.b === n.id).map((s) => `${name(s.a === n.id ? s.b : s.a)!.who} (${s.count})`),
   }));
   const sel = rows.find((r) => r.n.id === picked);
+  const mark = (id: string) => {
+    const source = sources?.find((x) => x.id === id);
+    return source ? <SourceStamp s={source} /> : null;
+  };
 
   return (
     <>
@@ -105,6 +110,7 @@ export function MapPage({ project }: StepProps) {
           {sel && (
             <div className={`card ${css.sel}`} role="status">
               <strong>{sel.n.title}</strong>
+              {mark(sel.n.id)}
               <span className="soft">
                 {sel.n.who} · {sel.n.year ?? 'year not stated'} {sel.n.doi && (<a href={`https://doi.org/${sel.n.doi}`} target="_blank" rel="noreferrer">Open the source</a>)}
               </span>
@@ -128,7 +134,7 @@ export function MapPage({ project }: StepProps) {
                       <button type="button" className={css.pick} onClick={() => setPicked(r.n.id)} aria-pressed={picked === r.n.id}>
                         {r.n.title}
                       </button>
-                      {r.n.flagged && <small> Flagged</small>}
+                      {mark(r.n.id)} {r.n.flagged && <small>Flagged</small>}
                     </th>
                     <td>{r.cites.join(', ') || 'none here'}</td>
                     <td>{r.by.join(', ') || 'none here'}</td>

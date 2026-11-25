@@ -262,8 +262,8 @@ export const VERDICT_TEXT: Record<Verdict, LabelText> = {
   'details-differ': { label: 'Details differ', tone: 'warn', mark: '≠', plain: 'The work is real, but something you wrote does not match the registry.' },
   'wrong-paper': { label: 'Wrong paper', tone: 'bad', mark: '⇄', plain: 'The DOI is real and belongs to a different work.' },
   retracted: { label: 'Retracted', tone: 'bad', mark: '✕', plain: 'The publisher has withdrawn this work.' },
-  'not-found': { label: 'Not found', tone: 'mute', mark: '?', plain: 'None of the registries we searched has it. Some real books and regional journals are not indexed.' },
-  'could-not-check': { label: 'Could not check', tone: 'mute', mark: '…', plain: 'A registry did not answer, so this is neither a pass nor a fail.' },
+  'not-found': { label: 'Not found', tone: 'mute', mark: '?', plain: 'This could not be verified. None of the registries we searched has it. Some real books and regional journals are not indexed.' },
+  'could-not-check': { label: 'Could not check', tone: 'mute', mark: '…', plain: 'This could not be verified. A registry did not answer, so it is neither a pass nor a fail.' },
 };
 
 export const CLAIM_TEXT: Record<ClaimLabel, LabelText> = {

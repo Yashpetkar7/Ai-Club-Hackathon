@@ -14,7 +14,7 @@ import { record as log } from '@/log/log';
 import { agentAllowed } from '@/policy/policy';
 import { editSource } from '@/store/actions';
 import { db } from '@/store/db';
-import { VerdictStamp } from '@/ui/Stamp';
+import { AiMark, VerdictStamp } from '@/ui/Stamp';
 import css from './Read.module.css';
 
 /** Carries a sentence to Evidence, where it is checked like any other claim. */
@@ -188,6 +188,7 @@ function One({ project, sources }: StepProps & { sources: Source[] }) {
               {typeof ai === 'string' && <p className="soft" role="status">{ai}</p>}
               {ai && typeof ai !== 'string' && (
                 <div className={`card ${css.aiBox}`}>
+                  <AiMark />
                   <p className="soft">Chosen by number by {ai.model}. The words are the paper’s.</p>
                   {ai.lines.map((l) => (
                     <blockquote key={l}>“{l}”</blockquote>

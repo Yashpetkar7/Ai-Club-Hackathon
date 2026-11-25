@@ -1,0 +1,7 @@
+.legend { background: var(--sheet); border: 1px solid var(--line); padding: 10px 14px; min-width: 0; }
+.legend summary { cursor: pointer; font-weight: 600; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 18px 32px; padding: 14px 0 6px; }
+.legend h2 { font-size: 1.1rem; margin-bottom: 10px; }
+.legend dl { margin: 0; display: grid; gap: 12px; }
+.legend dl > div { display: grid; gap: 4px; }
+.legend dd { margin: 0; color: var(--soft); font-size: 0.92rem; }

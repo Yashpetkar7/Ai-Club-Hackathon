@@ -6,6 +6,7 @@ import { Find } from '@/pages/Find';
 import { Plan } from '@/pages/Plan';
 import { setAiLevel } from '@/store/actions';
 import { db } from '@/store/db';
+import { Legend } from '@/ui/Legend';
 import css from './ProjectShell.module.css';
 import { Link } from './router';
 
@@ -150,6 +151,7 @@ export function ProjectShell({ projectId, step }: { projectId: string; step: str
         <Suspense fallback={<p className="soft">Loading…</p>}>
           <Page project={project} />
         </Suspense>
+        <Legend />
         <nav className={css.nextprev} aria-label="Steps">
           {before ? (
             <Link to={`/p/${project.id}/${before.key}`} className="btn">

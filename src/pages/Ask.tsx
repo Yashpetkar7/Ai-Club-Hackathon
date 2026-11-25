@@ -12,7 +12,7 @@ import { record as log } from '@/log/log';
 import { agentAllowed } from '@/policy/policy';
 import { recordAiDecision } from '@/store/actions';
 import { db } from '@/store/db';
-import { VerdictStamp } from '@/ui/Stamp';
+import { AiMark, SourceStamp, VerdictStamp } from '@/ui/Stamp';
 import css from './Ask.module.css';
 
 interface Line { text: string; source: Source }
@@ -131,10 +131,12 @@ export function Ask({ project }: StepProps) {
           {answer!.ai && (
             <div className="stack">
               <h3>Also pointed at by AI ({answer!.ai.model})</h3>
+              <AiMark />
               <p className="soft">These are exact sentences from your sources. The AI chose them by number.</p>
               {answer!.ai.lines.map((l) => (
                 <article key={l.text} className={`card ${css.group}`} data-choice={decided[l.text]}>
                   <blockquote>“{l.text}”</blockquote>
+                  <SourceStamp s={l.source} />
                   <p className={css.who}>
                     <strong>{titleOf(l.source)}</strong>
                     <br />

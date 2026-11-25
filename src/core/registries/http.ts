@@ -31,7 +31,7 @@ async function takeTurn(lane: keyof typeof lanes | string): Promise<void> {
 let health: Promise<{ ok: boolean; noAi: boolean }> | null = null;
 /** Our own server's answer about itself. Asked once per page load. */
 function serverHealth(): Promise<{ ok: boolean; noAi: boolean }> {
-  health ??= fetch('/api/health', { signal: AbortSignal.timeout(1500) })
+  health ??= fetch('/api/health', { signal: AbortSignal.timeout(4000) })
     .then(async (r) => {
       const j = r.ok ? await r.json() : {};
       return { ok: j.ok === true, noAi: j.ok === true && j.ai === false };
@@ -57,7 +57,8 @@ export async function withFreshAnswers<T>(run: () => Promise<T>): Promise<T> {
 async function once(url: string): Promise<Response> {
   if (await hasServer()) {
     const viaServer = await fetch(`/api/registry?url=${encodeURIComponent(url)}${asking ? '&fresh=1' : ''}`, { signal: AbortSignal.timeout(15000) });
-    if (viaServer.status !== 502 && viaServer.status !== 403) return viaServer;
+    // A busy shared server address is no reason to stop: the student's own connection may still be allowed.
+    if (![502, 403, 429].includes(viaServer.status)) return viaServer;
   }
   return fetch(url, { signal: AbortSignal.timeout(12000) });
 }

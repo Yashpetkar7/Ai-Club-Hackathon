@@ -13,6 +13,7 @@ import { record as log } from '@/log/log';
 import { AiStatement } from '@/pages/AiStatement';
 import { setStyle } from '@/store/actions';
 import { db } from '@/store/db';
+import { SourceStamp } from '@/ui/Stamp';
 import css from './Export.module.css';
 
 export function Export({ project }: StepProps) {
@@ -81,6 +82,7 @@ export function Export({ project }: StepProps) {
             {p.blocked.map((b) => (
               <li key={b.source.id}>
                 <strong>{titleOf(b.source)}</strong>
+                <SourceStamp s={b.source} />
                 <span>{b.why.join(' ')}</span>
               </li>
             ))}
@@ -144,12 +146,23 @@ export function Export({ project }: StepProps) {
             <div className={css.sheet} aria-label="Reference list preview">
               <h2>{LIST_HEADING[style]}</h2>
               {!out && !failed && <p className="soft">Formatting…</p>}
-              {out?.entries.map((e) => (
-                <p key={e.id} className={css.entry} data-numbered={!!e.label}>
-                  {e.label && <span className={css.num}>{e.label}</span>}
-                  {e.runs.map((r, i) => (r.italic ? <i key={i}>{r.text}</i> : r.bold ? <b key={i}>{r.text}</b> : <span key={i}>{r.text}</span>))}
-                </p>
-              ))}
+              {out?.entries.map((e) => {
+                const s = list.find((x) => x.id === e.id);
+                return (
+                  <div key={e.id} className={css.row}>
+                    <p className={css.entry} data-numbered={!!e.label}>
+                      {e.label && <span className={css.num}>{e.label}</span>}
+                      {e.runs.map((r, i) => (r.italic ? <i key={i}>{r.text}</i> : r.bold ? <b key={i}>{r.text}</b> : <span key={i}>{r.text}</span>))}
+                    </p>
+                    {s && (
+                      <span className={css.trust}>
+                        <SourceStamp s={s} /> {s.keptWithReason ? 'Kept with your reason' : 'Approved by you'}
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+              <p className={css.trust}>The labels are for you. They are not in the list you copy or download.</p>
               {notes.length > 0 && (
                 <div className={css.notes}>
                   <h3>Notes on sources</h3>

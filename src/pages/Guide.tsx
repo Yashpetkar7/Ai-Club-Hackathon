@@ -1,5 +1,6 @@
 import { Link } from '@/app/router';
-import { CLAIM_TEXT, VERDICT_TEXT, type ClaimLabel, type Verdict } from '@/core/contracts';
+import { CLAIM_TEXT, VERDICT_TEXT } from '@/core/contracts';
+import { LABELS, VERDICTS } from '@/ui/Legend';
 import { ClaimStamp, VerdictStamp } from '@/ui/Stamp';
 import css from './Guide.module.css';
 
@@ -20,8 +21,6 @@ const HELPERS: [string, string][] = [
   ['Challenge', 'Looks for evidence against your claim.'],
   ['Review', 'Lists what a marker could question before you hand in.'],
 ];
-const VERDICTS: Verdict[] = ['confirmed', 'one-registry', 'details-differ', 'wrong-paper', 'retracted', 'not-found', 'could-not-check'];
-const LABELS: ClaimLabel[] = ['verified', 'reported', 'disputed', 'ai-reasoning', 'not-found'];
 
 export function Guide() {
   return (
@@ -119,7 +118,7 @@ export function Guide() {
         <h2>Where your work is saved</h2>
         <ul className={css.list}>
           <li>As a guest: in this browser only.</li>
-          <li>With an account: in this browser, and as a locked copy on our server so you can sign in on another computer. It is locked with your passphrase before it leaves, so we cannot read it.</li>
+          <li>With an account: in this browser. Where this site has a server that saves, also as a locked copy there, so you can sign in on another computer. It is locked with your passphrase before it leaves, so we cannot read it.</li>
           <li>We cannot reset a passphrase, because we never have it. Keep a backup file from your account page.</li>
         </ul>
       </section>

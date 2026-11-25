@@ -1,6 +1,7 @@
 .area { min-height: 168px; resize: vertical; line-height: 1.55; }
 .empty { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px 32px; }
 .empty > div { display: grid; gap: 6px; align-content: start; }
+.given { overflow-wrap: anywhere; min-width: 0; }
 .note { padding: 22px 24px; display: grid; gap: 8px; }
 .tally { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; }
 .tally strong { margin-right: 8px; }

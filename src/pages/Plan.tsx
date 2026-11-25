@@ -6,6 +6,7 @@ import { suggestQueries } from '@/core/suggest';
 import { record as log } from '@/log/log';
 import { agentAllowed } from '@/policy/policy';
 import { approvePlan, recordAiDecision } from '@/store/actions';
+import { AiMark } from '@/ui/Stamp';
 import css from './Plan.module.css';
 
 export function Plan({ project }: StepProps) {
@@ -68,6 +69,7 @@ export function Plan({ project }: StepProps) {
             <button className="btn quiet" type="button" onClick={() => setQueries((c) => c.filter((_, k) => k !== i))} aria-label={`Remove search ${i + 1}`}>
               Remove
             </button>
+            {fromAi.includes(q) && <AiMark />}
           </li>
         ))}
       </ol>

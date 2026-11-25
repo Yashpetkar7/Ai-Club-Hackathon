@@ -9,7 +9,8 @@ import { SAMPLE_NOTE, SAMPLE_TEXT } from '@/fixtures/sample';
 import { addSource } from '@/store/actions';
 import { db } from '@/store/db';
 import { Receipt } from '@/ui/Receipt';
-import { Stamp, VerdictStamp } from '@/ui/Stamp';
+import { Legend } from '@/ui/Legend';
+import { NotVerified, Stamp, VerdictStamp } from '@/ui/Stamp';
 import css from './Check.module.css';
 
 interface Item {
@@ -26,6 +27,7 @@ export function Check() {
   const [text, setText] = useState('');
   const [items, setItems] = useState<Item[] | null>(null);
   const [orphans, setOrphans] = useState<string[]>([]);
+  const [given, setGiven] = useState('');
   const [running, setRunning] = useState(false);
   const [open, setOpen] = useState<number | null>(null);
   const [isSample, setIsSample] = useState(false);
@@ -56,6 +58,7 @@ export function Check() {
     const x = extractReferences(input);
     const list: Item[] = x.references.slice(0, 60).map((ref, id) => ({ id, ref }));
     setOrphans(x.orphanCitations);
+    setGiven(input.trim());
     setItems(list);
     setOpen(null);
     if (!list.length) return;
@@ -159,8 +162,12 @@ export function Check() {
 
       {items?.length === 0 && (
         <section className={`card ${css.note}`} role="status">
-          <h2>No references found in that text</h2>
-          <p className="soft">We looked for DOIs, reference lists, BibTeX and RIS. Paste the reference list itself, or one title on its own line.</p>
+          <div className="row">
+            <NotVerified />
+            <strong className={css.given}>{given.length > 160 ? `${given.slice(0, 160)}…` : given}</strong>
+          </div>
+          <h2>This could not be verified</h2>
+          <p className="soft">A name or a few words is not enough to look up, so nothing here counts as real. Give a full title, a DOI or the whole reference.</p>
           {orphans.length > 0 && <p>These citations have no reference to check: {orphans.join('; ')}.</p>}
         </section>
       )}
@@ -179,7 +186,7 @@ export function Check() {
           </div>
           {orphans.length > 0 && (
             <p className={css.orphans}>
-              Cited in the text with no entry in the list: <strong>{orphans.join('; ')}</strong>
+              <NotVerified /> Cited in the text with no entry in the list: <strong>{orphans.join('; ')}</strong>
             </p>
           )}
           <div className={css.split}>
@@ -231,6 +238,7 @@ export function Check() {
           </div>
         </section>
       )}
+      {items !== null && <Legend />}
       <p className="soft">
         “Not found” does not mean fake. <Link to="/rules">See what we can and cannot check</Link>.
       </p>
