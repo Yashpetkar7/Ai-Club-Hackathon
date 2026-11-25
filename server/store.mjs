@@ -78,7 +78,8 @@ export async function openStore(dir = resolve(process.env.DATA_DIR ?? 'data'), p
     let store = null;
     if (prefer !== 'files') {
       try {
-        const { DatabaseSync } = await import('node:sqlite');
+        // Asked for at run time, not imported: older Node versions and test tools do not know this module.
+        const { DatabaseSync } = process.getBuiltinModule('node:sqlite');
         store = sqliteStore(DatabaseSync, dir);
       } catch {
         store = null;
