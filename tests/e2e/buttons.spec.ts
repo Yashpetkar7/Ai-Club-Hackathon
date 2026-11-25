@@ -129,7 +129,7 @@ async function act(page: Page, n: number): Promise<{ name: string; did: string }
 test('every control on every page does something', async ({ browser, page }) => {
   const id = await prepare(page);
   const state = await page.context().storageState({ indexedDB: true });
-  const routes = ['/', '/home', '/projects', '/check', '/lab', '/rules', '/account', '/signin', ...['team', 'plan', 'find', 'library', 'read', 'map', 'evidence', 'challenge', 'ask', 'write', 'review', 'export'].map((s) => `/p/${id}/${s}`)];
+  const routes = ['/', '/home', '/projects', '/check', '/lab', '/rules', '/guide', '/account', '/signin', ...['team', 'plan', 'find', 'library', 'read', 'map', 'evidence', 'challenge', 'ask', 'write', 'review', 'export'].map((s) => `/p/${id}/${s}`)];
   const open = async (): Promise<{ ctx: BrowserContext; p: Page; errors: string[] }> => {
     const ctx = await browser.newContext({ storageState: state, baseURL: 'http://127.0.0.1:5199', viewport: { width: 1366, height: 900 } });
     const p = await ctx.newPage();
@@ -148,6 +148,8 @@ test('every control on every page does something', async ({ browser, page }) => 
       await p.goto(`/#${r}`);
       await p.waitForSelector(r === '/' ? 'h1' : 'main h1', { timeout: 20_000 });
       await p.waitForTimeout(r === '/' ? 900 : 350);
+      // The menu is opened once, so what is in it is clicked too.
+      if (r === '/home') await p.getByText('More', { exact: true }).click();
       if (r.endsWith('/write')) { await p.getByRole('button', { name: 'Check my draft' }).click(); await p.getByText(/about your sources/).waitFor(); }
       if (r.endsWith('/map')) { await p.getByRole('button', { name: 'Show them' }).click(); await p.getByRole('region', { name: 'Papers you may be missing' }).getByRole('button', { name: 'Keep' }).first().waitFor(); await p.waitForTimeout(900); }
       if (r.endsWith('/library')) { await p.locator('main ul > li > button').first().click(); await p.waitForTimeout(150); }

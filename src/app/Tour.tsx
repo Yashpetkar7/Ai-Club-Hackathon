@@ -51,7 +51,7 @@ const STEPS: Step[] = [
       setTimeout(() => go('/check'), 30);
     },
   },
-  { title: 'The verdicts', say: 'Two are real. One was retracted, one DOI belongs to another paper, and one was not found anywhere.', ms: 8000, run: () => document.querySelector<HTMLElement>('[role="status"]')?.scrollIntoView({ block: 'center', behavior: 'smooth' }) },
+  { title: 'The verdicts', say: 'Two are real. One was retracted, one DOI belongs to another paper, and one is in no database we searched.', ms: 8000, run: () => document.querySelector<HTMLElement>('[role="status"]')?.scrollIntoView({ block: 'center', behavior: 'smooth' }) },
   { title: '1. Plan', say: 'A project starts with your question. Nothing is searched until you approve the searches.', ms: 7000, run: (p) => go(`/p/${p}/plan`) },
   { title: '3. Library', say: 'Papers you keep land here. A paper can be cited only when it was found, checked and approved by you.', ms: 8000, run: (p) => go(`/p/${p}/library`) },
   {
