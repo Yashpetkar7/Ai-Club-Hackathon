@@ -33,7 +33,7 @@ export function Read({ project }: StepProps) {
     <>
       <div className="stack">
         <h1>Read and compare</h1>
-        <p className="soft">The Analyst sorts a paper’s own sentences into what it asked, did, found and left open. Every line is the paper’s exact words. It writes nothing, so it cannot add a finding.</p>
+        <p className="soft">A paper’s own sentences, sorted into what it asked, did, found and left open. Nothing here is written by AI.</p>
       </div>
       {sources.length === 0 ? (
         <div className={`card ${css.empty}`}>

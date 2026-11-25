@@ -1,7 +1,7 @@
 import Dexie, { type EntityTable } from 'dexie';
 import type { Claim, LogEvent, Project, Source } from '@/core/contracts';
 
-/** Everything stays in this browser. Nothing here is ever uploaded. Each account has a library of its own. */
+/** The working copy, in this browser. Each account has a library of its own. Only a locked copy ever leaves, see src/auth/cloud.ts. */
 export class PaperTrailDb extends Dexie {
   projects!: EntityTable<Project, 'id'>;
   sources!: EntityTable<Source, 'id'>;

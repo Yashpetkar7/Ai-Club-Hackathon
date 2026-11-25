@@ -111,7 +111,7 @@ export function Challenge({ project }: StepProps) {
     <>
       <div className="stack">
         <h1>Challenge a claim</h1>
-        <p className="soft">We search for evidence against you as hard as for you, and show the exact sentence from each paper. Plain code reads the direction from word choice, and only in sentences that report a result. It is a pointer to read, not a verdict.</p>
+        <p className="soft">We look for evidence against your claim as hard as for it, and show the exact sentences. It is a pointer, not a verdict.</p>
       </div>
       <form className="stack" onSubmit={(e) => void start(e)}>
         <label htmlFor="challenge-claim">

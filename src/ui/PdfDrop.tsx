@@ -56,7 +56,7 @@ export function PdfDrop({ projectId, onBusy, onAdded }: { projectId: string; onB
         onDrop={(e) => { e.preventDefault(); setOver(false); void take(e.dataTransfer.files); }}
       >
         <label htmlFor={id}>
-          <strong>Already have a PDF?</strong> <span className="soft">Drop it here or choose it. It is read on this device and never uploaded.</span>
+          <strong>Already have a PDF?</strong> <span className="soft">Drop it here or choose it. The file is read on this device and not uploaded.</span>
         </label>
         <input id={id} type="file" accept="application/pdf,.pdf" multiple disabled={!!busy} onChange={(e) => { void take(e.target.files); e.target.value = ''; }} />
         <p role="status" className="soft">{busy}</p>

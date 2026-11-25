@@ -15,6 +15,7 @@ const PAGES: Item[] = [
   { key: 'p-desk', label: 'Home', kind: 'Page', to: '/home' },
   { key: 'p-check', label: 'Check references', kind: 'Page', to: '/check' },
   { key: 'p-projects', label: 'Projects', kind: 'Page', to: '/projects' },
+  { key: 'p-guide', label: 'How it works', kind: 'Page', to: '/guide' },
   { key: 'p-lab', label: 'Integrity Lab', kind: 'Page', to: '/lab' },
   { key: 'p-rules', label: 'House rules', kind: 'Page', to: '/rules' },
   { key: 'p-account', label: 'Account', kind: 'Page', to: '/account' },

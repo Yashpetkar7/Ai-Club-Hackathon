@@ -92,7 +92,7 @@ export function Library({ project }: StepProps) {
     <>
       <div className="stack">
         <h1>Library</h1>
-        <p className="soft">A source can be cited when it was found, checked and approved. You can keep a flagged one, with a reason that stays on every export.</p>
+        <p className="soft">A source can be cited when it was found, checked and approved by you.</p>
       </div>
       <div className={css.bar}>
         <strong role="status">

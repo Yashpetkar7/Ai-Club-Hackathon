@@ -21,8 +21,9 @@ const LEAVES: [string, string][] = [
   ['Search words and reference details', 'Go to Crossref, OpenAlex, DataCite and doi.org when you press Find, Check or Challenge.'],
   ['A question, a claim or numbered passages from sources you kept', 'Go to an AI service only at level 1 or higher, only when you press that button, and only if the site has a key.'],
   ['The support model', 'Downloads to your device once, when you ask for it. Your claim is not sent.'],
-  ['Your account name and passphrase', 'Never leave this browser. The passphrase is never stored. Signing out encrypts your library with it.'],
-  ['Your library, notes, PDFs, draft and log', 'Never leave this browser, unless you export them.'],
+  ['Your passphrase and the key made from it', 'Never leave this browser and are never stored in readable form.'],
+  ['Your library, notes, draft and log', 'As a guest, never leave this browser. With an account, a copy locked with your passphrase is kept on our server, under a code instead of your name. We cannot open it.'],
+  ['Your PDF files', 'Are read on this device and not uploaded. With an account, the text read from them is inside the locked copy.'],
 ];
 const WHO: [string, string][] = [
   ['You', 'Every source you approve, every claim you accept, and everything you hand in.'],

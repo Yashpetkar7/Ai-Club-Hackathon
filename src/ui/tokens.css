@@ -68,6 +68,7 @@ p { margin: 0; max-width: 68ch; text-wrap: pretty; }
 a { color: var(--accent); text-underline-offset: 3px; }
 button, input, textarea, select { font: inherit; color: inherit; }
 :focus-visible { outline: 3px solid var(--gate); outline-offset: 2px; }
+[tabindex='-1']:focus-visible { outline: none; }
 [hidden] { display: none !important; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .soft { color: var(--soft); }

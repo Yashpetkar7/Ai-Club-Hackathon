@@ -107,7 +107,7 @@ export function DraftCheck({ project, text, sources, cite, onChange, area }: Pro
       <div className={css.head}>
         <div className="stack">
           <h2>Draft check</h2>
-          <p className="soft">Finds words that are too close to your sources, quotations that do not match, repetition and slips. Plain rules, no AI. Your draft stays on this device.</p>
+          <p className="soft">Finds words that are too close to your sources, quotations that do not match, repetition and slips. Plain rules, no AI, checked on this device.</p>
         </div>
         <button className="btn main" type="button" disabled={!text.trim()} onClick={start}>
           {on ? 'Check again' : 'Check my draft'}

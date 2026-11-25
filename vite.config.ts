@@ -15,6 +15,8 @@ export default defineConfig({
   build: { target: 'es2022', sourcemap: false, chunkSizeWarningLimit: 900 },
   test: {
     environment: 'jsdom',
+    // Tests never touch the real saved data.
+    env: { DATA_DIR: 'test-results/unit-data' },
     // The citation engine reads large style files, which is slow on a busy laptop.
     testTimeout: 30_000,
     include: ['tests/unit/**/*.test.{ts,tsx}'],

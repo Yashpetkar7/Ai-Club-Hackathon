@@ -103,7 +103,7 @@ export function Find({ project }: StepProps) {
     <>
       <div className="stack">
         <h1>Find sources</h1>
-        <p className="soft">Every result came from a scholarly registry. The Checker then looks each one up again in a second registry before you decide.</p>
+        <p className="soft">Real papers from scholarly registries, each looked up twice. Keep the ones you want.</p>
       </div>
       <div className={css.bar} role="status" aria-live="polite">
         <strong>

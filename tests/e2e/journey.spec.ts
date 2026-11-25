@@ -124,6 +124,7 @@ test('phone and tablet width: nothing scrolls sideways', async ({ page }) => {
 test('dark theme keeps readable contrast', async ({ page }) => {
   await mockRegistries(page);
   await page.goto('/#/check');
+  await page.getByText('More', { exact: true }).click();
   await page.getByRole('button', { name: 'Lights off' }).click();
   await axe(page, 'check dark');
 });

@@ -161,7 +161,7 @@ export function Evidence({ project }: StepProps) {
     <>
       <div className="stack">
         <h1>Evidence</h1>
-        <p className="soft">Write what you want to say. We find the closest sentence in the source and plain code compares the two. Verified means the source says it. It does not mean the source is right.</p>
+        <p className="soft">Write what you want to say. We show the closest sentence in the source and whether it says the same.</p>
       </div>
 
       <form className={css.ask} onSubmit={find}>

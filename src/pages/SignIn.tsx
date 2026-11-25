@@ -64,12 +64,11 @@ export function SignIn({ path }: { path: string }) {
     <main className={`wrap page ${css.page}`} id="main" tabIndex={-1}>
       <section className={css.side}>
         <h1>{mode === 'in' ? 'Sign in' : 'Create your account'}</h1>
-        <p>Your account lives on this device. There is no server with your name, your password or your reading on it.</p>
+        <p>An account saves your work, so you can open it on another computer.</p>
         <ul>
+          <li>Your library is locked with your passphrase before it is saved. We cannot read it.</li>
           <li>Each person on a shared laptop gets their own library.</li>
-          <li>Signing out encrypts your library with your passphrase.</li>
           <li>Two hours without use signs you out.</li>
-          <li>To move to another laptop, download an encrypted backup and open it there.</li>
         </ul>
         <p className="soft">We cannot reset a passphrase, because we never have it. Keep a backup.</p>
       </section>
@@ -120,7 +119,7 @@ export function SignIn({ path }: { path: string }) {
           </button>
         </form>
         <div className={css.guest}>
-          <p>Just looking? A guest library stays in this browser without a passphrase.</p>
+          <p>Just looking? A guest library stays in this browser, without a passphrase.</p>
           <button
             className="btn"
             type="button"

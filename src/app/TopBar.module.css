@@ -1,26 +1,32 @@
 .bar { background: var(--sheet); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; padding-top: env(safe-area-inset-top, 0px); }
 .in { display: flex; align-items: center; gap: 8px 14px; min-height: 60px; flex-wrap: wrap; padding-block: 6px; max-width: 1320px; }
-.back { background: none; border: 1px solid var(--line); padding: 6px 12px; cursor: pointer; font-size: 0.9rem; white-space: nowrap; }
-.back:hover { border-color: var(--accent); }
+.back { background: none; border: 0; padding: 6px 8px; cursor: pointer; font-size: 0.92rem; white-space: nowrap; color: var(--soft); }
+.back:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
 .mark { font-family: var(--display); font-size: 1.35rem; color: var(--ink); text-decoration: none; white-space: nowrap; }
-.nav { display: flex; gap: 4px 20px; flex: 1; flex-wrap: wrap; margin-left: 10px; }
-.nav a { color: var(--soft); text-decoration: none; padding: 6px 0; border-bottom: 2px solid transparent; white-space: nowrap; }
-.nav a:hover { color: var(--ink); }
-.nav a[aria-current='page'] { color: var(--ink); border-color: var(--accent); font-weight: 600; }
-.lamp { background: none; border: 1px solid var(--line); padding: 6px 12px; cursor: pointer; font-size: 0.9rem; white-space: nowrap; }
-.lamp kbd { font-family: var(--mono); font-size: 0.8em; color: var(--soft); margin-left: 4px; }
+.nav { display: flex; gap: 4px 22px; flex: 1; align-items: center; margin-left: 12px; }
+.nav > a, .more > summary { color: var(--soft); text-decoration: none; padding: 6px 0; border-bottom: 2px solid transparent; white-space: nowrap; }
+.nav > a:hover, .more > summary:hover { color: var(--ink); }
+.nav > a[aria-current='page'], .more > summary[data-on='true'] { color: var(--ink); border-color: var(--accent); font-weight: 600; }
+.more { position: relative; }
+.more > summary { cursor: pointer; list-style: none; }
+.more > summary::-webkit-details-marker { display: none; }
+.more > summary::after { content: ''; display: inline-block; width: 7px; height: 7px; margin: 0 0 3px 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); }
+.menu { position: absolute; top: calc(100% + 8px); left: -14px; min-width: 190px; background: var(--sheet); border: 1px solid var(--line); box-shadow: 0 8px 26px rgba(12, 14, 34, 0.16); display: grid; padding: 6px 0; z-index: 30; }
+.menu a, .menu button { display: block; text-align: left; background: none; border: 0; padding: 9px 16px; color: var(--ink); text-decoration: none; cursor: pointer; font: inherit; }
+.menu a:hover, .menu button:hover { background: var(--raise); }
+.menu a[aria-current='page'] { font-weight: 600; }
+.lamp { background: none; border: 1px solid var(--line); padding: 6px 14px; cursor: pointer; font-size: 0.92rem; white-space: nowrap; }
 .lamp:hover { border-color: var(--accent); }
-.who { border: 1px solid var(--accent); color: var(--accent); font-weight: 600; text-decoration: none; padding: 6px 12px; font-size: 0.9rem; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.who { border: 1px solid var(--accent); color: var(--accent); font-weight: 600; text-decoration: none; padding: 6px 14px; font-size: 0.92rem; max-width: 190px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .who:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
 :global(.skip) { position: absolute; left: -999px; top: 0; z-index: 50; background: var(--sheet); color: var(--ink); padding: 10px 16px; }
 :global(.skip:focus) { left: 10px; top: 10px; }
-@media (max-width: 1180px) {
-  .nav { order: 5; flex: 1 0 100%; flex-wrap: nowrap; overflow-x: auto; margin-left: 0; }
+@media (max-width: 860px) {
+  .nav { order: 5; flex: 1 0 100%; margin-left: 8px; }
   .mark { flex: 1; }
 }
 @media (max-width: 620px) {
-  .in { gap: 6px 8px; }
-  .lamp kbd { display: none; }
-  .lamp, .back, .who { padding: 5px 9px; font-size: 0.84rem; }
-  .who { max-width: 120px; }
+  .in { gap: 4px 8px; }
+  .lamp, .back, .who { padding: 5px 9px; font-size: 0.86rem; }
+  .who { max-width: 128px; }
 }

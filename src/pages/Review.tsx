@@ -41,7 +41,7 @@ export function Review({ project }: StepProps) {
     <>
       <div className="stack">
         <h1>Review</h1>
-        <p className="soft">The Reviewer reads your whole project the way a marker would and lists what could be questioned. It never approves anything. A clean page does not mean the work is right.</p>
+        <p className="soft">What a marker could question in your project. A clean page does not mean the work is right.</p>
       </div>
       <section className={css.sum} aria-label="Summary">
         <div data-level="fix">

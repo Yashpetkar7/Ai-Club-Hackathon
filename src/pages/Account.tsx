@@ -1,7 +1,8 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useState } from 'react';
 import { go, Link } from '@/app/router';
-import { changePassphrase, deleteAccount, signOut, useSession } from '@/auth/accounts';
+import { changePassphrase, chooseCopy, deleteAccount, putOnline, saveNow, signOut, useSession } from '@/auth/accounts';
+import { useSave } from '@/auth/cloud';
 import { makeBackup, readBackup, restore } from '@/auth/vault';
 import { saveFile } from '@/core/cite/save';
 import { db } from '@/store/db';
@@ -18,7 +19,7 @@ export function Account() {
       <div className="stack">
         <h1>{isAccount ? session.name : 'Guest'}</h1>
         <p className="soft">
-          {isAccount ? `Account on this device since ${new Date(session.since).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })}. ` : 'You are using the guest library. Anyone at this browser can open it. '}
+          {isAccount ? `Account since ${new Date(session.since).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })}. ` : 'You are using the guest library. Anyone at this browser can open it. '}
           {count ? `${many(count.projects, 'project')}, ${many(count.sources, 'source')}, ${many(count.claims, 'claim')}.` : ''}
         </p>
         <div className="row">
@@ -31,6 +32,7 @@ export function Account() {
           )}
         </div>
       </div>
+      {isAccount && <Online />}
       <Backup />
       {isAccount && <Change />}
       {isAccount && <Remove />}
@@ -61,6 +63,65 @@ function SignOutButton() {
         </p>
       )}
     </>
+  );
+}
+
+/** Where the work is, and what to do when two computers disagree. */
+function Online() {
+  const s = useSave();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const run = (f: () => Promise<void>) => () => {
+    setBusy(true);
+    setError('');
+    void f()
+      .catch((e: Error) => setError(e.message))
+      .finally(() => setBusy(false));
+  };
+  const when = (iso: string) => (iso ? new Date(iso).toLocaleString(undefined, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'just now');
+  return (
+    <section className={css.box} aria-label="Saved online">
+      <h2>Saved online</h2>
+      {s.at === 'saved' && <p>Your work is saved, last on {when(s.when)}. Sign in with the same name and passphrase on any computer to open it.</p>}
+      {s.at === 'saving' && <p>Locking your work and saving it…</p>}
+      {s.at === 'offline' && <p>The server did not answer. Your work is safe on this device, and we keep trying.</p>}
+      {s.at === 'toobig' && <p>This library is larger than the server takes. It stays on this device. Use a backup file to move it.</p>}
+      {s.at === 'changed' && <p>Your passphrase was changed on another computer. Sign out here, then sign in with the new one.</p>}
+      {s.at === 'device' && <p>{s.why === 'no server' ? 'This copy of the site has no server that can save, so this account is only on this device.' : 'This account is only on this device.'}</p>}
+      {s.at === 'conflict' && (
+        <>
+          <p>
+            <strong>Another computer saved newer work ({when(s.when)}).</strong> You also changed things here. Choose which to keep. Download a backup first if you are not sure.
+          </p>
+          <div className="row">
+            <button className="btn" type="button" disabled={busy} onClick={run(() => chooseCopy('server'))}>
+              Open the newer work
+            </button>
+            <button className="btn" type="button" disabled={busy} onClick={run(() => chooseCopy('here'))}>
+              Keep what is on this device
+            </button>
+          </div>
+        </>
+      )}
+      <p className="soft">It is locked with your passphrase before it leaves this browser. The server keeps a copy it cannot open, under a code instead of your name.</p>
+      <div className="row">
+        {(s.at === 'saved' || s.at === 'offline') && (
+          <button className="btn" type="button" disabled={busy} onClick={run(() => saveNow())}>
+            Save now
+          </button>
+        )}
+        {s.at === 'device' && s.why !== 'no server' && (
+          <button className="btn" type="button" disabled={busy} onClick={run(() => putOnline())}>
+            Save this account online
+          </button>
+        )}
+      </div>
+      {error && (
+        <p role="alert" className={css.error}>
+          {error}
+        </p>
+      )}
+    </section>
   );
 }
 

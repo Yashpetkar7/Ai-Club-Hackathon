@@ -169,6 +169,7 @@ test('Back goes where you came from, and never leaves the site', async ({ page }
   await expect(page).toHaveURL(/#\/$/);
   await page.goto('/#/home');
   await page.getByRole('link', { name: 'Projects' }).first().click();
+  await page.getByText('More', { exact: true }).click();
   await page.getByRole('link', { name: 'Integrity Lab' }).click();
   await page.getByRole('button', { name: 'Back' }).click();
   await expect(page).toHaveURL(/#\/projects$/);

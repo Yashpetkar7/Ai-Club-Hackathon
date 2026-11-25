@@ -99,7 +99,7 @@ export function Check() {
     <main className="wrap page" id="main" tabIndex={-1}>
       <div className="stack">
         <h1>Check references</h1>
-        <p className="soft">Paste a paragraph, a reference list, BibTeX, RIS or a DOI. We look each one up in Crossref and compare it with OpenAlex. If Crossref does not have the DOI, we ask DataCite and doi.org. Every receipt lists who was asked and who answered. No AI takes part.</p>
+        <p className="soft">Paste a paragraph, a reference list or a DOI. We look each one up in Crossref and OpenAlex and tell you which are real. No AI takes part.</p>
       </div>
 
       <form

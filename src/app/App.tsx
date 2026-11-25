@@ -14,6 +14,7 @@ const Landing = lazy(() => import('@/landing/Landing').then((m) => ({ default: m
 const Lab = lazy(() => import('@/pages/Lab').then((m) => ({ default: m.Lab })));
 const SignIn = lazy(() => import('@/pages/SignIn').then((m) => ({ default: m.SignIn })));
 const Account = lazy(() => import('@/pages/Account').then((m) => ({ default: m.Account })));
+const Guide = lazy(() => import('@/pages/Guide').then((m) => ({ default: m.Guide })));
 const Rules = lazy(() => import('@/pages/Rules').then((m) => ({ default: m.Rules })));
 
 class Boundary extends Component<{ children: ReactNode; resetKey: string }, { error: Error | null }> {
@@ -80,6 +81,7 @@ export function App() {
   else if (section === 'p' && parts[1]) page = <ProjectShell projectId={parts[1]} step={parts[2] ?? 'plan'} />;
   else if (section === 'lab') page = <Lab />;
   else if (section === 'rules') page = <Rules />;
+  else if (section === 'guide') page = <Guide />;
   else
     page = (
       <main className="wrap page">

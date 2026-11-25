@@ -23,6 +23,7 @@ createServer(async (req, res) => {
     res.writeHead(200, { 'content-type': TYPES[extname(file)] ?? 'application/octet-stream', ...HEADERS });
     createReadStream(file).pipe(res);
   } catch {
-    res.writeHead(500).end();
+    if (!res.headersSent) res.writeHead(500, { 'content-type': 'application/json' });
+    res.end('{"error":"server error"}');
   }
 }).listen(port, '127.0.0.1', () => console.log(`Paper Trail is running at http://127.0.0.1:${port}`));

@@ -37,7 +37,7 @@ export function Team({ project }: StepProps) {
     <>
       <div className="stack">
         <h1>The team</h1>
-        <p className="soft">Nine agents with one job each. Six are plain code. Three use AI, only at the level your assessment allows. They stop at three gates, and nobody but you can open one.</p>
+        <p className="soft">Nine agents with one job each. They stop at three gates, and only you can open one.</p>
       </div>
       <div className={css.control}>
         <div className="stack">

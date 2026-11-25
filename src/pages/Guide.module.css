@@ -1,0 +1,25 @@
+.page h2 { font-size: 1.5rem; }
+.page h3 { font-size: 1.1rem; }
+.lead { font-size: 1.12rem; }
+.keys { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.keys li { border-top: 3px solid var(--accent); background: var(--sheet); padding: 14px 16px; }
+.keys li:last-child { border-color: var(--gate); }
+.keys strong { display: block; font-family: var(--display); font-weight: 400; font-size: 1.25rem; }
+.steps { list-style: none; counter-reset: s; margin: 0; padding: 0; display: grid; gap: 8px; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 34px 170px minmax(0, 1fr); gap: 14px; align-items: center; padding: 13px 16px; }
+.steps li::before { content: counter(s); width: 28px; height: 28px; display: grid; place-items: center; background: var(--accent); color: var(--on-accent); font-weight: 700; }
+.steps small { display: block; color: var(--gate); font-weight: 600; }
+.helpers { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 28px; }
+.helpers dt { font-weight: 700; }
+.helpers dd { margin: 0; }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; align-items: start; }
+.labels { margin: 0; display: grid; gap: 10px; }
+.labels div { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 12px; align-items: start; }
+.labels dd { margin: 0; }
+.list { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; max-width: 70ch; }
+@media (max-width: 760px) {
+  .keys, .helpers, .two { grid-template-columns: minmax(0, 1fr); }
+  .steps li { grid-template-columns: 34px minmax(0, 1fr); }
+  .steps p { grid-column: 1 / -1; }
+  .labels div { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+}

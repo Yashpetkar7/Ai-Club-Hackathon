@@ -17,17 +17,16 @@ const SAY: Record<string, string> = {
 export function Home() {
   const session = useSession();
   const data = useLiveQuery(async () => {
-    const [projects, sources, claims] = await Promise.all([db.projects.orderBy('createdAt').reverse().toArray(), db.sources.toArray(), db.claims.toArray()]);
+    const [projects, sources, claims, drafts] = await Promise.all([db.projects.orderBy('createdAt').reverse().toArray(), db.sources.toArray(), db.claims.toArray(), db.drafts.toArray()]);
     const log = await db.log.orderBy('seq').reverse().limit(8).toArray();
-    return { projects, sources, claims, log };
+    return { projects, sources, claims, drafts, log };
   }, []);
   if (!data) return <main className="wrap page" aria-busy="true"><p className="soft">Opening your library…</p></main>;
-  const { projects, sources, claims, log } = data;
+  const { projects, sources, claims, drafts, log } = data;
   const verdicts = (Object.keys(VERDICT_TEXT) as Verdict[]).map((v) => [v, sources.filter((s) => s.check?.verdict === v).length] as const).filter(([, n]) => n);
   const labels = (Object.keys(CLAIM_TEXT) as ClaimLabel[]).map((l) => [l, claims.filter((c) => c.label === l && c.decision !== 'rejected').length] as const).filter(([, n]) => n);
   const ready = sources.filter((s) => citable(s)).length;
   const waiting = sources.length - ready;
-  const latest = projects[0];
   const name = session.kind === 'account' ? session.name : '';
 
   return (
@@ -35,7 +34,7 @@ export function Home() {
       <div className={css.top}>
         <div className="stack">
           <h1>{name ? `Hello, ${name}` : 'Your desk'}</h1>
-          <p className="soft">{latest ? 'Pick up where you stopped, or start something new.' : 'Start with a question. Everything you keep stays on this device.'}</p>
+          <p className="soft">{projects.length ? 'Pick up where you stopped, or start something new.' : 'Start with a question, or check references you already have.'}</p>
         </div>
         <div className="row">
           <Link to="/projects" className="btn main">
@@ -47,30 +46,12 @@ export function Home() {
         </div>
       </div>
 
-      <dl className={css.stats}>
-        {(
-          [
-            ['Projects', projects.length],
-            ['Sources', sources.length],
-            ['Ready to cite', ready],
-            ['Waiting for you', waiting],
-            ['Claims decided', claims.filter((c) => c.decision).length],
-          ] as const
-        ).map(([k, n]) => (
-          <div key={k}>
-            <dt>{k}</dt>
-            <dd>{n}</dd>
-          </div>
-        ))}
-      </dl>
-
       {projects.length === 0 ? (
         <section className={css.start}>
-          <h2>Three ways to begin</h2>
           <div className={css.three}>
             <Link to="/projects" className="card">
               <strong>Ask a research question</strong>
-              <span className="soft">Real papers, checked twice, for you to keep or skip.</span>
+              <span className="soft">Find real papers, keep the ones you want, and cite them.</span>
             </Link>
             <Link to="/check" className="card">
               <strong>Check a list you already have</strong>
@@ -81,62 +62,95 @@ export function Home() {
               <span className="soft">One minute, on the real site.</span>
             </button>
           </div>
+          <p>
+            New here? <Link to="/guide">How it works, in plain words</Link>
+          </p>
         </section>
       ) : (
-        <div className={css.cols}>
+        <>
           <section className="stack" aria-label="Your projects">
-            <h2>Projects</h2>
+            <h2 className={css.h}>Your projects</h2>
             <ul className={css.list}>
-              {projects.slice(0, 5).map((p) => {
-                const mine = sources.filter((s) => s.projectId === p.id);
+              {projects.slice(0, 6).map((p) => {
+                const mine = sources.filter((x) => x.projectId === p.id);
+                const next = nextStep({ plan: !!p.plan?.approvedAt, sources: mine.length, approved: mine.filter((x) => x.keys.approved).length, decided: claims.filter((c) => c.projectId === p.id && c.decision).length, words: (drafts.find((d) => d.id === p.id)?.html ?? '').trim().length });
                 return (
                   <li key={p.id} className={`card ${css.project}`}>
-                    <Link to={`/p/${p.id}/${p.plan?.approvedAt ? 'library' : 'plan'}`}>{p.question}</Link>
-                    <span className="soft">
-                      {mine.length} sources, {mine.filter((s) => citable(s)).length} ready to cite · AI level {p.aiLevel}
-                    </span>
-                    <div className="row">
-                      <Link to={`/p/${p.id}/team`} className="btn">
-                        Open the team
-                      </Link>
-                      <Link to={`/p/${p.id}/write`} className="btn quiet">
-                        Write
-                      </Link>
-                      <Link to={`/p/${p.id}/export`} className="btn quiet">
-                        Export
-                      </Link>
+                    <div className="stack">
+                      <Link to={`/p/${p.id}/${next.key}`}>{p.question}</Link>
+                      <span className="soft">
+                        {mine.length} {mine.length === 1 ? 'source' : 'sources'}, {mine.filter((x) => citable(x)).length} ready to cite
+                      </span>
+                      <span className={css.dots} aria-label={`Next: step ${next.n} of 6, ${next.label}`}>
+                        {[1, 2, 3, 4, 5, 6].map((k) => (
+                          <i key={k} data-state={k < next.n ? 'done' : k === next.n ? 'now' : 'next'} aria-hidden="true" />
+                        ))}
+                        <span className="soft">
+                          Next: {next.n}. {next.label}
+                        </span>
+                      </span>
                     </div>
+                    <Link to={`/p/${p.id}/${next.key}`} className="btn main" aria-label={`Continue: ${p.question}`}>
+                      Continue
+                    </Link>
                   </li>
                 );
               })}
             </ul>
-            {projects.length > 5 && <Link to="/projects">All {projects.length} projects</Link>}
+            {projects.length > 6 && <Link to="/projects">All {projects.length} projects</Link>}
           </section>
-          <div className={css.right}>
-            <section className="stack" aria-label="References by verdict">
-              <h2>References</h2>
-              {verdicts.length === 0 ? <p className="soft">Nothing checked yet.</p> : <Bars rows={verdicts.map(([v, n]) => [v, n, VERDICT_TEXT[v].tone, <VerdictStamp key={v} verdict={v} />])} />}
-            </section>
-            <section className="stack" aria-label="Claims by label">
-              <h2>Claims</h2>
-              {labels.length === 0 ? <p className="soft">No claims yet. Write one in Evidence.</p> : <Bars rows={labels.map(([l, n]) => [l, n, CLAIM_TEXT[l].tone, <ClaimStamp key={l} label={l} />])} />}
-            </section>
-            <section className="stack" aria-label="Recent activity">
-              <h2>Recent activity</h2>
-              <ul className={css.log}>
-                {log.map((e) => (
-                  <li key={e.seq}>
-                    <strong>{WHO[e.actor]}</strong> {SAY[e.action] ?? e.action}
-                    <small>{new Date(e.at).toLocaleString(undefined, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</small>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          </div>
-        </div>
+          <details className={css.fold}>
+            <summary>Numbers and recent activity</summary>
+            <dl className={css.stats}>
+              {(
+                [
+                  ['Projects', projects.length],
+                  ['Sources', sources.length],
+                  ['Ready to cite', ready],
+                  ['Waiting for you', waiting],
+                  ['Claims decided', claims.filter((c) => c.decision).length],
+                ] as const
+              ).map(([k, n]) => (
+                <div key={k}>
+                  <dt>{k}</dt>
+                  <dd>{n}</dd>
+                </div>
+              ))}
+            </dl>
+            <div className={css.cols}>
+              <section className="stack" aria-label="References by verdict">
+                <h2>References</h2>
+                {verdicts.length === 0 ? <p className="soft">Nothing checked yet.</p> : <Bars rows={verdicts.map(([v, n]) => [v, n, VERDICT_TEXT[v].tone, <VerdictStamp key={v} verdict={v} />])} />}
+                <h2>Claims</h2>
+                {labels.length === 0 ? <p className="soft">No claims yet. Write one in Evidence.</p> : <Bars rows={labels.map(([l, n]) => [l, n, CLAIM_TEXT[l].tone, <ClaimStamp key={l} label={l} />])} />}
+              </section>
+              <section className="stack" aria-label="Recent activity">
+                <h2>Recent activity</h2>
+                <ul className={css.log}>
+                  {log.map((e) => (
+                    <li key={e.seq}>
+                      <strong>{WHO[e.actor]}</strong> {SAY[e.action] ?? e.action}
+                      <small>{new Date(e.at).toLocaleString(undefined, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</small>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            </div>
+          </details>
+        </>
       )}
     </main>
   );
+}
+
+/** The first of the six steps with nothing in it yet. */
+export function nextStep(p: { plan: boolean; sources: number; approved: number; decided: number; words: number }): { n: number; key: string; label: string } {
+  if (!p.plan) return { n: 1, key: 'plan', label: 'Plan' };
+  if (!p.sources) return { n: 2, key: 'find', label: 'Find' };
+  if (!p.approved) return { n: 3, key: 'library', label: 'Library' };
+  if (!p.decided) return { n: 4, key: 'evidence', label: 'Evidence' };
+  if (!p.words) return { n: 5, key: 'write', label: 'Write' };
+  return { n: 6, key: 'export', label: 'Export' };
 }
 
 /** Counts as bars, with the label and the number always written out. */

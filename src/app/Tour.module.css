@@ -1,3 +1,9 @@
-.bar { position: fixed; z-index: 40; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); width: min(880px, calc(100vw - 32px)); background: var(--sheet); border: 2px solid var(--gate); padding: 14px 18px; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
-.bar p { flex: 1 1 300px; }
-.n { color: var(--soft); font-variant-numeric: tabular-nums; }
+.bar { position: fixed; z-index: 40; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); width: min(980px, calc(100vw - 24px)); background: var(--sheet); color: var(--ink); border: 2px solid var(--gate); padding: 14px 18px 16px; display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; box-shadow: 0 10px 34px rgba(12, 14, 34, 0.28); font-size: 16px; }
+.say { flex: 1 1 360px; display: grid; gap: 3px; min-width: 0; }
+.say strong { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.acts :global(.btn) { padding: 7px 13px; }
+.n { color: var(--soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.line { position: absolute; left: 0; bottom: 0; height: 4px; width: 100%; background: var(--gate); transform-origin: left; transform: scaleX(0); }
+.line[data-run='true'] { animation-name: fill; animation-timing-function: linear; animation-fill-mode: forwards; }
+@keyframes fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
