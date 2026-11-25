@@ -38,10 +38,13 @@ Unit tests replay recorded answers from Crossref, OpenAlex, DataCite and doi.org
 | Library, Read and compare, Map | Works |
 | Evidence (claim against exact sentence), Challenge, Ask | Works without AI; optional support model on the device |
 | Write, Review, Export (APA 7, Harvard, MLA, Chicago, IEEE; Word, BibTeX, RIS) | Works |
+| Draft check: copied text, false quotations, repetition, slips | Works; rules only, compares with your own library |
+| Retraction check: retracted, corrected, under concern, cites retracted work | Works, live |
+| Duplicates, papers you may be missing, page numbers on quotes | Works |
 | Integrity Lab, House rules, AI statement, evidence report | Works |
 
 ## What it does not do
-It does not write assignments, call sources fake, or promise that a verified claim is true. Verified means the source says it. Registries miss many books, reports and regional journals, so "Not found" lists where we looked and nothing more.
+It does not write assignments, call sources fake, or promise that a verified claim is true. Verified means the source says it. The draft check compares with your own library only. It is not a plagiarism verdict and gives no score. Registries miss many books, reports and regional journals, so "Not found" lists where we looked and nothing more.
 
 ## Data and honesty
 - Metadata comes from Crossref, OpenAlex, DataCite and doi.org. Projects stay in your browser.

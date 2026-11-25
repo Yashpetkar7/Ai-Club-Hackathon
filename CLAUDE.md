@@ -21,7 +21,8 @@ Read `docs/PROBLEM_STATEMENT.md`, then `docs/BUILD_PLAN.md`, then the brief of t
 - We never call a source "fake". We say where we looked and what we did not find.
 - Paper Trail does not write the student's assignment.
 - AI permission level (0 to 3) is enforced in the server handler as well as the page.
-- The library stays in the browser. Never add tracking, accounts or uploads.
+- The library stays in the browser. Accounts live on the device (Yash, 25 November). Never add tracking, server accounts or uploads.
+- The draft check is rules only. It never rewrites a sentence, never touches a quotation, and every change is the student's click.
 
 ## Code map
 | Path | What | Owner |
@@ -36,6 +37,9 @@ Read `docs/PROBLEM_STATEMENT.md`, then `docs/BUILD_PLAN.md`, then the brief of t
 | `src/core/claims`, `src/agents`, `src/pages/Evidence, Ask`, `server/handlers/ai.mjs` | Evidence and the assistant | Nihal |
 | `src/core/cite`, `src/core/import`, `src/pages/Library, Write, Export` | Organise and cite | Siddal |
 | `src/core/lab`, `src/pages/Lab, Rules, AiStatement`, `docs/deck` | Proof, governance, deck | Hemanth |
+| `src/auth`, `src/pages/SignIn, Account, Home, Team, Read, Review`, `src/core/analyst, review` | Accounts, dashboard, team, reader, reviewer | Yash |
+| `src/core/draftcheck`, `src/pages/DraftCheck` | Copied text, quotations, slips | Yash |
+| `src/core/library`, `src/pages/LibraryChecks, MissingPapers`, `src/map/missing.ts`, `src/core/pdf/pages.ts` | Retraction check, duplicates, missing papers, page numbers | Yash |
 
 Branches: `nihal/evidence-ask`, `siddal/library-cite`, `hemanth/lab-governance`, `yash/integration`.
 

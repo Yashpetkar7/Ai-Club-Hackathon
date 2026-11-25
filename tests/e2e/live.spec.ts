@@ -33,7 +33,7 @@ test('live: retraction check, duplicates and missing papers with the real regist
   await page.getByLabel('What are you researching?').fill('What do later papers make of withdrawn work?');
   await page.getByRole('button', { name: 'Start project' }).click();
   await page.getByLabel('Your trail').getByRole('link', { name: 'Library' }).click();
-  // A 2023 review whose reference list holds a retracted 1998 paper, that 1998 paper itself, and three papers on home working.
+  // A 2023 paper whose reference list holds a retracted 1998 paper, that 1998 paper itself, and three papers on home working.
   const dois = ['10.1053/j.gastro.2023.01.017', '10.1016/S0140-6736(97)11096-0', '10.1093/qje/qju032', '10.1086/721803', '10.1111/ntwe.12153'];
   for (const [i, d] of dois.entries()) {
     if (!(await page.getByLabel('DOI, DOI link or title').isVisible())) await page.getByRole('button', { name: 'Add a source' }).click();
