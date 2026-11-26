@@ -5,11 +5,12 @@ import { findQuote, quotesExactly } from './quote';
 import { coverage, runGuards, type Guard } from './guards';
 
 /** Scores from the on-device model for this claim against this sentence. Null when it has not run. */
-export interface Support { entails: number; contradicts: number }
+export interface Support { entails: number; contradicts: number; neutral?: number }
 
 export interface Judged { label: ClaimLabel; reasons: ReasonCode[]; checks: ClaimChecks; wordForWord: boolean }
 
 const asCheck = (g: Guard): boolean | null => (g === 'none' ? null : g === 'ok');
+const ONE_REGISTRY: ReasonCode[] = ['SECOND_REGISTRY_NO_RECORD', 'REGISTRY_METADATA_DISAGREES', 'SECOND_REGISTRY_UNREACHABLE'];
 const EMPTY: ClaimChecks = { exactQuote: false, support: null, contradiction: null, numbers: null, direction: null, scope: null };
 
 /**
@@ -45,6 +46,8 @@ export function judge(claim: string, source: Pick<Source, 'check' | 'text'> | un
     exactQuote: true,
     support: support?.entails ?? null,
     contradiction: support?.contradicts ?? null,
+    neutral: support?.neutral ?? null,
+    wordForWord: said,
     numbers: asCheck(g.numbers),
     direction: g.negation === 'conflict' || g.direction === 'conflict' ? false : asCheck(g.direction === 'none' ? g.negation : g.direction),
     scope: asCheck(g.scope),
@@ -67,9 +70,16 @@ export function judge(claim: string, source: Pick<Source, 'check' | 'text'> | un
   if (g.scope === 'missing') reasons.add('SCOPE_OVERCLAIM');
   if (g.framed) reasons.add('SCOPE_OVERCLAIM');
   const backed = said || (!!support && support.entails >= t.supportVerified);
+  // When the model never ran, say so. "Not sure" is only for a model that ran and was not sure.
+  const unsure: ReasonCode = support ? 'MODEL_UNSURE' : 'MEANING_NOT_COMPARED';
   // Word for word settles direction. Otherwise an unclear direction or negation is not enough.
-  if (!said && (g.direction === 'missing' || g.negation === 'missing')) reasons.add('MODEL_UNSURE');
-  if (!backed) reasons.add('MODEL_UNSURE');
-  if (source.check?.verdict !== 'confirmed') reasons.add(source.check?.verdict === 'one-registry' ? 'SECOND_REGISTRY_UNREACHABLE' : source.check?.verdict === 'retracted' ? 'RETRACTED' : 'NO_MATCH_IN_REGISTRIES');
+  if (!said && (g.direction === 'missing' || g.negation === 'missing')) reasons.add(unsure);
+  if (!backed) reasons.add(unsure);
+  const verdict = source.check?.verdict;
+  if (verdict === 'one-registry') {
+    // Keep the checker's own reason: no record, records disagree, or no answer.
+    const why = (source.check?.reasons ?? []).filter((r) => ONE_REGISTRY.includes(r));
+    for (const r of why.length ? why : ['SECOND_REGISTRY_UNREACHABLE' as const]) reasons.add(r);
+  } else if (verdict !== 'confirmed') reasons.add(verdict === 'retracted' ? 'RETRACTED' : 'NO_MATCH_IN_REGISTRIES');
   return done(reasons.size ? 'reported' : 'verified', checks, said);
 }

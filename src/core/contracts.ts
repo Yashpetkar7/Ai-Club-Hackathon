@@ -36,6 +36,7 @@ export type ReasonCode =
   | 'NO_SOURCE'
   | 'NO_READABLE_TEXT'
   | 'MODEL_UNSURE'
+  | 'MEANING_NOT_COMPARED'
   | 'CONTRADICTED_BY_SOURCE'
   | 'INSTRUCTION_IN_SOURCE';
 
@@ -192,6 +193,10 @@ export interface ClaimChecks {
   exactQuote: boolean;
   support: number | null;
   contradiction: number | null;
+  /** The model's third answer: the sentence neither backs nor contradicts the claim. Older claims lack it. */
+  neutral?: number | null;
+  /** The claim's own words are in the source. Older claims lack it. */
+  wordForWord?: boolean;
   numbers: boolean | null;
   direction: boolean | null;
   scope: boolean | null;
@@ -208,6 +213,8 @@ export interface Claim {
   checks: ClaimChecks;
   decision?: 'accepted' | 'rewritten' | 'rejected';
   keptWithReason?: string;
+  /** Ranking aids at the time of saving. Shown only; they never decide the label. */
+  match?: { words: number; meaning: number | null };
   by: 'student' | 'ai';
   createdAt: string;
 }
@@ -297,6 +304,7 @@ export const REASON_TEXT: Record<ReasonCode, string> = {
   NO_SOURCE: 'No source is attached.',
   NO_READABLE_TEXT: 'We could not read the text of this source.',
   MODEL_UNSURE: 'The support check was not sure.',
+  MEANING_NOT_COMPARED: 'Not word for word, and the meaning has not been compared yet.',
   CONTRADICTED_BY_SOURCE: 'The source contradicts this.',
   INSTRUCTION_IN_SOURCE: 'The source text contains instructions aimed at an AI. They were ignored.',
 };

@@ -3,6 +3,7 @@ import { record as log } from '@/log/log';
 import { pageAt } from '@/core/pdf/pages';
 import { POLICY } from '@/policy/policy';
 import { db, newId } from '@/store/db';
+import { coverage } from './guards';
 import { judge, type Support } from './label';
 
 /** Gate 3. The label is judged again here, so a page can never save one it made up. */
@@ -15,6 +16,8 @@ export async function saveClaim(o: {
   decision: 'accepted' | 'rewritten' | 'rejected';
   reason?: string;
   by?: Claim['by'];
+  /** Ranking aids, kept for the record. They are not passed to judge(). */
+  match?: Claim['match'];
 }): Promise<Claim> {
   const text = o.text.trim();
   if (text.split(/\s+/).length < 3) throw new Error('Write the claim as a full sentence first.');
@@ -36,6 +39,8 @@ export async function saveClaim(o: {
     ...(o.source ? { sourceId: o.source.id } : {}),
     ...(passage ? { passage } : {}),
     ...(j.label !== 'verified' && o.decision !== 'rejected' ? { keptWithReason: reason } : {}),
+    // Words shared is worked out again here; the meaning match can only come from the model on the page.
+    ...(o.match && passage ? { match: { words: coverage(text, passage.text), meaning: typeof o.match.meaning === 'number' && Number.isFinite(o.match.meaning) ? Math.max(-1, Math.min(1, o.match.meaning)) : null } } : {}),
   };
   await db.claims.add(claim);
   await log(o.projectId, 'student', `gate3.claim-${o.decision}`, `${text.slice(0, 200)} [${CLAIM_TEXT[j.label].label}]${claim.keptWithReason ? ` | reason: ${claim.keptWithReason}` : ''}`);

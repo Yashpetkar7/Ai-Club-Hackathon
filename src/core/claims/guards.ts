@@ -57,13 +57,22 @@ export function numbers(raw: string): Num[] {
     if (!u && /^(1[89]|20)\d{2}$/.test(m[1]!) && (before === '(' || /\b(in|since|from|until|by|of)\s$/i.test(s.slice(0, m.index)))) continue;
     out.push({ value, unit: /^(%|per)/.test(u) ? '%' : u ? 'x' : '', at: m.index, text: m[0] });
   }
-  const w = /\b([a-z]+)(?:[\s-]([a-z]+))?\s*(%|percent|per cent|percentage points?|times|fold)?/gi;
-  for (const m of s.matchAll(w)) {
+  // Tried at every word, so a number word right after another word ("delivered thirteen percent") is not skipped.
+  const w = /([a-z]+)(?:[\s-]([a-z]+))?\s*(%|percent|per cent|percentage points?|times|fold)?/iy;
+  let joined = -1;
+  for (const word of s.matchAll(/\b[a-z]+/gi)) {
+    if (word.index <= joined) continue;
+    w.lastIndex = word.index;
+    const m = w.exec(s);
+    if (!m) continue;
     const a = NUMBER_WORDS.get(m[1]!.toLowerCase());
     if (a === undefined) continue;
     const b = NUMBER_WORDS.get((m[2] ?? '').toLowerCase());
     const unitText = (m[3] ?? (/^(percent|times|fold)$/i.test(m[2] ?? '') ? m[2]! : '')).toLowerCase();
-    const value = a >= 20 && b !== undefined && b < 10 ? a + b : a;
+    const both = a >= 20 && b !== undefined && b < 10;
+    const value = both ? a + b : a;
+    // "twenty five" is one number: its second word is not counted again.
+    if (both) joined = word.index + m[0].trimEnd().length - 1;
     out.push({ value, unit: /^per/.test(unitText) ? '%' : unitText ? 'x' : '', at: m.index, text: m[0].trim() });
   }
   for (const m of s.matchAll(/\b(half|halved|halving|doubled|doubling|double|tripled|twice)\b/gi)) {
@@ -328,4 +337,14 @@ export const runGuards = (claim: string, sentence: string): Guards => ({ numbers
 export function coverage(claim: string, sentence: string): number {
   const mine = subjectWords(claim);
   return mine.length ? overlap(mine, subjectWords(sentence)) / mine.length : 0;
+}
+
+/** Words that point up or down, and words that negate, in reading order. For showing the student only; the guards above decide. */
+export function directionWords(s: string): { word: string; dir: 'up' | 'down' | 'not' }[] {
+  return tokens(s.replace(/-/g, ' ')).flatMap((word): { word: string; dir: 'up' | 'down' | 'not' }[] => (UP.has(word) ? [{ word, dir: 'up' }] : DOWN.has(word) ? [{ word, dir: 'down' }] : NEG.has(word) ? [{ word, dir: 'not' }] : []));
+}
+
+/** Words of certainty, cause, link and hedging. For showing the student what changed; the scope guard decides. */
+export function scopeWords(s: string): string[] {
+  return [...new Set([ABSOLUTE, PROOF, MOST, CAUSE, LINK, HEDGE].flatMap((re) => [...s.matchAll(new RegExp(re.source, 'gi'))].map((m) => m[0].toLowerCase())))];
 }

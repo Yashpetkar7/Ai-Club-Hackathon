@@ -47,6 +47,8 @@ export function statementLines(log: LogEvent[], project: Pick<Project, 'aiLevel'
     out.push('The log cannot infer which sections of my submitted paper contain these ideas or how I incorporated them. I must describe that explicitly.');
   }
   if (device.length) out.push(`A small language model ran on my own device ${times(device.length)} to compare a claim with a sentence from its source. It wrote no text, and no claim was sent anywhere.`);
+  const ranked = log.filter((e) => e.action === 'meaning.model-ran');
+  if (ranked.length) out.push(`A small embedding model ran on my own device ${times(ranked.length)} to put the sentences of a source in order by meaning. It wrote no text, decided no label, and no claim was sent anywhere.`);
   const checks = log.filter((e) => e.action === 'draft.checked').length;
   const fixes = log.filter((e) => e.action === 'draft.fix').length;
   if (checks) out.push(`A rule-based check, which is not AI, compared my draft with my own sources and looked for slips ${times(checks)}. ${fixes ? `I applied ${fixes === 1 ? 'one of its corrections' : `${fixes} of its corrections`}, each with a click.` : 'I applied none of its corrections.'}`);
