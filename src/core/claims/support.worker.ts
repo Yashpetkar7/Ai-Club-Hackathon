@@ -2,11 +2,20 @@
 import { AutoModelForSequenceClassification, AutoTokenizer, env } from '@huggingface/transformers';
 
 /** Runs the support model on this device. It scores a claim against one sentence. It writes no text. */
-const MODEL = 'Xenova/nli-deberta-v3-xsmall';
+let MODEL = 'Xenova/nli-deberta-v3-xsmall';
 env.allowLocalModels = false;
 
 type Loaded = { tokenizer: any; model: any };
 let ready: Promise<Loaded> | null = null;
+
+/** Our own fine-tuned model is served by this site under /models/; the original comes from Hugging Face. */
+function choose(model?: string, local?: boolean, base = '/'): void {
+  if (!model || ready) return;
+  MODEL = model;
+  env.allowLocalModels = !!local;
+  env.allowRemoteModels = !local;
+  if (local) env.localModelPath = `${base}models/`;
+}
 
 function load(): Promise<Loaded> {
   ready ??= (async () => {
@@ -48,10 +57,11 @@ async function score(premise: string, hypothesis: string): Promise<{ entails: nu
   return out;
 }
 
-onmessage = async (e: MessageEvent<{ type: 'load' } | { type: 'score'; id: number; premise: string; hypothesis: string }>) => {
+onmessage = async (e: MessageEvent<{ type: 'load'; model?: string; local?: boolean; base?: string } | { type: 'score'; id: number; premise: string; hypothesis: string }>) => {
   const m = e.data;
   try {
     if (m.type === 'load') {
+      choose(m.model, m.local, m.base);
       await load();
       postMessage({ type: 'ready' });
     } else postMessage({ type: 'score', id: m.id, ...(await score(m.premise, m.hypothesis)) });

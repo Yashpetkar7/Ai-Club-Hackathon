@@ -1,4 +1,5 @@
 import type { RawReference, ReasonCode, ReferenceCheck, RegistryRecord, RegistryTrace, Verdict } from '@/core/contracts';
+import { rwNotice, type RwEntry } from '@/core/registries/retractionWatch';
 import { POLICY } from '@/policy/policy';
 import { compare, rank, type Comparison } from './compare';
 import { tokens } from './normalise';
@@ -14,6 +15,23 @@ export interface Registries {
   dataciteByDoi(doi: string): Promise<RegistryRecord | null>;
   doiExists(doi: string): Promise<boolean>;
   crossrefSearch(query: string): Promise<RegistryRecord[]>;
+  /** The shipped Retraction Watch index. null means it has no notice for this DOI. Optional: it can only add a warning. */
+  retractionWatch?(doi: string): Promise<RwEntry | null>;
+}
+
+/**
+ * Adds what Retraction Watch knows to a record. It can mark a work retracted or under concern and attach the reasons;
+ * it never clears a retraction another registry reported. If the index cannot be read, the record is unchanged.
+ */
+export function withRetractionWatch(rec: RegistryRecord, e: RwEntry | null): RegistryRecord {
+  if (!e) return rec;
+  const n = rwNotice(e);
+  const notices = [...(rec.notices ?? [])];
+  const same = notices.findIndex((x) => x.kind === n.kind && (x.by === 'retraction-watch' || (!!n.doi && x.doi === n.doi)));
+  if (same >= 0) notices[same] = { ...notices[same]!, ...(n.reasons ? { reasons: n.reasons } : {}) };
+  else notices.unshift(n);
+  const retracted = rec.retracted || e.status === 'retracted';
+  return { ...rec, retracted, ...(retracted && !rec.retractedOn && e.on && e.status === 'retracted' ? { retractedOn: e.on } : {}), notices };
 }
 
 async function timed<T>(trace: RegistryTrace[], registry: RegistryTrace['registry'], run: () => Promise<T>, status: (v: T) => RegistryTrace['status'], note?: (v: T) => string | undefined): Promise<{ ok: true; value: T } | { ok: false }> {
@@ -71,6 +89,10 @@ export async function checkReference(ref: RawReference, reg: Registries, now: ()
           if (other.title >= th.titleMatch) c = other;
         }
       }
+    }
+    if (record.doi && reg.retractionWatch) {
+      const rw = await timed(trace, 'retraction-watch', () => reg.retractionWatch!(record.doi!), (v) => (v ? 'match' : 'not-found'), (v) => (v ? `${v.status === 'retracted' ? 'retraction' : 'expression of concern'} listed` : undefined));
+      if (rw.ok) record = withRetractionWatch(record, rw.value);
     }
     const bareDoi = viaDoi && !ref.title && !ref.authors?.length && tokens(ref.raw).length <= 8;
     if (viaDoi && !bareDoi && ref.title && c.title < 0.6) return done('wrong-paper', ['DOI_IS_ANOTHER_PAPER'], record, c);

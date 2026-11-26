@@ -6,7 +6,7 @@ import { titleOf } from '@/core/cite/preflight';
 import { judge, type Support } from '@/core/claims/label';
 import { rankSentences, type Ranked } from '@/core/claims/rank';
 import { removeClaim, saveClaim } from '@/core/claims/store';
-import { cancelSupport, loadSupport, onSupport, scoreSupport, SUPPORT_MB, SUPPORT_MODEL, supportState } from '@/core/claims/support';
+import { cancelSupport, loadSupport, onSupport, scoreSupport, SUPPORT_MB, supportModelLabel, supportState } from '@/core/claims/support';
 import { CLAIM_TEXT, REASON_TEXT, type Claim, type ClaimChecks, type Source } from '@/core/contracts';
 import { pageAt, pageText } from '@/core/pdf/pages';
 import { registries } from '@/core/registries';
@@ -98,7 +98,7 @@ export function Evidence({ project }: StepProps) {
       .then(async (s) => {
         if (!live) return;
         setSupport(s);
-        await log(project.id, 'code', 'support.model-ran', `${SUPPORT_MODEL} on this device | support ${s.entails.toFixed(2)}, contradiction ${s.contradicts.toFixed(2)}`);
+        await log(project.id, 'code', 'support.model-ran', `${supportModelLabel()} on this device | support ${s.entails.toFixed(2)}, contradiction ${s.contradicts.toFixed(2)}`);
       })
       .catch(() => live && setSupport(null))
       .finally(() => live && setScoring(false));
@@ -385,7 +385,7 @@ function ModelBox({ state }: { state: ReturnType<typeof supportState> }) {
     <div className={css.model}>
       {state.status === 'failed' && <p role="alert">{state.why}</p>}
       <p className="soft">Your words differ from the source’s. A small model can compare the meaning on this device. It downloads about {SUPPORT_MB} MB once, and your claim is not sent anywhere.</p>
-      <button className="btn" type="button" onClick={loadSupport}>
+      <button className="btn" type="button" onClick={() => loadSupport()}>
         Compare the meaning
       </button>
     </div>

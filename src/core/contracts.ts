@@ -6,7 +6,7 @@
 /** What the assessment allows. Enforced at the server as well as in the UI. */
 export type AiLevel = 0 | 1 | 2 | 3;
 
-export type RegistryName = 'crossref' | 'openalex' | 'datacite' | 'doi.org';
+export type RegistryName = 'crossref' | 'openalex' | 'datacite' | 'doi.org' | 'retraction-watch';
 
 /** Verdict on whether a reference is real. Only code in core/verify may create one. */
 export type Verdict = 'confirmed' | 'one-registry' | 'details-differ' | 'wrong-paper' | 'retracted' | 'not-found' | 'could-not-check';
@@ -62,6 +62,8 @@ export interface Notice {
   /** DOI of the notice itself. */
   doi?: string;
   by: 'publisher' | 'retraction-watch';
+  /** Why, in Retraction Watch's own words (its controlled list). Only from the Retraction Watch index. */
+  reasons?: string[];
 }
 
 /** A record that came from a registry. The only thing a citation may be built from. */
