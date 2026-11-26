@@ -1,6 +1,6 @@
 import { createElement, StrictMode } from 'react';
 import { webcrypto } from 'node:crypto';
-import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, configure, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import axe from 'axe-core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -14,6 +14,9 @@ import recordedSample from '@/core/lab/sample-run.json';
 vi.mock('@/core/verify/verdict', async (original) => ({ ...await original<typeof import('@/core/verify/verdict')>(), checkReference: vi.fn() }));
 const check = vi.mocked(checkReference);
 const actualRecordedCheck = recordedSample.payload.run.rows.find((r) => r.check?.verdict === 'confirmed')!.check as ReferenceCheck;
+// The benchmark hashes and scores 104 claims before it renders. On a busy laptop that takes longer than
+// Testing Library's one-second default, so this file waits up to 15 seconds.
+configure({ asyncUtilTimeout: 15_000 });
 const mount = () => render(createElement(StrictMode, null, createElement(Lab)));
 
 function deferred<T>() {

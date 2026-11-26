@@ -74,3 +74,29 @@ The current request authorizes substantive integration work beyond the older fil
 > can you build and then document what was not done and that can be done. And what is my vision and what should be done.
 
 Produced `docs/VISION_AND_ROADMAP.md`, linking the actual local implementation and validation to the requested global student research-and-learning vision. It separates release blockers, independent benchmark/learning evaluations and longer-term adoption work; the final package-registry probe failed with `EACCES`, so no production-build or live-demo success was claimed.
+
+## Build-and-push session: 26 November 2026 (Dubai)
+
+Tool: AI coding assistant; builder model identifier omitted in line with the existing preference. Work ran on a fresh clone of `hemanth/lab-governance`, pushed only to that branch as hbasired. Results and test output are in `docs/deck/INTEGRATION_HANDOVER.md` and `docs/deck/VALIDATION_CURRENT.md`.
+
+### Exact build request
+
+> can you check the last written documents and all the files and get idea of the project and then proceed with the build and push repo using my username:hbasired. The repo for hackathon is https://github.com/Yashpetkar7/Ai-Club-Hackathon. And I am Hemanth and have a branch so push to that only. The already deployed work is at https://paper-trail-team1.vercel.app/ so check this as well and see if my work is implemented in the deployed version or not and then proceed.
+
+Produced: a fresh clone, the earlier local candidate merged on top of current main (commit 4682fcf), regression fixes found by the full test run (7dc42fa), and a normal push to `hemanth/lab-governance`. The deployed site was compared with main: the Integrity Lab and House rules are live; Research Compass, Study studio and reading priority were not yet merged into main.
+
+### Exact vision request
+
+> make sure you get my full vision for the enhanced tool or platform and the implement from where I have left and then proceed according. Web search open source tools by big tech and trusted repo's and then include those which make the tool or platform better than any other thing available in the market. It should be like the go to for researchers to use this tool and get everything done.
+
+Produced: a research pass over open models and free scholarly APIs. Chosen: a small open embedding model (Snowflake arctic-embed-xs, Apache-2.0) that runs in the browser to find a source sentence by meaning, next to the existing DeBERTa support model; OpenAlex semantic search on a host already in use. Rejected or deferred: anything needing a new paid provider, a new npm dependency or an unreviewed host.
+
+### Exact tests, semantic layer, demo and metrics request
+
+> can we also do some tests before itself to check and enhance if anything is not working or working with mediocrity and improve it. And also isadding semantic layer make sense in this project or no, if yes implement it accordingly. For demonstration make sure what to do and it should blow thereviewers mindaway. And also with the tests done can we add evaluation metrics as well. And the difference between claims from the references are shown with the score which is correctand which is not, and for ploished answers as well. And if this required LLM API key I have groq, I can provide it in the UI somewhere in the hidden section that is not directly seen by the reviewers but I can get to it and paste the key. And the explorability and navigability should be good. And can you do one agent at a time for the 5 you have included in the workflow so that they can work with the available RAM.
+
+Produced, one agent at a time: find-by-meaning and a claim scorecard on Evidence (2ed9ff5); the "Audit a paragraph" page for polished text with a claims-by-references matrix (8a91337); live evaluation numbers in the Integrity Lab worked out from the labelled claim sets and the recorded replay (817aef5). Semantic layer decision: yes, but it only puts sentences in order; `judge()` still makes every label. A real-model recording of every candidate sentence then tested where pages start when several sentences are scored, and the start rule was made safer (exact quote first, then any dispute, then best support).
+
+### Exact push and guide request
+
+> push to my branch only and after everything is done update my guide html which is already available.
