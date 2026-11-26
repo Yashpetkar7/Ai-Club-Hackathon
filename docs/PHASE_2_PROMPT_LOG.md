@@ -33,6 +33,21 @@ Every significant prompt used for the Phase 2 implementation, in order of use. N
 - **Result:** both implemented. Live pack 12/12, live browser journey passed, 730 unit tests passed. Pushed to `nihal/evidence-ask` (the branch CLAUDE.md names for Nihal), not to main.
 - **Follow-up inside the task:** Bloom et al.'s title has a "?", and the parser took the subtitle for the journal. The journal is now the last sentence before the volume.
 
+## 5. Technical architecture and demo script
+- **When:** 26 Nov 2026, 14:40 Dubai
+- **Prompt (Nihal):** an attached brief, "Technical Architecture, System Workflow & MVP Presentation Playbook" (sections 2.1–2.12), asking for TECHNICAL_ARCHITECTURE.md and an 8-minute demo script that describe the system as actually built.
+- **Result:** `docs/TECHNICAL_ARCHITECTURE.md` (written from the code, with Mermaid diagrams) and `docs/MVP_DEMO_SCRIPT.md`. The brief's demo-script section was not included, so the script follows the demo plan in `docs/BUILD_PLAN.md`.
+
+## 6. Architecture images
+- **When:** 26 Nov 2026, 14:48 Dubai
+- **Prompt (Nihal, verbatim):** "create images of the technical architecture"
+- **Result:** the 11 Mermaid diagrams rendered in Chrome to PNG and SVG, in `docs/architecture/`. Mermaid was installed in a scratch folder outside the repo, so no dependency was added.
+
+## 7. Plain-words script
+- **When:** 26 Nov 2026, 15:02 Dubai
+- **Prompt (Nihal, verbatim):** "can you create a proper script in easy terms to explain"
+- **Result:** `docs/PRESENTATION_SCRIPT_EASY.md`
+
 ### Master prompt, as supplied
 
 ````text
