@@ -29,6 +29,7 @@ export const PROJECT_WORDS: Record<string, string> = {
   team: 'agents automate run all',
   plan: 'question searches queries gate approve',
   find: 'search registries papers results keep skip',
+  discover: 'meaning semantic similar related more like this openalex explore',
   library: 'sources approve folders tags notes doi pdf bibtex import',
   learn: 'study recall capture understand reflect',
   read: 'method findings limits aims sort compare abstract text',

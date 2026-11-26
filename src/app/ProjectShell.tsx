@@ -29,6 +29,7 @@ const load = {
   ask: () => import('@/pages/Ask'),
   write: () => import('@/pages/Write'),
   export: () => import('@/pages/Export'),
+  discover: () => import('@/pages/Discover'),
 };
 const Team = lazy(() => load.team().then((m) => ({ default: m.Team })));
 const Compass = lazy(() => load.compass().then((m) => ({ default: m.Compass })));
@@ -71,6 +72,7 @@ export const MAIN: Step[] = [
 export const HELPERS: (Step & { near: string })[] = [
   { key: 'compass', label: 'Compass', hint: 'Your research overview and next step', near: '', Page: Compass },
   { key: 'team', label: 'Team', hint: 'Run all the agents', near: '', Page: Team },
+  { key: 'discover', label: 'Discover', hint: 'Similar papers and related works', near: 'find', Page: lazy(() => load.discover().then((m) => ({ default: m.Discover }))) },
   { key: 'learn', label: 'Study studio', hint: 'Read, capture, question and recall', near: 'library', Page: Learn },
   { key: 'read', label: 'Read', hint: 'Method, findings, limits', near: 'library', Page: Read },
   { key: 'map', label: 'Map', hint: 'How papers connect', near: 'library', Page: MapPage },
