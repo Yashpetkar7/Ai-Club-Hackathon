@@ -1,0 +1,282 @@
+{
+ "summary": {
+  "checkedAt": "2026-11-26T07:55:35.427Z",
+  "real": {
+   "n": 10,
+   "confirmed": 10,
+   "other": []
+  },
+  "retracted": {
+   "n": 5,
+   "flagged": 5,
+   "other": []
+  },
+  "altered": {
+   "n": 5,
+   "caught": 5,
+   "confirmedByMistake": []
+  }
+ },
+ "rows": [
+  {
+   "kind": "real",
+   "doi": "10.35211/18154360_2026_3_146",
+   "expect": "confirmed",
+   "got": "confirmed",
+   "reasons": [],
+   "asked": [
+    "crossref:match",
+    "openalex:match",
+    "retraction-watch:not-found"
+   ]
+  },
+  {
+   "kind": "real",
+   "doi": "10.11646/zootaxa.1325.1.14",
+   "expect": "confirmed",
+   "got": "confirmed",
+   "reasons": [],
+   "asked": [
+    "crossref:match",
+    "openalex:match",
+    "retraction-watch:not-found"
+   ]
+  },
+  {
+   "kind": "real",
+   "doi": "10.15173/m.v1i35.2206",
+   "expect": "confirmed",
+   "got": "confirmed",
+   "reasons": [],
+   "asked": [
+    "crossref:match",
+    "openalex:match",
+    "retraction-watch:not-found"
+   ]
+  },
+  {
+   "kind": "real",
+   "doi": "10.1016/j.coastaleng.2024.104652",
+   "expect": "confirmed",
+   "got": "confirmed",
+   "reasons": [],
+   "asked": [
+    "crossref:match",
+    "openalex:match",
+    "retraction-watch:not-found"
+   ]
+  },
+  {
+   "kind": "real",
+   "doi": "10.1007/s00417-016-3299-9",
+   "expect": "confirmed",
+   "got": "confirmed",
+   "reasons": [],
+   "asked": [
+    "crossref:match",
+    "openalex:match",
+    "retraction-watch:not-found"
+   ]
+  },
+  {
+   "kind": "real",
+   "doi": "10.1016/j.neuint.2007.05.008",
+   "expect": "confirmed",
+   "got": "confirmed",
+   "reasons": [],
+   "asked": [
+    "crossref:match",
+    "openalex:match",
+    "retraction-watch:not-found"
+   ]
+  },
+  {
+   "kind": "real",
+   "doi": "10.3917/popu.p2000.55n6.0885",
+   "expect": "confirmed",
+   "got": "confirmed",
+   "reasons": [],
+   "asked": [
+    "crossref:match",
+    "openalex:match",
+    "retraction-watch:not-found"
+   ]
+  },
+  {
+   "kind": "real",
+   "doi": "10.15382/sturii2022107.11-24",
+   "expect": "confirmed",
+   "got": "confirmed",
+   "reasons": [],
+   "asked": [
+    "crossref:match",
+    "openalex:match",
+    "retraction-watch:not-found"
+   ]
+  },
+  {
+   "kind": "real",
+   "doi": "10.2196/70057",
+   "expect": "confirmed",
+   "got": "confirmed",
+   "reasons": [],
+   "asked": [
+    "crossref:match",
+    "openalex:match",
+    "retraction-watch:not-found"
+   ]
+  },
+  {
+   "kind": "real",
+   "doi": "10.1016/j.revhom.2021.07.008",
+   "expect": "confirmed",
+   "got": "confirmed",
+   "reasons": [],
+   "asked": [
+    "crossref:match",
+    "openalex:match",
+    "retraction-watch:not-found"
+   ]
+  },
+  {
+   "kind": "retracted (Retraction Watch)",
+   "doi": "10.2169/internalmedicine.50.4792",
+   "expect": "retracted",
+   "got": "retracted",
+   "reasons": [
+    "RETRACTED"
+   ],
+   "asked": [
+    "crossref:match",
+    "openalex:match",
+    "retraction-watch:match"
+   ]
+  },
+  {
+   "kind": "retracted (Retraction Watch)",
+   "doi": "10.1177/11297298221150664",
+   "expect": "retracted",
+   "got": "retracted",
+   "reasons": [
+    "RETRACTED"
+   ],
+   "asked": [
+    "crossref:match",
+    "openalex:match",
+    "retraction-watch:match"
+   ]
+  },
+  {
+   "kind": "retracted (Retraction Watch)",
+   "doi": "10.1042/bsr20194309",
+   "expect": "retracted",
+   "got": "retracted",
+   "reasons": [
+    "RETRACTED"
+   ],
+   "asked": [
+    "crossref:match",
+    "openalex:match",
+    "retraction-watch:match"
+   ]
+  },
+  {
+   "kind": "retracted (Retraction Watch)",
+   "doi": "10.1007/s43188-020-00084-9",
+   "expect": "retracted",
+   "got": "retracted",
+   "reasons": [
+    "RETRACTED"
+   ],
+   "asked": [
+    "crossref:match",
+    "openalex:match",
+    "retraction-watch:match"
+   ]
+  },
+  {
+   "kind": "retracted (Retraction Watch)",
+   "doi": "10.1177/1758835920965853",
+   "expect": "retracted",
+   "got": "retracted",
+   "reasons": [
+    "RETRACTED"
+   ],
+   "asked": [
+    "crossref:match",
+    "openalex:match",
+    "retraction-watch:match"
+   ]
+  },
+  {
+   "kind": "altered: year changed by our code",
+   "doi": "10.21331/jprapr.2016.9.1.001",
+   "expect": "details-differ",
+   "got": "details-differ",
+   "reasons": [
+    "YEAR_DIFFERS"
+   ],
+   "asked": [
+    "crossref:match",
+    "openalex:match",
+    "retraction-watch:not-found"
+   ]
+  },
+  {
+   "kind": "altered: first author changed by our code",
+   "doi": "10.1016/j.jcp.2009.01.009",
+   "expect": "details-differ",
+   "got": "details-differ",
+   "reasons": [
+    "AUTHOR_DIFFERS"
+   ],
+   "asked": [
+    "crossref:match",
+    "openalex:match",
+    "retraction-watch:not-found"
+   ]
+  },
+  {
+   "kind": "altered: year changed by our code",
+   "doi": "10.1152/ajpheart.00573.2001",
+   "expect": "details-differ",
+   "got": "details-differ",
+   "reasons": [
+    "YEAR_DIFFERS"
+   ],
+   "asked": [
+    "crossref:match",
+    "openalex:match",
+    "retraction-watch:not-found"
+   ]
+  },
+  {
+   "kind": "altered: first author changed by our code",
+   "doi": "10.37251/ijoer.v2i3.529",
+   "expect": "details-differ",
+   "got": "details-differ",
+   "reasons": [
+    "AUTHOR_DIFFERS"
+   ],
+   "asked": [
+    "crossref:match",
+    "openalex:match",
+    "retraction-watch:not-found"
+   ]
+  },
+  {
+   "kind": "altered: year changed by our code",
+   "doi": "10.24989/ig.v34i1-2.3592",
+   "expect": "details-differ",
+   "got": "details-differ",
+   "reasons": [
+    "YEAR_DIFFERS"
+   ],
+   "asked": [
+    "crossref:match",
+    "openalex:match",
+    "retraction-watch:not-found"
+   ]
+  }
+ ]
+}

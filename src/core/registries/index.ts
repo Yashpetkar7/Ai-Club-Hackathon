@@ -2,6 +2,7 @@ import type { RegistryRecord } from '@/core/contracts';
 import type { Registries } from '@/core/verify/verdict';
 import { getJson, RegistryError } from './http';
 import { fromCrossref, fromDataCite, fromOpenAlex } from './map';
+import { retractionWatch } from './retractionWatch';
 
 const OA_FIELDS = 'id,doi,title,display_name,publication_year,authorships,primary_location,biblio,type,type_crossref,is_retracted,cited_by_count,open_access,referenced_works,abstract_inverted_index';
 
@@ -32,6 +33,7 @@ export const registries: Registries = {
     const j = await getJson<{ message: { items: Record<string, unknown>[] } }>(`https://api.crossref.org/works?rows=6&query.bibliographic=${q}`, 'crossref-search');
     return (j?.message.items ?? []).map(fromCrossref).filter((r) => r.title);
   },
+  retractionWatch: (doi) => retractionWatch.lookup(doi),
 };
 
 export interface RetractedRef { id: string; title: string; doi?: string; year?: number }

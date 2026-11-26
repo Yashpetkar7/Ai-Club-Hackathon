@@ -1,0 +1,72 @@
+{
+ "data": "Positives: Crossref records of papers Retraction Watch lists as retracted (journal articles, 2000 on). Negatives: Crossref random sample of journal articles, 2000 on, minus anything Retraction Watch lists.",
+ "features": [
+  "log_authors",
+  "single_author",
+  "no_authors",
+  "year_2000",
+  "year_2005",
+  "year_2010",
+  "year_2015",
+  "year_2018",
+  "year_2020",
+  "year_2022",
+  "year_2024",
+  "year_unknown",
+  "publisher one-hot (>= 8 papers)",
+  "journal one-hot (>= 8 papers)"
+ ],
+ "records": 12033,
+ "trainedOn": {
+  "positives": 6033,
+  "negatives": 6000
+ },
+ "test": {
+  "n": 2407,
+  "auc": 0.8603,
+  "aucUnseenJournals": 0.8056,
+  "aucWithoutNames": 0.7143,
+  "above_p90": 0.6338,
+  "above_p97": 0.4797
+ },
+ "vocab": {
+  "publishers": 78,
+  "journals": 159
+ },
+ "strongestPublishers": [
+  "spandidos publications",
+  "wiley",
+  "public library of science (plos)",
+  "frontiers media sa",
+  "springer science and business media llc",
+  "edp sciences",
+  "american physiological society",
+  "sage publications"
+ ],
+ "weakestPublishers": [
+  "hans publishers",
+  "project muse",
+  "publishing house helvetica (publications)",
+  "japan society of mechanical engineers",
+  "georg thieme verlag kg",
+  "openedition",
+  "cairn",
+  "egypts presidential specialized council for education and scientific research"
+ ],
+ "numericWeights": {
+  "log_authors": 0.19688265167453264,
+  "single_author": -0.25740746683697396,
+  "no_authors": -0.6403596760859147,
+  "year_2000": -0.9077966842627138,
+  "year_2005": -0.09584227523929352,
+  "year_2010": 0.13675702957266472,
+  "year_2015": 0.3315512144459742,
+  "year_2018": 0.398517857635867,
+  "year_2020": 0.5754274235042649,
+  "year_2022": 0.2992081699740966,
+  "year_2024": -1.0846248508405514,
+  "year_unknown": 0.0
+ },
+ "dropped": "page, volume and issue: they partly encode the retraction (papers withdrawn before print never get a volume) and would flag every new online-first paper",
+ "caveat": "Balanced training data: scores rank papers, they are not probabilities. Real retraction rates are far below 1%. Much of the signal is the publisher and journal, which says more about where retractions cluster than about any one paper."
+}

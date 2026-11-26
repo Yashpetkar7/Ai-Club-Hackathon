@@ -1,9 +1,10 @@
 import { REASON_TEXT, VERDICT_TEXT, type RawReference, type ReferenceCheck, type RegistryTrace } from '@/core/contracts';
+import { retractionRisk } from '@/core/risk/risk';
 import { cleanTitle } from '@/core/verify/normalise';
 import css from './Receipt.module.css';
 import { VerdictStamp } from './Stamp';
 
-const REGISTRY: Record<RegistryTrace['registry'], string> = { crossref: 'Crossref', openalex: 'OpenAlex', datacite: 'DataCite', 'doi.org': 'doi.org' };
+const REGISTRY: Record<RegistryTrace['registry'], string> = { crossref: 'Crossref', openalex: 'OpenAlex', datacite: 'DataCite', 'doi.org': 'doi.org', 'retraction-watch': 'Retraction Watch' };
 const STATUS: Record<RegistryTrace['status'], string> = { match: 'has it', 'no-match': 'no match', 'not-found': 'no record', error: 'did not answer', skipped: 'not asked' };
 const FIELD = { title: 'Title', authors: 'Authors', year: 'Year', doi: 'DOI' } as const;
 
@@ -20,6 +21,8 @@ export function Receipt({ check, raw, children, live }: { check: ReferenceCheck;
   const t = VERDICT_TEXT[check.verdict];
   const r = check.record;
   const asked = [...new Map(check.trace.map((x) => [x.registry, x])).values()];
+  // A caution only. It never changes the verdict above and is not shown for a work already retracted.
+  const risk = r && !r.retracted ? retractionRisk(r) : null;
   return (
     <article className={`${css.receipt}${live ? ` ${css.feed}` : ''}`} data-verdict={check.verdict}>
       <header className={css.head}>
@@ -79,6 +82,7 @@ export function Receipt({ check, raw, children, live }: { check: ReferenceCheck;
               <strong>{x.label}</strong>
               {x.on ? `, ${x.on}` : ''}
               {x.by === 'retraction-watch' ? ', from Retraction Watch' : ', from the publisher'}
+              {!!x.reasons?.length && `. Reasons recorded by Retraction Watch: ${x.reasons.join('; ')}`}
               {x.doi && (
                 <>
                   {'. '}
@@ -90,6 +94,11 @@ export function Receipt({ check, raw, children, live }: { check: ReferenceCheck;
             </li>
           ))}
         </ul>
+      )}
+      {risk && risk.band !== 'typical' && (
+        <p className={css.risk}>
+          Retraction risk signal: higher than {risk.band === 'much-higher' ? '97' : '90'}% of ordinary papers in our test{risk.because.length ? `, mostly because of ${risk.because.join(', ')}` : ''}. This is a trained model, not a check: read the paper carefully, it may be perfectly sound. <a href="#/data">How the model works</a>
+        </p>
       )}
       <p className={css.asked}>
         {asked.map((x, i) => (

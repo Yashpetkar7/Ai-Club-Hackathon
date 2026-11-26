@@ -16,6 +16,7 @@ const SignIn = lazy(() => import('@/pages/SignIn').then((m) => ({ default: m.Sig
 const Account = lazy(() => import('@/pages/Account').then((m) => ({ default: m.Account })));
 const Guide = lazy(() => import('@/pages/Guide').then((m) => ({ default: m.Guide })));
 const Rules = lazy(() => import('@/pages/Rules').then((m) => ({ default: m.Rules })));
+const Data = lazy(() => import('@/pages/Data').then((m) => ({ default: m.Data })));
 
 class Boundary extends Component<{ children: ReactNode; resetKey: string }, { error: Error | null }> {
   state = { error: null as Error | null };
@@ -82,6 +83,7 @@ export function App() {
   else if (section === 'lab') page = <Lab />;
   else if (section === 'rules') page = <Rules />;
   else if (section === 'guide') page = <Guide />;
+  else if (section === 'data') page = <Data />;
   else
     page = (
       <main className="wrap page">
