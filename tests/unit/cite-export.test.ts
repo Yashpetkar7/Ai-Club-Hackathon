@@ -7,9 +7,10 @@ import { checkDraft, findCitations, numberCitations } from '@/core/cite/draft';
 import { STYLE_FILE, type StyleFiles } from '@/core/cite/engine';
 import { toBibtex, toDocx, toRis, toText } from '@/core/cite/export';
 import { exportSet, preflight } from '@/core/cite/preflight';
-import type { CitationStyle, ReferenceCheck, RegistryRecord, Source, Verdict } from '@/core/contracts';
+import type { CitationStyle, Claim, ReferenceCheck, RegistryRecord, Source, Verdict } from '@/core/contracts';
 import { addWebPage, refFromLine, refsFromFile, webProblems } from '@/core/import/import';
 import { statementLines } from '@/core/report/statement';
+import { claimTrail, trailLines } from '@/core/report/trail';
 import { fromCrossref } from '@/core/registries/map';
 import { parseBibtex, parseRis } from '@/core/verify/parse';
 import { addSource, approveSource, createProject, editSource, recheckSource, recordAiDecision, setAiLevel } from '@/store/actions';
@@ -96,6 +97,23 @@ describe('Word file', () => {
     expect(xml).toContain('AI helped (Noy &amp; Zhang, 2023).');
     expect(xml).toContain('Second paragraph.');
     expect(xml).toContain('No calls are recorded.');
+  });
+  it('carries each claim the student used, with the exact words of its source', async () => {
+    // A real sentence: the first one of this paper's abstract as OpenAlex served it (tests/unit/fixtures/abstracts.json).
+    const sentence = JSON.parse(readFileSync('tests/unit/fixtures/abstracts.json', 'utf8'))['10.1126/science.adh2586'].split(/(?<=\.)\s/)[0] as string;
+    const base = { projectId: 'p', reasons: [], checks: { exactQuote: true, support: null, contradiction: null, numbers: null, direction: null, scope: null }, by: 'student' as const };
+    const claims: Claim[] = [
+      { ...base, id: 'c1', text: 'AI made writers faster', sourceId: 'good', passage: { id: 'x', sourceId: 'good', text: sentence, start: 0, end: sentence.length }, label: 'reported', decision: 'accepted', createdAt: '2026-11-26T09:00:00Z' },
+      { ...base, id: 'c2', text: 'A claim the student threw away', label: 'reported', decision: 'rejected', createdAt: '2026-11-26T09:01:00Z' },
+      { ...base, id: 'c3', text: 'A claim not decided yet', label: 'reported', createdAt: '2026-11-26T09:02:00Z' },
+    ];
+    const trail = claimTrail(claims, [good]);
+    expect(trail.map((r) => r.id)).toEqual(['c1']);
+    const xml = await documentXml(await toDocx({ sources: [good], style: 'apa', files: files('apa'), question: 'Q', trail: trail.map(trailLines) }));
+    expect(xml).toContain('Claims and their sources');
+    expect(xml).toContain('Claim: AI made writers faster');
+    expect(xml).toContain(`The source says: “${sentence.replace(/&/g, '&amp;')}”`);
+    expect(xml).not.toContain('threw away');
   });
   it('IEEE numbers follow the draft', async () => {
     const b = src({ id: 'b', record: BLOOM, check: check('confirmed', BLOOM) });

@@ -51,8 +51,8 @@ const TASKS = {
   explain: explainTask,
 };
 
-async function getJson(url, init) {
-  const r = await fetch(url, { ...init, signal: AbortSignal.timeout(TIMEOUT_MS) });
+async function getJson(url, init, ms = TIMEOUT_MS) {
+  const r = await fetch(url, { ...init, signal: AbortSignal.timeout(ms) });
   if (!r.ok) throw Object.assign(new Error(`HTTP ${r.status}`), { status: r.status });
   return r.json();
 }
@@ -74,20 +74,28 @@ async function groqModel(key, slot) {
   return chosen.get(slot);
 }
 
-async function geminiModel(key) {
-  if (process.env.GEMINI_MODEL) return process.env.GEMINI_MODEL;
+/**
+ * Gemini models to try, best first. Our tasks are small, so the fast "lite" models come first; the newest model is
+ * often overloaded, and Google lists retired models that new keys can no longer call. The one that answers moves to
+ * the front.
+ */
+async function geminiModels(key) {
+  if (process.env.GEMINI_MODEL) return [process.env.GEMINI_MODEL];
   if (!chosen.has('gemini')) {
-    const list = await getJson('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200', { headers: { 'x-goog-api-key': key } });
-    const pick = (list.models ?? [])
+    const list = await getJson('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200', { headers: { 'x-goog-api-key': key } }, 8_000);
+    const names = (list.models ?? [])
       .filter((m) => (m.supportedGenerationMethods ?? []).includes('generateContent'))
       .map((m) => String(m.name).replace('models/', ''))
-      .filter((n) => /^gemini-[\d.]+-flash(-lite)?$/.test(n))
-      .sort((a, b) => parseFloat(b.slice(7)) - parseFloat(a.slice(7)) || a.length - b.length)[0];
-    if (!pick) throw new Error('no model');
-    chosen.set('gemini', pick);
+      .filter((n) => /^gemini-[\d.]+-flash(-lite)?$/.test(n));
+    const lite = (n) => (n.endsWith('-lite') ? 0 : 1);
+    names.sort((a, b) => lite(a) - lite(b) || parseFloat(b.slice(7)) - parseFloat(a.slice(7)));
+    if (!names.length) throw new Error('no model');
+    chosen.set('gemini', names);
   }
   return chosen.get('gemini');
 }
+const GEMINI_TRIES = 3;
+const GEMINI_MS = 8_000;
 
 // The gpt-oss models reason before they answer. Low effort, with the reasoning left out of the reply, is the cheapest
 // setting Groq offers for them (console.groq.com/docs/reasoning); other models refuse these fields, so they get none.
@@ -106,13 +114,29 @@ async function groq(system, user, key = process.env.GROQ_API_KEY, slot = 'groq')
 
 async function gemini(system, user) {
   const key = process.env.GEMINI_API_KEY;
-  const model = await geminiModel(key);
-  const j = await getJson(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
-    body: JSON.stringify({ systemInstruction: { parts: [{ text: system }] }, contents: [{ role: 'user', parts: [{ text: user }] }], generationConfig: { temperature: 0.2, maxOutputTokens: 1200, responseMimeType: 'application/json' } }),
-  });
-  return { model: `${model} (Gemini)`, text: j.candidates?.[0]?.content?.parts?.map((p) => p.text ?? '').join('') };
+  const models = await geminiModels(key);
+  let last;
+  for (const model of models.slice(0, GEMINI_TRIES)) {
+    try {
+      const j = await getJson(
+        `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
+          body: JSON.stringify({ systemInstruction: { parts: [{ text: system }] }, contents: [{ role: 'user', parts: [{ text: user }] }], generationConfig: { temperature: 0.2, maxOutputTokens: 1200, responseMimeType: 'application/json' } }),
+        },
+        GEMINI_MS,
+      );
+      const text = j.candidates?.[0]?.content?.parts?.map((p) => p.text ?? '').join('');
+      if (!text) throw new Error('empty');
+      // Busy or retired models fall behind the one that answered.
+      if (models[0] !== model && !process.env.GEMINI_MODEL) chosen.set('gemini', [model, ...models.filter((m) => m !== model)]);
+      return { model: `${model} (Gemini)`, text };
+    } catch (e) {
+      last = e;
+    }
+  }
+  throw last ?? new Error('no answer');
 }
 
 export async function ai(req) {

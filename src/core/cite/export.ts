@@ -95,7 +95,7 @@ export function toRis(sources: Source[]): string {
 }
 
 /** Word file. A hanging indent of half an inch and double spacing, with italics kept as real runs. */
-export async function toDocx(o: { sources: Source[]; style: CitationStyle; files: StyleFiles; question: string; draft?: string; statement?: string[] }): Promise<import('docx').Document> {
+export async function toDocx(o: { sources: Source[]; style: CitationStyle; files: StyleFiles; question: string; draft?: string; statement?: string[]; trail?: string[][] }): Promise<import('docx').Document> {
   mustBeExportable(o.sources);
   const { AlignmentType, Document, HeadingLevel, Paragraph, TabStopType, TextRun } = await import('docx');
   const font = 'Times New Roman';
@@ -124,6 +124,8 @@ export async function toDocx(o: { sources: Source[]; style: CitationStyle; files
   body.push(head(LIST_HEADING[o.style], !!o.draft?.trim()), ...formatted.entries.map(entry));
   const notes = reasonNotes(list);
   if (notes.length) body.push(head(NOTES), ...notes.map(para));
+  // Each claim the student used, with the exact words of its source: the trail from claim to evidence.
+  if (o.trail?.length) body.push(head('Claims and their sources'), ...o.trail.flatMap((lines) => lines.map(para)));
   if (o.statement?.length) body.push(head('AI-use statement'), ...o.statement.map(para));
   return new Document({ creator: 'Paper Trail', title: cleanTitle(o.question), sections: [{ children: body }] });
 }
