@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { Link } from '@/app/router';
-import { onSupport, supportState, type SupportState } from '@/core/claims/support';
+import { onSupport, SUPPORT_MODELS, supportModelLabel, supportState, type SupportState } from '@/core/claims/support';
 import { askAiKey, LICENCES_CHECKED_ON, MODELS, PROXY_HOSTS, taskRows, type AiKey, type ModelFacts } from '@/core/guardrails/architecture';
 import { GUARDRAILS, runGuardrails, type CaseResult, type GuardrailCheck, type GuardrailResult } from '@/core/guardrails/checks';
 import { MAPPING, NIST, OWASP, UNESCO } from '@/core/guardrails/frameworks';
@@ -8,6 +8,7 @@ import { loadBenchmark, type Benchmark } from '@/core/lab/benchmark';
 import type { Rate } from '@/core/lab/metrics';
 import { meaningState, onMeaning, type MeaningState } from '@/core/semantic/meaning';
 import { Stamp } from '@/ui/Stamp';
+import tuned from '../../ml/results/finetune.json';
 import css from './Guardrails.module.css';
 
 /**
@@ -171,7 +172,10 @@ function WhereItRuns() {
     void askAiKey().then((k) => { if (on) setKey(k); });
     return () => { on = false; };
   }, []);
-  const now = { support, meaning };
+  // The support row shows the model that is loading or loaded; the other support row shows Not loaded.
+  const usingFallback = supportModelLabel() === SUPPORT_MODELS.original.label;
+  const off: SupportState = { status: 'off' };
+  const now = { support: usingFallback ? off : support, fallback: usingFallback ? support : off, meaning };
   const tasks = taskRows();
   return (
     <section className="stack" aria-labelledby="guard-where-heading">
@@ -184,13 +188,13 @@ function WhereItRuns() {
         <div className={css.scroll} role="region" aria-labelledby="guard-models-caption" tabIndex={0}>
           <table className={css.table}>
             <caption id="guard-models-caption">On-device models</caption>
-            <thead><tr><th scope="col">Model</th><th scope="col">Files from Hugging Face</th><th scope="col">Revision</th><th scope="col">Size</th><th scope="col">Licence</th><th scope="col">Now</th></tr></thead>
+            <thead><tr><th scope="col">Model</th><th scope="col">Files</th><th scope="col">Revision</th><th scope="col">Size</th><th scope="col">Licence</th><th scope="col">Now</th></tr></thead>
             <tbody>
               {MODELS.map((m) => (
                 <tr key={m.key}>
                   <th scope="row">{m.name}</th>
-                  <td><code>{m.repo}</code></td>
-                  <td>{m.revision ? <code>{m.revision}</code> : 'Not pinned: the newest files load'}</td>
+                  <td>{m.from === 'site' ? <>From this site: <code>public/models/{m.repo}</code></> : <>From Hugging Face: <code>{m.repo}</code></>}</td>
+                  <td>{m.from === 'site' ? 'Ships with the code' : m.revision ? <code>{m.revision}</code> : 'Not pinned: the newest files load'}</td>
                   <td>About {m.mb} MB</td>
                   <td><Licence m={m} /></td>
                   <td>{stateText(now[m.key])}</td>
@@ -256,6 +260,9 @@ function Measured({ state }: { state: { status: 'loading' } | { status: 'ready';
         {claims.model.auc !== null && <li><strong>Area under the ROC curve</strong> for the support score alone: {claims.model.auc.toFixed(3)}. 1 means every true claim scores above every false one.</li>}
       </ul>
       <p className={css.note}><span className="sample">SAMPLE</span> Worked out just now from recorded data. The team wrote these {m.total} claims against {pv.counts.abstracts} real abstracts. It is a development set: the claim rules were tuned on it, so these are not hold-out results. The scores were recorded once, on {day(pv.recordedAt)}, with {pv.model}.</p>
+      {tuned.inChrome?.scifact && (
+        <p className={css.note}>The site now runs the fine-tuned model. On the same claim sets in Chrome it labelled {tuned.inChrome.scifact.falseVerified} false claims and {tuned.inChrome.scifact.trueVerified} true claims Verified (recorded {day(tuned.inChrome.scifact.recordedAt)}, <code>ml/results/finetune.json</code>). <Link to="/data">See Data and models</Link></p>
+      )}
       <p><Link to="/lab?misses">See every miss in the Integrity Lab</Link></p>
     </div>
   );
@@ -271,6 +278,7 @@ function ModelCards() {
     return () => { on = false; };
   }, []);
   const support = MODELS.find((m) => m.key === 'support')!;
+  const fallback = MODELS.find((m) => m.key === 'fallback')!;
   const meaning = MODELS.find((m) => m.key === 'meaning')!;
   return (
     <section className="stack" aria-labelledby="guard-cards-heading" aria-busy={state.status === 'loading'}>
@@ -282,7 +290,7 @@ function ModelCards() {
             <div><dt>What it does here</dt><dd>Scores how one source sentence relates to a claim: supports it, says neither, or contradicts it.</dd></div>
             <div><dt>What it never does</dt><dd>Decide a label. <code>judge()</code> in <code>src/core/claims/label.ts</code> does, and a high score never makes a claim Verified unless the sentence is in the source, two registries confirmed it and every plain-code check passes.</dd></div>
             <div><dt>Where it runs</dt><dd>In this browser, in a background worker, with ONNX Runtime. Claims and sources are not sent anywhere.</dd></div>
-            <div><dt>Size</dt><dd>About {support.mb} MB, downloaded once when someone asks for it. <code>{support.repo}</code>.</dd></div>
+            <div><dt>Size</dt><dd>About {support.mb} MB, served by this site and downloaded once when someone asks for it. <code>{support.repo}</code>, our fine-tune of <code>{tuned.base}</code> on SciFact. If this site cannot serve it, <code>{fallback.repo}</code> (about {fallback.mb} MB, from Hugging Face) loads instead.</dd></div>
             <div><dt>Measured</dt><dd><Measured state={state} /></dd></div>
           </dl>
         </article>

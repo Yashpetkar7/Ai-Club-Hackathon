@@ -85,7 +85,7 @@ export const MAPPING: readonly MappingRow[] = [
     unesco: [],
   },
   {
-    control: 'Both on-device models are named with their size and licence status. The meaning model is pinned to one revision; the support model is not, and this page says so.',
+    control: 'Every on-device model is named with where its files come from, its size and its licence status. The support model ships with the site, so its files change only with the code. The meaning model is pinned to one revision; the fallback support model is not, and this page says so.',
     evidence: 'What runs where, above',
     nist: ['Govern', 'Map'],
     owasp: [OWASP.LLM03],

@@ -59,7 +59,10 @@ The readiness script makes real requests and writes `test-results/live-readiness
 It does not write assignments, call sources fake, or promise that a verified claim is true. Verified means the source says it. The draft check compares with your own library only. It is not a plagiarism verdict and gives no score. Registries miss many books, reports and regional journals, so "Not found" lists where we looked and nothing more.
 
 ## Data and honesty
-- Metadata comes from Crossref, OpenAlex, DataCite and doi.org.
+- Metadata comes from Crossref, OpenAlex, DataCite and doi.org, asked live.
+- The Retraction Watch database (made public by Crossref) ships with the site as a DOI index in `public/data/retraction-watch/`, a third retraction source in every check. It can add a retraction and its reasons, never remove one. Sources and rebuild steps: `datasets/README.md`.
+- Two models we trained: the claim-support model fine-tuned on SciFact, and a retraction-risk signal trained on Retraction Watch and a Crossref sample. Neither can set a verdict or a claim label. Method and held-out results: `ml/README.md` and `ml/results/`.
+- Every source, dataset and model is listed on the site's **Data and models** page (`#/data`).
 - As a guest, projects stay in your browser. With an account, a copy locked with your passphrase (AES-256-GCM, PBKDF2 600,000 rounds) is kept on the server. The server has no name, passphrase or key, so it cannot open it.
 - Sample content is labelled SAMPLE. Two references in the sample text are invented on purpose and say so.
 - AI tools helped build this. Prompts are in `docs/AI_PROMPT_LOG.md` and `docs/prompts/`.

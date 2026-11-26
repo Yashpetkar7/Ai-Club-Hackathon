@@ -1,9 +1,21 @@
 import { listen, nextId, release, send, start, stop, type HostMessage } from './host';
 import type { Support } from './label';
 
-/** The page side of the on-device model. Nothing loads until the student asks, and Cancel really stops it. */
-export const SUPPORT_MODEL = 'nli-deberta-v3-xsmall';
-export const SUPPORT_MB = 100;
+/** The page side of the on-device support model. Nothing loads until the student asks, and Cancel really stops it. */
+export const SUPPORT_MODELS = {
+  original: { id: 'Xenova/nli-deberta-v3-xsmall', local: false, label: 'nli-deberta-v3-xsmall', mb: 100 },
+  scifact: { id: 'paper-trail-nli-scifact', local: true, label: 'nli-deberta-v3-xsmall fine-tuned on SciFact', mb: 90 },
+} as const;
+export type SupportModelKey = keyof typeof SUPPORT_MODELS;
+
+/** The model this site runs, and why. Changed only when a new model beats the old one on held-out data AND on our claim sets. */
+export const SUPPORT: { key: SupportModelKey; label: string; why: string } = {
+  key: 'scifact',
+  label: SUPPORT_MODELS.scifact.label,
+  why: 'On held-out SciFact it was right more often (81% against 64%) and made far fewer wrong calls (3 against 12 wrong “supports”, 11 against 165 wrong “contradicts”), at the cost of finding slightly fewer real supports. On our own claim sets in Chrome both models let 0 of 80 false claims through and Verified 21 of 24 true ones. If this site cannot serve it, the original model loads instead.',
+};
+export const SUPPORT_MODEL = SUPPORT_MODELS[SUPPORT.key].label;
+export const SUPPORT_MB = SUPPORT_MODELS[SUPPORT.key].mb;
 
 export type SupportState = { status: 'off' } | { status: 'loading'; loaded: number; total: number } | { status: 'ready' } | { status: 'failed'; why: string };
 
@@ -40,7 +52,11 @@ function heard(m: HostMessage): void {
     } else if (state.status === 'loading') {
       fail('not loaded');
       release('nli');
-      set({ status: 'failed', why: navigator.onLine === false ? 'You are offline, and the model is not saved in this browser yet. Everything else still works.' : 'The model did not load. Everything else still works.' });
+      // Our own model is served by this site. If the host does not have it, use the original instead of failing.
+      if (loading !== 'original') {
+        set({ status: 'off' });
+        loadSupport('original');
+      } else set({ status: 'failed', why: navigator.onLine === false ? 'You are offline, and the model is not saved in this browser yet. Everything else still works.' : 'The model did not load. Everything else still works.' });
     }
   } else if (m.type === 'crashed') {
     fail('stopped');
@@ -50,12 +66,17 @@ function heard(m: HostMessage): void {
     const was = state.status;
     set({ status: 'off' });
     // The meaning model's download was cancelled, which closed the shared worker. Ours comes back from the browser's cache.
-    if (m.by !== 'nli' && (was === 'ready' || was === 'loading')) loadSupport();
+    if (m.by !== 'nli' && (was === 'ready' || was === 'loading')) loadSupport(loading);
   }
 }
 
-export function loadSupport(): void {
+let loading: SupportModelKey = SUPPORT.key;
+/** The model that actually loaded, for the evidence log. */
+export const supportModelLabel = (): string => SUPPORT_MODELS[loading].label;
+
+export function loadSupport(model: SupportModelKey = SUPPORT.key): void {
   if (state.status === 'loading' || state.status === 'ready') return;
+  loading = model;
   if (!wired) {
     wired = true;
     listen(heard);
@@ -65,7 +86,7 @@ export function loadSupport(): void {
     return;
   }
   set({ status: 'loading', loaded: 0, total: 0 });
-  send({ type: 'load' });
+  send({ type: 'load', model: SUPPORT_MODELS[model].id, local: SUPPORT_MODELS[model].local, base: import.meta.env.BASE_URL });
 }
 
 export function cancelSupport(): void {

@@ -177,7 +177,7 @@ test('audit: compare the meaning on this device, with FAKE on-device models', as
   await runSample(page);
   await expect(page.locator('#claim-c3 .stamp').first()).toHaveText(/Reported, not checked$/);
 
-  await expect(page.getByText(/download about 123 MB once \(23 MB to find sentences by meaning, 100 MB to score support\)/)).toBeVisible();
+  await expect(page.getByText(/download about 113 MB once \(23 MB to find sentences by meaning, 90 MB to score support\)/)).toBeVisible();
   await page.getByRole('button', { name: 'Compare the meaning on this device' }).click();
   await expect(page.getByText('Meaning is compared on this device.')).toBeVisible();
 

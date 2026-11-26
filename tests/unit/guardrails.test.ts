@@ -1,8 +1,9 @@
 // @vitest-environment node
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { AGENTS } from '@/policy/policy';
-import { MODELS, PROXY_HOSTS, SERVER_MIN_LEVEL, SUPPORT_REPO, TASK_AGENT, askAiKey, taskRows } from '@/core/guardrails/architecture';
+import { FALLBACK_REPO, MODELS, PROXY_HOSTS, SERVER_MIN_LEVEL, SUPPORT_REPO, TASK_AGENT, askAiKey, taskRows } from '@/core/guardrails/architecture';
+import { SUPPORT, SUPPORT_MODELS } from '@/core/claims/support';
 import { GUARDRAILS, overall, probeServer, runGuardrail, runGuardrails, type CheckEnv } from '@/core/guardrails/checks';
 import { ALL_LINKS, MAPPING } from '@/core/guardrails/frameworks';
 import { MEANING_REVISION } from '@/core/semantic/models';
@@ -110,13 +111,20 @@ describe('page-side copies of server values do not drift', () => {
     for (const [task, agent] of Object.entries(TASK_AGENT)) expect(AGENTS.find((a) => a.id === agent)?.kind, task).toBe('ai');
   });
 
-  it('the support model the worker loads, and whether it is pinned', () => {
-    const worker = read('src/core/claims/support.worker.ts');
-    expect(worker.match(/const MODEL = '([^']+)'/)?.[1]).toBe(SUPPORT_REPO);
+  it('the support model the site ships, the one it falls back to, and whether each is pinned', () => {
     const support = MODELS.find((m) => m.key === 'support')!;
-    // The page says "not pinned" only while the worker loads it without a revision.
-    const loadsWithRevision = /from_pretrained\(MODEL,\s*\{[^}]*revision/.test(worker);
-    expect(support.revision === null).toBe(!loadsWithRevision);
+    const fallback = MODELS.find((m) => m.key === 'fallback')!;
+    expect(support.repo).toBe(SUPPORT_MODELS[SUPPORT.key].id);
+    expect(support).toMatchObject({ from: 'site', mb: SUPPORT_MODELS[SUPPORT.key].mb });
+    expect(fallback).toMatchObject({ repo: SUPPORT_MODELS.original.id, from: 'hub', mb: SUPPORT_MODELS.original.mb });
+    // "From this site" is true only while the files are in public/models.
+    for (const f of ['config.json', 'tokenizer.json', 'onnx/model_quantized.onnx']) expect(existsSync(`public/models/${SUPPORT_REPO}/${f}`), f).toBe(true);
+    const worker = read('src/core/claims/support.worker.ts');
+    expect(worker.match(/model: '([^']+)', local: false/)?.[1]).toBe(FALLBACK_REPO);
+    // The page says "not pinned" only while the worker loads the support model without a revision.
+    const loadsWithRevision = /from_pretrained\(id,\s*\{[^}]*revision/.test(worker);
+    expect(/from_pretrained\(id,/.test(worker)).toBe(true);
+    expect(fallback.revision === null).toBe(!loadsWithRevision);
     expect(MODELS.find((m) => m.key === 'meaning')!.revision).toBe(MEANING_REVISION);
   });
 

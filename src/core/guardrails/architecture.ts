@@ -1,4 +1,4 @@
-import { SUPPORT_MB, SUPPORT_MODEL } from '@/core/claims/support';
+import { SUPPORT, SUPPORT_MODELS } from '@/core/claims/support';
 import { MEANING_MB, MEANING_MODEL, MEANING_REVISION } from '@/core/semantic/models';
 import { AGENTS, type AgentId } from '@/policy/policy';
 
@@ -34,8 +34,9 @@ export function taskRows(): TaskRow[] {
   });
 }
 
-/** Copy of MODEL in src/core/claims/support.worker.ts. The worker loads it without a pinned revision. */
-export const SUPPORT_REPO = `Xenova/${SUPPORT_MODEL}`;
+/** The support model the site runs (served by this site from public/models), and the one it falls back to (from Hugging Face). */
+export const SUPPORT_REPO = SUPPORT_MODELS[SUPPORT.key].id;
+export const FALLBACK_REPO = SUPPORT_MODELS.original.id;
 
 export interface Licence {
   /** Confirmed only when a licence was found for these exact files. */
@@ -46,10 +47,12 @@ export interface Licence {
   checked: { label: string; url: string }[];
 }
 export interface ModelFacts {
-  key: 'support' | 'meaning';
+  key: 'support' | 'fallback' | 'meaning';
   name: string;
   repo: string;
-  /** null when the code loads the newest files instead of a pinned revision. */
+  /** Where the files come from: this site (they change only with the code) or Hugging Face. */
+  from: 'site' | 'hub';
+  /** For files from Hugging Face: null when the code loads the newest files instead of a pinned revision. */
   revision: string | null;
   mb: number;
   licence: Licence;
@@ -63,8 +66,26 @@ export const MODELS: readonly ModelFacts[] = [
     key: 'support',
     name: 'Support model',
     repo: SUPPORT_REPO,
+    from: 'site',
     revision: null,
-    mb: SUPPORT_MB,
+    mb: SUPPORT_MODELS[SUPPORT.key].mb,
+    licence: {
+      confirmed: false,
+      short: 'Not confirmed',
+      text: 'Our own fine-tune, so no published licence: the repository has no licence file for these weights yet. Its base, cross-encoder/nli-deberta-v3-xsmall, is listed as Apache 2.0. The SciFact claims it was trained on are CC BY 4.0, and the SciFact abstracts ODC-By 1.0; both ask for attribution.',
+      checked: [
+        { label: 'Base model: cross-encoder/nli-deberta-v3-xsmall', url: 'https://huggingface.co/cross-encoder/nli-deberta-v3-xsmall' },
+        { label: 'SciFact licence file', url: 'https://github.com/allenai/scifact/blob/master/LICENSE.md' },
+      ],
+    },
+  },
+  {
+    key: 'fallback',
+    name: 'Support model, if this site cannot serve ours',
+    repo: FALLBACK_REPO,
+    from: 'hub',
+    revision: null,
+    mb: SUPPORT_MODELS.original.mb,
     licence: {
       confirmed: false,
       short: 'Not confirmed',
@@ -80,6 +101,7 @@ export const MODELS: readonly ModelFacts[] = [
     key: 'meaning',
     name: 'Meaning model',
     repo: MEANING_MODEL,
+    from: 'hub',
     revision: MEANING_REVISION,
     mb: MEANING_MB,
     licence: {

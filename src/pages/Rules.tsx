@@ -24,7 +24,7 @@ const CANNOT = ['Whether a source is right', 'Books, reports and regional journa
 const LEAVES: [string, string][] = [
   ['Search words and reference details', 'Go to Crossref, OpenAlex, DataCite and doi.org when you press Find, Discover, Check, Audit or Challenge. On Discover your question also goes to OpenAlex’s search by meaning.'],
   ['A question, a claim or numbered passages from sources you kept; for Explain, a claim with its source sentence, label and scores', 'Go to an AI service only at the level that allows that task, only when you press that button, and only if a key is set for this site.'],
-  [`The support model (about ${SUPPORT_MB} MB) and the meaning model (about ${MEANING_MB} MB)`, 'Download from Hugging Face to your device once, when you ask for them. Your claims and sources are not sent.'],
+  [`The support model (about ${SUPPORT_MB} MB) and the meaning model (about ${MEANING_MB} MB)`, 'Download to your device once, when you ask for them: the support model from this site (from Hugging Face only if this site cannot serve it), the meaning model from Hugging Face. Your claims and sources are not sent.'],
   ['Your passphrase and the key made from it', 'Never leave this browser and are never stored in readable form.'],
   ['Your library, notes, draft and log', 'As a guest, never leave this browser. With an account, where this site has a server that saves, a copy locked with your passphrase is kept there, under a code instead of your name. We cannot open it.'],
   ['Your PDF files', 'Are read on this device and not uploaded. With an account, the text read from them is inside the locked copy.'],

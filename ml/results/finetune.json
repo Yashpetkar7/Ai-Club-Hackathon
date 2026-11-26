@@ -1,0 +1,192 @@
+{
+ "base": "cross-encoder/nli-deberta-v3-xsmall",
+ "data": "SciFact (allenai), claims_train.jsonl for training, claims_dev.jsonl held out",
+ "pairing": "premise = one abstract sentence (or a multi-sentence rationale), hypothesis = claim; neutral = closest non-rationale sentences of the cited abstract plus one random",
+ "threshold": 0.9,
+ "settings": {
+  "epochs": 3,
+  "lr": 3e-05,
+  "batch": 16,
+  "maxLen": 192,
+  "seed": 13
+ },
+ "pairs": {
+  "fit": {
+   "neutral": 2451,
+   "contradiction": 291,
+   "entailment": 556
+  },
+  "val": {
+   "entailment": 60,
+   "neutral": 280,
+   "contradiction": 50
+  },
+  "dev": {
+   "neutral": 1015,
+   "entailment": 216,
+   "contradiction": 122
+  }
+ },
+ "baseVal": {
+  "pairs": 390,
+  "accuracy": 0.7077,
+  "macroF1": 0.5622,
+  "f1": {
+   "contradiction": 0.4889,
+   "entailment": 0.3864,
+   "neutral": 0.8115
+  },
+  "falseSupport": 3,
+  "falseSupportRate": 0.0091,
+  "supportRecallAt09": 0.1667,
+  "falseContradiction": 25,
+  "contradictionRecallAt09": 0.52
+ },
+ "history": [
+  {
+   "epoch": 1,
+   "val": {
+    "pairs": 390,
+    "accuracy": 0.8282,
+    "macroF1": 0.7344,
+    "f1": {
+     "contradiction": 0.7209,
+     "entailment": 0.5882,
+     "neutral": 0.8939
+    },
+    "falseSupport": 2,
+    "falseSupportRate": 0.0061,
+    "supportRecallAt09": 0.1333,
+    "falseContradiction": 2,
+    "contradictionRecallAt09": 0.22
+   },
+   "eligible": true,
+   "seconds": 1301
+  },
+  {
+   "epoch": 2,
+   "val": {
+    "pairs": 390,
+    "accuracy": 0.8231,
+    "macroF1": 0.7265,
+    "f1": {
+     "contradiction": 0.6747,
+     "entailment": 0.6107,
+     "neutral": 0.894
+    },
+    "falseSupport": 7,
+    "falseSupportRate": 0.0212,
+    "supportRecallAt09": 0.4333,
+    "falseContradiction": 1,
+    "contradictionRecallAt09": 0.24
+   },
+   "eligible": false,
+   "seconds": 864
+  },
+  {
+   "epoch": 3,
+   "val": {
+    "pairs": 390,
+    "accuracy": 0.841,
+    "macroF1": 0.7635,
+    "f1": {
+     "contradiction": 0.7692,
+     "entailment": 0.619,
+     "neutral": 0.9023
+    },
+    "falseSupport": 9,
+    "falseSupportRate": 0.0273,
+    "supportRecallAt09": 0.45,
+    "falseContradiction": 2,
+    "contradictionRecallAt09": 0.42
+   },
+   "eligible": false,
+   "seconds": 2058
+  }
+ ],
+ "chosenEpoch": 1,
+ "baseDev": {
+  "pairs": 1353,
+  "accuracy": 0.6726,
+  "macroF1": 0.515,
+  "f1": {
+   "contradiction": 0.3455,
+   "entailment": 0.4131,
+   "neutral": 0.7863
+  },
+  "falseSupport": 7,
+  "falseSupportRate": 0.0062,
+  "supportRecallAt09": 0.1759,
+  "falseContradiction": 136,
+  "contradictionRecallAt09": 0.5246
+ },
+ "tunedDev": {
+  "pairs": 1353,
+  "accuracy": 0.8197,
+  "macroF1": 0.6667,
+  "f1": {
+   "contradiction": 0.4664,
+   "entailment": 0.6418,
+   "neutral": 0.8919
+  },
+  "falseSupport": 2,
+  "falseSupportRate": 0.0018,
+  "supportRecallAt09": 0.1389,
+  "falseContradiction": 9,
+  "contradictionRecallAt09": 0.2049
+ },
+ "shipped": {
+  "paper-trail-nli-scifact": {
+   "file": "public/models/paper-trail-nli-scifact/onnx/model_quantized.onnx",
+   "mb": 87.2,
+   "dev": {
+    "pairs": 1353,
+    "accuracy": 0.8108,
+    "macroF1": 0.6657,
+    "f1": {
+     "contradiction": 0.4641,
+     "entailment": 0.6492,
+     "neutral": 0.8839
+    },
+    "falseSupport": 3,
+    "falseSupportRate": 0.0026,
+    "supportRecallAt09": 0.1713,
+    "falseContradiction": 11,
+    "contradictionRecallAt09": 0.1721
+   }
+  }
+ },
+ "baseInt8Dev": {
+  "pairs": 1353,
+  "accuracy": 0.6438,
+  "macroF1": 0.5025,
+  "f1": {
+   "contradiction": 0.314,
+   "entailment": 0.4324,
+   "neutral": 0.761
+  },
+  "falseSupport": 12,
+  "falseSupportRate": 0.0106,
+  "supportRecallAt09": 0.213,
+  "falseContradiction": 165,
+  "contradictionRecallAt09": 0.541
+ },
+ "baseInt8Note": "The base model exported and quantised by the same script (ml/export_onnx.py with SRC=ml/work/base), so before and after are both the 8-bit file a browser runs.",
+ "inChrome": {
+  "original": {
+   "model": "Original model (Xenova/nli-deberta-v3-xsmall)",
+   "falseVerified": "0 of 80",
+   "trueVerified": "21 of 24",
+   "modelAloneWouldPass": 4,
+   "recordedAt": "2026-11-25T07:22:33.069Z"
+  },
+  "scifact": {
+   "model": "Fine-tuned on SciFact",
+   "falseVerified": "0 of 80",
+   "trueVerified": "21 of 24",
+   "modelAloneWouldPass": 5,
+   "recordedAt": "2026-11-26T07:18:56.847Z"
+  }
+ },
+ "inChromeNote": "Our own claim sets (tests/claims-set.ts and tests/claims-holdout-set.ts), scored in Chrome by tests/e2e/model.spec.ts, labelled by src/core/claims/label.ts. modelAloneWouldPass counts false claims the model alone scores >= 0.9 for support; the guards stopped all of them."
+}

@@ -22,10 +22,12 @@ interface Props {
   cite: (s: Source, page: string) => string | null;
   onChange: (v: string) => void;
   area: RefObject<HTMLTextAreaElement | null>;
+  /** Told how many things the check found, each time the student runs it. */
+  onChecked?: (found: number) => void;
 }
 
 /** Copied text, quotations, repetition and slips. Rules only: no AI, nothing leaves the device, nothing changes without a click. */
-export function DraftCheck({ project, text, sources, cite, onChange, area }: Props) {
+export function DraftCheck({ project, text, sources, cite, onChange, area, onChecked }: Props) {
   const [on, setOn] = useState(false);
   const [at, setAt] = useState('');
   const result = useRef<HTMLParagraphElement>(null);
@@ -53,6 +55,7 @@ export function DraftCheck({ project, text, sources, cite, onChange, area }: Pro
     setLeft(new Set());
     const c = POLICY.draftCheck.copied ? checkCopied(text, sources, project.style) : null;
     const s = POLICY.draftCheck.language ? checkLanguage(text) : [];
+    onChecked?.((c?.items.length ?? 0) + s.length);
     void log(project.id, 'code', 'draft.checked', `${c?.items.length ?? 0} about copied text or quotations, ${s.length} about wording, compared with ${c?.compared.length ?? 0} sources`);
   }
 

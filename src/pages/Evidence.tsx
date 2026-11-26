@@ -9,7 +9,7 @@ import { judge, type Judged, type Support } from '@/core/claims/label';
 import { startAt } from '@/core/claims/nli';
 import { rankSentences } from '@/core/claims/rank';
 import { removeClaim, saveClaim } from '@/core/claims/store';
-import { cancelSupport, loadSupport, onSupport, scoreSupport, scoreSupportMany, SUPPORT_MB, SUPPORT_MODEL, supportState } from '@/core/claims/support';
+import { cancelSupport, loadSupport, onSupport, scoreSupport, scoreSupportMany, SUPPORT_MB, supportModelLabel, supportState } from '@/core/claims/support';
 import { CLAIM_TEXT, REASON_TEXT, type Claim, type ClaimLabel, type Source } from '@/core/contracts';
 import { pageAt, pageText } from '@/core/pdf/pages';
 import { registries } from '@/core/registries';
@@ -199,7 +199,7 @@ export function Evidence({ project }: StepProps) {
           setPick(best);
           setMoved(best > 0);
         }
-        for (const s of got) if (s) await log(project.id, 'code', 'support.model-ran', `${SUPPORT_MODEL} on this device | support ${s.entails.toFixed(2)}, neutral ${(s.neutral ?? 0).toFixed(2)}, contradiction ${s.contradicts.toFixed(2)}`);
+        for (const s of got) if (s) await log(project.id, 'code', 'support.model-ran', `${supportModelLabel()} on this device | support ${s.entails.toFixed(2)}, neutral ${(s.neutral ?? 0).toFixed(2)}, contradiction ${s.contradicts.toFixed(2)}`);
       })
       .finally(() => live && setScoring(false));
     return () => {
@@ -230,7 +230,7 @@ export function Evidence({ project }: StepProps) {
         }
         if (best && useModel) {
           sup = await scoreSupport(best.text, claim).catch(() => null);
-          if (sup) await log(project.id, 'code', 'support.model-ran', `${SUPPORT_MODEL} on this device | support ${sup.entails.toFixed(2)}, neutral ${(sup.neutral ?? 0).toFixed(2)}, contradiction ${sup.contradicts.toFixed(2)}`);
+          if (sup) await log(project.id, 'code', 'support.model-ran', `${supportModelLabel()} on this device | support ${sup.entails.toFixed(2)}, neutral ${(sup.neutral ?? 0).toFixed(2)}, contradiction ${sup.contradicts.toFixed(2)}`);
         }
       }
       if (mine !== allRun.current) return;
@@ -756,7 +756,7 @@ function ModelBox({ state }: { state: ReturnType<typeof supportState> }) {
     <div className={css.model}>
       {state.status === 'failed' && <p role="alert">{state.why}</p>}
       <p className="soft">Your words differ from the source’s. A small model can compare the meaning on this device. It downloads about {SUPPORT_MB} MB once, and your claim is not sent anywhere.</p>
-      <button className="btn" type="button" onClick={loadSupport}>
+      <button className="btn" type="button" onClick={() => loadSupport()}>
         Compare the meaning
       </button>
     </div>

@@ -21,3 +21,20 @@
 .gate { border: 2px solid var(--gate); padding: 18px 20px; display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; justify-content: space-between; background: var(--sheet); }
 @media (max-width: 1080px) { .split { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 520px) { .page { padding: 18px; } }
+.goal { max-width: 75ch; }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.steps li { display: flex; gap: 12px; align-items: center; background: var(--sheet); border: 1px solid var(--line); padding: 10px 14px; }
+.steps li[data-done='true'] { border-color: var(--accent); }
+.steps strong { display: block; }
+.steps small { color: var(--soft); }
+.num { flex: none; width: 28px; height: 28px; display: grid; place-items: center; background: var(--line); color: var(--ink); font-weight: 700; }
+.steps li[data-done='true'] .num { background: var(--accent); color: var(--on-accent); }
+.margin h3 { font-size: 1rem; }
+.checklist li { border: 0; padding: 6px 0 6px 26px; position: relative; }
+.checklist li::before { content: '•'; position: absolute; left: 6px; color: var(--soft); }
+.checklist li[data-ok='true']::before { content: '✓'; color: var(--accent); }
+.checklist li[data-ok='false'] { color: var(--warn); font-weight: 600; }
+.checklist li[data-ok='false']::before { content: '!'; color: var(--warn); }
+.more summary { cursor: pointer; font-weight: 600; }
+.more ul { margin-top: 8px; }
+@media (max-width: 760px) { .steps { grid-template-columns: minmax(0, 1fr); } }

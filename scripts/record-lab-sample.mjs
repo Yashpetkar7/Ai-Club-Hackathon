@@ -7,6 +7,7 @@ import { summarizeFamilies } from '../src/core/lab/evaluate.ts';
 import { registries } from '../src/core/registries/index.ts';
 import { checkReference } from '../src/core/verify/verdict.ts';
 import { installReplay } from '../tests/unit/replay.ts';
+import { readRetractionWatchFrom } from '../src/core/registries/retractionWatch.ts';
 
 if (process.env.RECORD === '1') throw new Error('This script only replays existing data.');
 const hash = (v) => createHash('sha256').update(v).digest('hex');
@@ -14,11 +15,13 @@ const realNow = Date.now.bind(Date);
 const realTimeout = globalThis.setTimeout;
 const realFetch = globalThis.fetch;
 const now = () => new Date(realNow()).toISOString();
-const files = ['src/core/verify/verdict.ts', 'src/core/verify/compare.ts', 'src/core/verify/normalise.ts', 'src/core/registries/index.ts', 'src/core/registries/http.ts', 'src/core/registries/map.ts', 'src/policy/policy.ts', 'src/core/lab/corpus.ts', 'src/core/lab/recorded-seeds.json', 'tests/unit/replay.ts', 'tests/unit/fixtures/registry.json'];
+const files = ['src/core/verify/verdict.ts', 'src/core/verify/compare.ts', 'src/core/verify/normalise.ts', 'src/core/registries/index.ts', 'src/core/registries/http.ts', 'src/core/registries/map.ts', 'src/core/registries/retractionWatch.ts', 'public/data/retraction-watch/meta.json', 'src/policy/policy.ts', 'src/core/lab/corpus.ts', 'src/core/lab/recorded-seeds.json', 'tests/unit/replay.ts', 'tests/unit/fixtures/registry.json'];
 const startedAt = now();
 const rows = [];
 let simulated = realNow();
 installReplay();
+// The Retraction Watch index ships with the site; read the same files from disk, as the unit tests do.
+readRetractionWatchFrom(async (path) => JSON.parse(readFileSync(`public/data/retraction-watch/${path}`, 'utf8')));
 const replayFetch = globalThis.fetch;
 const missing = new Set();
 globalThis.fetch = async (...args) => {

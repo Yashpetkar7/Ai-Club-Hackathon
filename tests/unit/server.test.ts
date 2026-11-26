@@ -58,6 +58,30 @@ describe('registry proxy answers are data and stay on the list', () => {
   it('other sites may not use it', async () => expect((await ask('https://api.crossref.org/works/10.1/a', { 'sec-fetch-site': 'cross-site' })).status).toBe(403));
 });
 
+describe('a wrong OpenAlex key', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    delete process.env.OPENALEX_API_KEY;
+  });
+  it('costs no more than no key: asked again without it, then never sent again', async () => {
+    process.env.OPENALEX_API_KEY = 'refused-key-for-this-test';
+    const seen: string[] = [];
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async (to) => {
+      const url = String(to);
+      seen.push(url);
+      return url.includes('api_key=') ? new Response('{"error":"Invalid or missing API key"}', { status: 401 }) : new Response('{"ok":1}');
+    });
+    const ask = (p: string) => route(new Request(`http://localhost/api/registry?url=${encodeURIComponent(`https://api.openalex.org/works/${p}`)}`));
+    expect((await ask('W1')).status).toBe(200);
+    expect(seen).toHaveLength(2);
+    expect(seen[0]).toContain('api_key=');
+    expect(seen[1]).not.toContain('api_key=');
+    expect((await ask('W2')).status).toBe(200);
+    expect(seen).toHaveLength(3);
+    expect(seen[2]).not.toContain('api_key=');
+  });
+});
+
 describe('asking a registry again', () => {
   afterEach(() => {
     vi.useRealTimers();

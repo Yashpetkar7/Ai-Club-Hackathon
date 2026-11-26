@@ -62,7 +62,11 @@ test('guardrails: nothing runs before the click, then every check matches in the
   const where = page.getByRole('region', { name: 'What runs where' });
   await expect(where.getByRole('region', { name: 'On-device models' })).toContainText('d8c86521100d3556476a063fc2342036d45c106f');
   await expect(where.getByRole('region', { name: 'On-device models' })).toContainText('Not pinned');
-  await expect(where.getByText('Not confirmed', { exact: true })).toBeVisible();
+  // Three models: ours from this site, its fallback from Hugging Face, and the meaning model. Two licences are not confirmed.
+  const models = where.getByRole('region', { name: 'On-device models' });
+  await expect(models).toContainText('From this site: public/models/paper-trail-nli-scifact');
+  await expect(models).toContainText('Ships with the code');
+  await expect(models.getByText('Not confirmed', { exact: true })).toHaveCount(2);
   await expect(where.getByRole('region', { name: 'AI tasks and the lowest level for each' }).getByRole('row')).toHaveCount(5);
   await expect(where).not.toContainText('Asking this site’s server');
   await expect(where).not.toContainText('Differs from the server');

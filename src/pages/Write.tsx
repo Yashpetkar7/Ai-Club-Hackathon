@@ -37,6 +37,8 @@ export function Write({ project }: StepProps) {
   const [text, setText] = useState<string | null>(null);
   const [saved, setSaved] = useState<'yes' | 'saving' | 'failed'>('yes');
   const [picking, setPicking] = useState(false);
+  /** How many things the last draft check found. Null until the student runs it. */
+  const [checked, setChecked] = useState<number | null>(null);
   const area = useRef<HTMLTextAreaElement>(null);
   const caret = useRef(0);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -96,12 +98,49 @@ export function Write({ project }: StepProps) {
 
   const words = text.trim() ? text.trim().split(/\s+/).length : 0;
   const accepted = claims.filter((c) => c.decision === 'accepted' || c.decision === 'rewritten');
+  const toFix = check.unknown.length + check.notCitable.length;
+  const citations = check.cited.reduce((n, c) => n + c.times, 0);
+  const ready = words > 0 && citations > 0 && toFix === 0;
+
+  /** From a claim the student accepted in Evidence straight to a citation in the draft. */
+  function citeClaim(sourceId: string) {
+    const s = ok.find((x) => x.id === sourceId);
+    if (!s) return;
+    caret.current = area.current?.selectionStart ?? (text ?? '').length;
+    insert(s, '');
+  }
+
+  const STEPS: { n: number; title: string; status: string; done: boolean }[] = [
+    { n: 1, title: 'Write in your own words', status: words ? `${words} ${words === 1 ? 'word' : 'words'}` : 'Not started', done: words > 0 },
+    {
+      n: 2,
+      title: 'Cite your approved sources',
+      status: toFix ? `${citations} citations, ${toFix} to fix` : citations ? `${citations} ${citations === 1 ? 'citation' : 'citations'}, all fine` : ok.length ? 'No citations yet' : 'Approve sources first',
+      done: citations > 0 && toFix === 0,
+    },
+    { n: 3, title: 'Check, then export', status: checked === null ? 'Not checked yet' : checked === 0 ? 'Checked: nothing found' : `Checked: ${checked} to look at`, done: checked !== null },
+  ];
 
   return (
     <>
       <div className="stack">
         <h1>Write</h1>
-        <p className="soft">You write it, in your own words. Paper Trail only adds citations from your library and tells you when one does not match.</p>
+        <p className={css.goal}>
+          <strong>Goal:</strong> a draft you wrote yourself, where every citation points to a source you approved. Paper Trail never writes for you. It inserts citations, flags any that do not match your library, and checks for copied words.
+        </p>
+        <ol className={css.steps} aria-label="Three steps">
+          {STEPS.map((x) => (
+            <li key={x.n} data-done={x.done}>
+              <span className={css.num} aria-hidden="true">
+                {x.done ? '✓' : x.n}
+              </span>
+              <span>
+                <strong>{x.title}</strong>
+                <small>{x.status}</small>
+              </span>
+            </li>
+          ))}
+        </ol>
       </div>
       <div className={css.split}>
         <div className="stack">
@@ -129,18 +168,78 @@ export function Write({ project }: StepProps) {
               </select>
             </label>
             <span className="soft" role="status">
-              {words} {words === 1 ? 'word' : 'words'} · {saved === 'yes' ? 'saved on this device' : saved === 'saving' ? 'saving…' : 'could not save: this browser is blocking storage'}
+              {saved === 'yes' ? 'Saved on this device' : saved === 'saving' ? 'Saving…' : 'Could not save: this browser is blocking storage'}
             </span>
           </div>
-          {picking && <Picker sources={ok} inText={inText} onPick={insert} onClose={() => { setPicking(false); area.current?.focus(); }} />}
+          {picking && (
+            <Picker
+              sources={ok}
+              inText={inText}
+              onPick={insert}
+              onClose={() => {
+                setPicking(false);
+                area.current?.focus();
+              }}
+            />
+          )}
           {project.style === 'ieee' && <p className="soft">IEEE numbers depend on the order you cite. Your draft shows author and year, and the Word file turns them into [1], [2].</p>}
-          {failed && <p role="alert" className={css.warn}>The citation style did not load, so nothing can be inserted yet. Check your connection and reload.</p>}
+          {failed && (
+            <p role="alert" className={css.warn}>
+              The citation style did not load, so nothing can be inserted yet. Check your connection and reload.
+            </p>
+          )}
           <label className="sr" htmlFor="draft">
             Your draft
           </label>
-          <textarea id="draft" ref={area} className={css.page} value={text} onChange={(e) => change(e.target.value)} placeholder="Start writing. Press Cite to add a source from your library." spellCheck lang="en-GB" />
+          <textarea
+            id="draft"
+            ref={area}
+            className={css.page}
+            value={text}
+            onChange={(e) => change(e.target.value)}
+            placeholder="Start writing here. To cite, put the cursor where the citation goes and press Cite, or press Cite its source next to a claim on the right."
+            spellCheck
+            lang="en-GB"
+          />
         </div>
-        <aside className={css.margin} aria-label="Citation checks">
+        <aside className={css.margin} aria-label="Your evidence and citation checks">
+          <section>
+            <h2>Your evidence</h2>
+            {accepted.length === 0 ? (
+              <p className="soft">
+                Claims you accept in <Link to={`/p/${project.id}/evidence`}>Evidence</Link> appear here, each with the source that backs it, ready to cite.
+              </p>
+            ) : (
+              <ul>
+                {accepted.map((c) => {
+                  const src = c.sourceId ? ok.find((x) => x.id === c.sourceId) : undefined;
+                  return (
+                    <li key={c.id}>
+                      {c.text} <ClaimStamp label={c.label} />
+                      <small className={css.note}>{CLAIM_TEXT[c.label].plain}</small>
+                      {src ? (
+                        <button className="btn quiet" type="button" onClick={() => citeClaim(src.id)} disabled={!inText.get(src.id)}>
+                          Cite its source
+                        </button>
+                      ) : (
+                        <small className={css.note}>Its source is not approved yet, so it cannot be cited.</small>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </section>
+
+          <section aria-label="Before you export">
+            <h2>Before you export</h2>
+            <ul className={css.checklist}>
+              <li data-ok={check.unknown.length === 0}>{check.unknown.length === 0 ? 'Every citation is in your library' : `Not in your library (${check.unknown.length})`}</li>
+              <li data-ok={check.notCitable.length === 0}>{check.notCitable.length === 0 ? 'Every cited source is approved' : `In your library, not approved (${check.notCitable.length})`}</li>
+              <li data-ok={checked !== null}>{checked === null ? 'Draft not checked yet (below)' : 'Draft checked for copied words and slips'}</li>
+            </ul>
+          </section>
+
           {ok.length === 0 && (
             <p className="soft">
               Nothing is ready to cite. <Link to={`/p/${project.id}/library`}>Approve sources in your library</Link> first.
@@ -148,7 +247,7 @@ export function Write({ project }: StepProps) {
           )}
           {check.unknown.length > 0 && (
             <section>
-              <h2>Not in your library ({check.unknown.length})</h2>
+              <h3>Fix: not in your library</h3>
               <ul className={css.bad}>
                 {check.unknown.map((u) => (
                   <li key={u}>
@@ -161,7 +260,7 @@ export function Write({ project }: StepProps) {
           )}
           {check.notCitable.length > 0 && (
             <section>
-              <h2>In your library, not approved ({check.notCitable.length})</h2>
+              <h3>Fix: not approved</h3>
               <ul className={css.warnList}>
                 {check.notCitable.map((x) => (
                   <li key={x.source.id}>
@@ -185,8 +284,8 @@ export function Write({ project }: StepProps) {
             </ul>
           </section>
           {check.neverCited.length > 0 && (
-            <section>
-              <h2>Never cited ({check.neverCited.length})</h2>
+            <details className={css.more}>
+              <summary>Approved but never cited ({check.neverCited.length})</summary>
               <ul>
                 {check.neverCited.map((s) => (
                   <li key={s.id}>
@@ -194,26 +293,22 @@ export function Write({ project }: StepProps) {
                   </li>
                 ))}
               </ul>
-            </section>
-          )}
-          {accepted.length > 0 && (
-            <section>
-              <h2>Claims you accepted</h2>
-              <ul>
-                {accepted.map((c) => (
-                  <li key={c.id}>
-                    {c.text} <ClaimStamp label={c.label} />
-                    <small className={css.note}>{CLAIM_TEXT[c.label].plain}</small>
-                  </li>
-                ))}
-              </ul>
-            </section>
+              <p className="soft">That is fine. Only the sources you cite go in your reference list.</p>
+            </details>
           )}
         </aside>
       </div>
-      <DraftCheck project={project} text={text} sources={sources} cite={citeWith} onChange={change} area={area} />
+      <DraftCheck project={project} text={text} sources={sources} cite={citeWith} onChange={change} area={area} onChecked={setChecked} />
       <div className={css.gate}>
-        <p>When you are done, export the reference list. Only approved sources leave.</p>
+        <p>
+          {toFix
+            ? 'Fix the citations marked on the right first. Only approved sources can leave.'
+            : ready
+              ? checked === null
+                ? 'Citations are fine. Run Check my draft above, then export your reference list.'
+                : 'All set. Export your reference list; only approved sources leave.'
+              : 'When your draft has citations, export the reference list. Only approved sources leave.'}
+        </p>
         <Link to={`/p/${project.id}/export`} className="btn main">
           Go to export
         </Link>

@@ -18,6 +18,7 @@ const Guide = lazy(() => import('@/pages/Guide').then((m) => ({ default: m.Guide
 const Rules = lazy(() => import('@/pages/Rules').then((m) => ({ default: m.Rules })));
 const Audit = lazy(() => import('@/pages/Audit').then((m) => ({ default: m.Audit })));
 const Guardrails = lazy(() => import('@/pages/Guardrails').then((m) => ({ default: m.Guardrails })));
+const Data = lazy(() => import('@/pages/Data').then((m) => ({ default: m.Data })));
 
 class Boundary extends Component<{ children: ReactNode; resetKey: string }, { error: Error | null }> {
   state = { error: null as Error | null };
@@ -86,6 +87,7 @@ export function App() {
   else if (section === 'rules') page = <Rules />;
   else if (section === 'guardrails') page = <Guardrails />;
   else if (section === 'guide') page = <Guide />;
+  else if (section === 'data') page = <Data />;
   else
     page = (
       <main className="wrap page">

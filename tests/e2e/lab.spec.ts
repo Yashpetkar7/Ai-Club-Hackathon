@@ -97,7 +97,7 @@ test('lab: words against meaning, with FAKE on-device models', async ({ page }) 
   await mockRegistries(page);
   await page.goto('/#/lab');
   const box = page.getByRole('region', { name: 'Finding the sentence: by words or by meaning' });
-  await expect(box.getByText(/about 123 MB downloaded once/)).toBeVisible();
+  await expect(box.getByText(/about 113 MB downloaded once/)).toBeVisible();
   await box.getByRole('button', { name: 'Compare on this device' }).click();
   await expect(box.getByText('Measured on this device just now.')).toBeVisible({ timeout: 30_000 });
   const table = box.getByRole('region', { name: 'Hits by how the sentences were picked' });

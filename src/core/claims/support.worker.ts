@@ -8,11 +8,15 @@ import { threeWay } from './nli';
  * model, which turns sentences into vectors for ranking. One worker holds both, so they share one runtime.
  * Each loads only when first asked for. Neither writes text.
  *
- * In:  load | score {id, premise, hypothesis} | load-embed | embed {id, texts} | unload {model}
+ * In:  load {model?, local?, base?} | score {id, premise, hypothesis} | load-embed | embed {id, texts} | unload {model}
  * Out: progress | ready | score {id, entails, neutral, contradicts} | error {id?, message}
  *      embed-progress | embed-ready | embedded {id, dims, data} | embed-error {message}
  */
-const MODEL = 'Xenova/nli-deberta-v3-xsmall';
+type Where = { local: boolean; base: string };
+type Support = Where & { model: string };
+
+/** The support model to load. The page names it; our fine-tuned one is served by this site under /models/. */
+let support: Support = { model: 'Xenova/nli-deberta-v3-xsmall', local: false, base: '/' };
 env.allowLocalModels = false;
 
 type Loaded = { tokenizer: any; model: any };
@@ -36,12 +40,40 @@ function progressOf(type: 'progress' | 'embed-progress'): Progress {
   };
 }
 
+/**
+ * Where model files come from is one setting for the whole library, and the models need different ones: our
+ * support model comes only from this site, the meaning model and the original support model only from Hugging Face.
+ * So downloads take turns, and each sets the switches it needs before it starts. Letting a model look on this site
+ * first and fall back is not safe: the local server answers a missing file with the home page, not a 404.
+ */
+let downloads: Promise<unknown> = Promise.resolve();
+function download<T>(where: Where, job: () => Promise<T>): Promise<T> {
+  const run = (): Promise<T> => {
+    env.allowLocalModels = where.local;
+    env.allowRemoteModels = !where.local;
+    if (where.local) env.localModelPath = `${where.base}models/`;
+    return job();
+  };
+  const next = downloads.then(run, run);
+  downloads = next.catch(() => undefined);
+  return next;
+}
+
+/** The page asks for a support model. Ignored while one is loading or loaded; unload it first to change it. */
+function choose(model?: string, local?: boolean, base = '/'): void {
+  if (!model || ready) return;
+  support = { model, local: !!local, base };
+}
+
 function load(): Promise<Loaded> {
-  ready ??= (async () => {
-    const progress_callback = progressOf('progress');
-    const tokenizer = await AutoTokenizer.from_pretrained(MODEL, { progress_callback });
-    const model = await AutoModelForSequenceClassification.from_pretrained(MODEL, { dtype: 'q8', device: 'wasm', progress_callback });
-    return { tokenizer, model };
+  ready ??= (() => {
+    const { model: id, ...where } = support;
+    return download(where, async () => {
+      const progress_callback = progressOf('progress');
+      const tokenizer = await AutoTokenizer.from_pretrained(id, { progress_callback });
+      const model = await AutoModelForSequenceClassification.from_pretrained(id, { dtype: 'q8', device: 'wasm', progress_callback });
+      return { tokenizer, model };
+    });
   })();
   ready.catch(() => {
     ready = null;
@@ -50,14 +82,16 @@ function load(): Promise<Loaded> {
 }
 
 function loadEmbedder(): Promise<any> {
-  embedder ??= pipeline('feature-extraction', MEANING_MODEL, { revision: MEANING_REVISION, dtype: 'q8', device: 'wasm', progress_callback: progressOf('embed-progress') });
+  embedder ??= download({ local: false, base: '/' }, () =>
+    pipeline('feature-extraction', MEANING_MODEL, { revision: MEANING_REVISION, dtype: 'q8', device: 'wasm', progress_callback: progressOf('embed-progress') }),
+  );
   embedder.catch(() => {
     embedder = null;
   });
   return embedder;
 }
 
-// One model run at a time. Downloads may overlap; runs on the shared runtime do not.
+// One model run at a time. Downloads take turns too (above); runs on the shared runtime never overlap.
 let queue: Promise<unknown> = Promise.resolve();
 function serial<T>(job: () => Promise<T>): Promise<T> {
   const next = queue.then(job, job);
@@ -91,7 +125,7 @@ async function unload(which: 'nli' | 'embed'): Promise<void> {
 }
 
 type In =
-  | { type: 'load' }
+  | { type: 'load'; model?: string; local?: boolean; base?: string }
   | { type: 'score'; id: number; premise: string; hypothesis: string }
   | { type: 'load-embed' }
   | { type: 'embed'; id: number; texts: string[] }
@@ -125,6 +159,7 @@ onmessage = async (e: MessageEvent<In>) => {
   }
   try {
     if (m.type === 'load') {
+      choose(m.model, m.local, m.base);
       await load();
       postMessage({ type: 'ready' });
     } else postMessage({ type: 'score', id: m.id, ...(await score(m.premise, m.hypothesis)) });

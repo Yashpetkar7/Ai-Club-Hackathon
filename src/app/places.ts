@@ -20,6 +20,7 @@ export const PAGE_PLACES: { key: string; label: string; to: string; words: strin
   { key: 'p-guide', label: 'How it works', to: '/guide', words: 'guide help explain three keys labels meaning scorecard tour' },
   { key: 'p-rules', label: 'House rules', to: '/rules', words: 'policy ai levels allowed limits what we check' },
   { key: 'p-guardrails', label: 'Guardrails', to: '/guardrails', words: 'guardrails safety governance ethics architecture tests run live deck promises nist owasp unesco model cards' },
+  { key: 'p-data', label: 'Data and models', to: '/data', words: 'data sources models trained fine-tuned scifact retraction watch index risk licence where facts come from' },
   { key: 'p-account', label: 'Account', to: '/account', words: 'sign in passphrase backup profile' },
   { key: 'p-home', label: 'Start page', to: '/', words: 'landing front' },
 ];

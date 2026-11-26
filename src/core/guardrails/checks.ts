@@ -6,6 +6,7 @@ import { checkExplanation, explainInput, factsOf } from '@/core/lab/explain';
 import { makeStudyEntry, STUDY_STAGES, studyFingerprint, studyProgress, type StudyStage } from '@/core/learning/study';
 import { checkAgain } from '@/core/library/watch';
 import { findInstructions } from '@/core/pdf/injection';
+import { retractionWatch } from '@/core/registries/retractionWatch';
 import { priorityFor, rankResearch, TIER_LABEL } from '@/core/research/priority';
 import { cleanTitle } from '@/core/verify/normalise';
 import { checkReference } from '@/core/verify/verdict';
@@ -317,10 +318,11 @@ export const GUARDRAILS: readonly GuardrailCheck[] = [
     risk: 'A withdrawn paper is cited, or a later silent registry wipes out the warning.',
     promise: 'On-demand library recheck; warnings retained.',
     sample: `The real, retracted Leelavathi and Surendhranatha (2024) paper from the Check page sample: “${RETRACTED_LINE}” Both registries answer with the Crossref record the Lab recorded.`,
-    where: ['src/core/verify/verdict.ts: checkReference()', 'src/core/cite/preflight.ts: preflight()', 'src/core/library/watch.ts: checkAgain()'],
-    limit: 'Registry metadata can be incomplete or cached. There is no continuous monitoring: a recheck runs when the student asks.',
+    where: ['src/core/verify/verdict.ts: checkReference(), withRetractionWatch()', 'src/core/registries/retractionWatch.ts', 'src/core/cite/preflight.ts: preflight()', 'src/core/library/watch.ts: checkAgain()'],
+    limit: 'Registry metadata can be incomplete or cached, and the shipped Retraction Watch index is a snapshot. There is no continuous monitoring: a recheck runs when the student asks.',
     cases: [
       { input: 'Check the reference', expected: verdictSays('retracted', 'RETRACTED') },
+      { input: 'Check it again with the Retraction Watch index that ships with the site, which can only add a warning', expected: verdictSays('retracted', 'RETRACTED') },
       { input: 'Export it after approving it without a written reason', expected: blocked(`Checked as “${VERDICT_TEXT.retracted.label}”.`) },
       { input: 'Export it kept with a written reason', expected: KEPT },
       { input: 'Check the library again while every registry is silent', expected: `Earlier result kept: ${VERDICT_TEXT.retracted.label}` },
@@ -328,6 +330,9 @@ export const GUARDRAILS: readonly GuardrailCheck[] = [
     async run() {
       const rec = recordedRecord(RETRACTED_DOI);
       const check = await checkReference(retractedRef(), standInRegistries({ crossref: rec, openalex: asSecondRegistry(rec) }));
+      // The real shipped index, read the way the site reads it. Whatever it says, it may not clear the retraction.
+      const listed = await retractionWatch.lookup(RETRACTED_DOI).then((e) => (e ? `lists it (${e.status === 'retracted' ? 'retraction' : 'expression of concern'})` : 'has no entry for it'), () => 'could not be read');
+      const withIndex = await checkReference(retractedRef(), { ...standInRegistries({ crossref: rec, openalex: asSecondRegistry(rec) }), retractionWatch: (doi) => retractionWatch.lookup(doi) });
       const plain = sampleSource({ id: 'sample-retracted', record: check.record ?? rec, check, keys: { found: true, checked: false, approved: true } });
       const kept = sampleSource({ id: 'sample-retracted-kept', record: check.record ?? rec, check, keys: { found: true, checked: false, approved: true }, keptWithReason: 'SAMPLE: cited only to discuss why it was retracted.' });
       const p = preflight([plain, kept]);
@@ -335,6 +340,7 @@ export const GUARDRAILS: readonly GuardrailCheck[] = [
       const notices = (check.record?.notices ?? []).map((n) => `${n.kind} (${n.by}${n.on ? `, ${n.on}` : ''})`).join(', ');
       return [
         { actual: verdictOf(check, 'RETRACTED'), detail: `${traceOf(check)}${notices ? ` Notices: ${notices}.` : ''}` },
+        { actual: verdictOf(withIndex, 'RETRACTED'), detail: `The Retraction Watch index ${listed}. A missing entry never clears a warning another registry gave. ${traceOf(withIndex)}` },
         { actual: placeOf(p, plain) },
         { actual: placeOf(p, kept), detail: reasonNotes([kept]).join(' ') },
         { actual: again.ok ? `Replaced: ${VERDICT_TEXT[again.check.verdict].label}` : `Earlier result kept: ${VERDICT_TEXT[plain.check!.verdict].label}`, detail: `Today the checker said “${VERDICT_TEXT[again.check.verdict].label}”. A silent registry is not a reason to drop an earlier warning.` },

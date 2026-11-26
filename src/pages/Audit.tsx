@@ -43,7 +43,7 @@ const T = POLICY.thresholds;
 const MAX_REFS = 40;
 const MAX_CLAIMS = 60;
 const ORDER: Verdict[] = ['confirmed', 'one-registry', 'details-differ', 'wrong-paper', 'retracted', 'not-found', 'could-not-check'];
-const REGISTRY: Record<RegistryTrace['registry'], string> = { crossref: 'Crossref', openalex: 'OpenAlex', datacite: 'DataCite', 'doi.org': 'doi.org' };
+const REGISTRY: Record<RegistryTrace['registry'], string> = { crossref: 'Crossref', openalex: 'OpenAlex', datacite: 'DataCite', 'doi.org': 'doi.org', 'retraction-watch': 'Retraction Watch' };
 const STATUS: Record<RegistryTrace['status'], string> = { match: 'has it', 'no-match': 'no match', 'not-found': 'no record', error: 'did not answer', skipped: 'not asked' };
 const BUCKETS: { key: Bucket; text: string; tone: 'ok' | 'warn' | 'mute'; mark: string }[] = [
   { key: 'verified', text: 'Verified', tone: 'ok', mark: CLAIM_TEXT.verified.mark },

@@ -19,6 +19,7 @@ const missing = new Set<string>();
 const sourceFiles = [
   'src/core/verify/verdict.ts', 'src/core/verify/compare.ts', 'src/core/verify/normalise.ts',
   'src/core/registries/index.ts', 'src/core/registries/http.ts', 'src/core/registries/map.ts',
+  'src/core/registries/retractionWatch.ts', 'public/data/retraction-watch/meta.json',
   'src/policy/policy.ts', 'src/core/lab/corpus.ts', 'src/core/lab/recorded-seeds.json',
   'tests/unit/replay.ts', 'tests/unit/fixtures/registry.json',
 ];

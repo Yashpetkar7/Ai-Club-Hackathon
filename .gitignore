@@ -17,3 +17,7 @@ docs/official/
 
 # Locked libraries saved by the server
 /data/
+
+# Raw downloads and training work: rebuilt by scripts, never committed
+/datasets/raw/
+/ml/work/

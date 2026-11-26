@@ -83,7 +83,12 @@ async function act(page: Page, n: number): Promise<{ name: string; did: string }
   if (/^https?:/.test(info.href) && !info.blank) return { name, did: 'opens a source' };
   if (info.current) return { name, did: 'this is the page you are on' };
   if (info.type === 'radio' && info.checked) return { name, did: 'already chosen' };
-  const handle = await el.elementHandle();
+  const handle = (await el.elementHandle())!;
+  // The More menu is opened so its links get clicked too. For anything outside it, close it first so it covers nothing.
+  // The element is held by handle, so closing the menu cannot shift which control is clicked.
+  await page.evaluate((e) => {
+    if (!e.closest('details')) for (const d of document.querySelectorAll<HTMLDetailsElement>('header details[open]')) d.open = false;
+  }, handle);
   await page.evaluate((clicked) => {
     const w = window as any;
     w.__did = [];
@@ -101,21 +106,21 @@ async function act(page: Page, n: number): Promise<{ name: string; did: string }
   let extra = '';
   page.once('download', () => (extra = 'saved a file'));
   if (info.tag === 'SELECT') {
-    const opts = await el.locator('option').evaluateAll((o) => o.map((x) => (x as HTMLOptionElement).value));
-    const now = await el.inputValue();
+    const opts = await handle.evaluate((e) => [...(e as HTMLSelectElement).options].map((x) => x.value));
+    const now = await handle.inputValue();
     const other = opts.find((o) => o !== now);
     if (other === undefined) return { name, did: 'only one choice for now' };
-    await el.selectOption(other);
+    await handle.selectOption(other);
     await page.waitForTimeout(700);
-    if ((await el.inputValue().catch(() => other)) === other) extra ||= 'changed the choice';
+    if ((await handle.inputValue().catch(() => other)) === other) extra ||= 'changed the choice';
   } else if (info.type === 'checkbox' || info.type === 'radio') {
-    await el.click({ force: true, timeout: 4000 });
+    await handle.click({ force: true, timeout: 4000 });
     extra ||= 'ticked';
   } else if (info.name === 'Skip to content') {
     // For keyboards: it is off screen until Tab reaches it.
-    await el.focus();
+    await handle.focus();
     await page.keyboard.press('Enter');
-  } else await el.click({ timeout: 6000 });
+  } else await handle.click({ timeout: 6000 });
   await page.waitForTimeout(450);
   if (!extra) extra = await page.evaluate(() => ((window as any).__did as string[])[0] ?? '').catch(() => 'went to another page');
   if (!extra) {
@@ -129,7 +134,7 @@ async function act(page: Page, n: number): Promise<{ name: string; did: string }
 test('every control on every page does something', async ({ browser, page }) => {
   const id = await prepare(page);
   const state = await page.context().storageState({ indexedDB: true });
-  const routes = ['/', '/home', '/projects', '/check', '/lab', '/rules', '/guide', '/account', '/signin', ...['team', 'plan', 'find', 'library', 'read', 'map', 'evidence', 'challenge', 'ask', 'write', 'review', 'export'].map((s) => `/p/${id}/${s}`)];
+  const routes = ['/', '/home', '/projects', '/check', '/lab', '/rules', '/guide', '/data', '/account', '/signin', ...['team', 'plan', 'find', 'library', 'read', 'map', 'evidence', 'challenge', 'ask', 'write', 'review', 'export'].map((s) => `/p/${id}/${s}`)];
   const open = async (): Promise<{ ctx: BrowserContext; p: Page; errors: string[] }> => {
     const ctx = await browser.newContext({ storageState: state, baseURL: 'http://127.0.0.1:5199', viewport: { width: 1366, height: 900 } });
     const p = await ctx.newPage();
