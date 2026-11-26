@@ -39,4 +39,9 @@ describe('a pasted reference list', () => {
   it('treats a line with a DOI link as a reference, not a web page', () => {
     expect(itemsFromList(PACK)[0]!.kind).toBe('ref');
   });
+
+  it('treats a link to a paper host with no DOI as a paper to look up, not a web page', () => {
+    const [item] = itemsFromList('Vaswani, A., Shazeer, N., & Parmar, N. (2017). Attention is all you need. arXiv. https://arxiv.org/abs/1706.03762');
+    expect(item?.kind).toBe('ref');
+  });
 });

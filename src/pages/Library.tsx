@@ -295,7 +295,7 @@ function Detail({ s, folders, onClose }: { s: Source; folders: string[]; onClose
       )}
 
       {wrong.length > 0 && (
-        <div className={css.fix} aria-label="Suggested fix">
+        <div className={css.fix} role="group" aria-label="Suggested fix">
           <p>
             <strong>{small ? 'Suggested fix.' : 'Too different to fix.'}</strong> {small ? 'The registry has different details. Nothing changes unless you accept.' : 'This does not look like a small error. Check that this DOI is the paper you meant.'}
           </p>
@@ -487,9 +487,10 @@ function AddSource({ projectId, onAdded, onBusy }: { projectId: string; onAdded:
     );
   }
 
-  async function addItems(kind: 'doi' | 'bibtex' | 'ris', items: ListItem[]) {
-    // Keep this panel open once the library is no longer empty, so the labels and duplicate offers stay in view.
-    onBusy();
+  async function addItems(kind: 'doi' | 'bibtex' | 'ris', items: ListItem[], pasted = false) {
+    // A pasted list keeps this panel open, even on an empty library, so every label and duplicate offer stays in view.
+    // A single source opens its own details instead, where it is approved.
+    if (pasted) onBusy();
     setError('');
     setSaid('');
     setRows([]);
@@ -499,7 +500,9 @@ function AddSource({ projectId, onAdded, onBusy }: { projectId: string; onAdded:
       const added = out.filter((r) => r.isNew).length;
       const dup = out.filter((r) => r.source && !r.isNew).length;
       setRows(out);
-      setSaid([`${added} added${dup ? `, ${dup} duplicate${dup > 1 ? 's' : ''} not saved twice` : ''}. Each one shows its label below. Nothing is approved until you approve it.`, items.length > 60 ? 'Only the first 60 were read.' : ''].filter(Boolean).join(' '));
+      setSaid([`${added} added.`, dup ? `${dup} already in your library.` : '', 'Each one shows its label below. Nothing is approved until you approve it.', items.length > 60 ? 'Only the first 60 were read.' : ''].filter(Boolean).join(' '));
+      const last = [...out].reverse().find((r) => r.source)?.source;
+      if (!pasted && last) onAdded(last.id);
       setLine('');
       setFile('');
       setList('');
@@ -556,7 +559,7 @@ function AddSource({ projectId, onAdded, onBusy }: { projectId: string; onAdded:
           onSubmit={(e) => {
             e.preventDefault();
             const items = itemsFromList(list);
-            if (items.length) void addItems('doi', items);
+            if (items.length) void addItems('doi', items, true);
             else setError('Paste at least one reference.');
           }}
         >

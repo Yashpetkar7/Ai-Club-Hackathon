@@ -25,6 +25,15 @@ export function refsFromFile(text: string): { kind: 'bibtex' | 'ris'; refs: RawR
 export type ListItem = { kind: 'ref'; line: string; ref: RawReference } | { kind: 'web'; line: string; page: WebPage };
 
 const YEAR_PART = /^\(?(n\.\s?d\.|(?:19|20)\d{2})[a-z]?\)?$/i;
+/** Hosts of papers, preprints and journals. A link to one of these is a paper to look up, not a web page. */
+const SCHOLARLY_HOST = /(^|\.)(arxiv\.org|ssrn\.com|openreview\.net|aclanthology\.org|neurips\.cc|nips\.cc|proceedings\.mlr\.press|jstor\.org|ncbi\.nlm\.nih\.gov|pubmed\.gov|sciencedirect\.com|springer\.com|wiley\.com|tandfonline\.com|ieeexplore\.ieee\.org|acm\.org|nature\.com|science\.org|oup\.com|cambridge\.org|sagepub\.com|mdpi\.com|frontiersin\.org|plos\.org|biorxiv\.org|medrxiv\.org|researchgate\.net|semanticscholar\.org)$/i;
+const scholarly = (url: string): boolean => {
+  try {
+    return SCHOLARLY_HOST.test(new URL(url).hostname);
+  } catch {
+    return false;
+  }
+};
 
 /** A web address with no DOI is read as a web page: organisation or author, year if given, title. Nothing is guessed. */
 function webFromLine(line: string, url: string): WebPage {
@@ -46,7 +55,7 @@ export function itemsFromList(text: string): ListItem[] {
   const lines = blocks.length > 1 ? blocks : text.split('\n').map((l) => l.trim()).filter(Boolean);
   return lines.map((line) => {
     const url = line.match(/https?:\/\/\S+/)?.[0]?.replace(/[.,;)]+$/, '');
-    if (url && !findDoi(line)) return { kind: 'web', line, page: webFromLine(line, url) };
+    if (url && !findDoi(line) && !scholarly(url)) return { kind: 'web', line, page: webFromLine(line, url) };
     return { kind: 'ref', line, ref: parseReference(line) };
   });
 }
