@@ -15,6 +15,7 @@ import { addSource } from '@/store/actions';
 import { db } from '@/store/db';
 import { VerdictStamp } from '@/ui/Stamp';
 import css from './Challenge.module.css';
+import { FixFirst } from './Signposts';
 
 interface Found {
   key: string;
@@ -125,6 +126,7 @@ export function Challenge({ project }: StepProps) {
           </button>
           {!agentAllowed('challenger', project.aiLevel) && <span className="soft">The AI Challenger is locked at level {project.aiLevel}. Plain code does the work here.</span>}
         </div>
+        <FixFirst project={project} on="challenge" />
       </form>
 
       {state === 'failed' && (

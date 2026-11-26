@@ -1,5 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useState } from 'react';
+import { projectPath } from '@/app/places';
 import { go, Link } from '@/app/router';
 import type { AiLevel } from '@/core/contracts';
 import { AI_LEVELS } from '@/policy/policy';
@@ -69,7 +70,7 @@ export function Projects() {
         {projects === undefined && <p className="soft">Opening your library…</p>}
         {projects?.length === 0 && <p className="soft">No projects yet.</p>}
         {projects?.map((p) => (
-          <Link key={p.id} to={`/p/${p.id}/${p.plan?.approvedAt ? 'library' : 'plan'}`} className={`card ${css.item}`}>
+          <Link key={p.id} to={projectPath(p)} className={`card ${css.item}`}>
             <strong>{p.question}</strong>
             <span className="soft">
               {counts?.[p.id] ?? 0} sources · AI level {p.aiLevel} · {new Date(p.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}

@@ -14,6 +14,7 @@ import { recordAiDecision } from '@/store/actions';
 import { db } from '@/store/db';
 import { AiMark, SourceStamp, VerdictStamp } from '@/ui/Stamp';
 import css from './Ask.module.css';
+import { FixFirst } from './Signposts';
 
 interface Line { text: string; source: Source }
 interface Answer { question: string; asked: Asked; ai?: { model: string; lines: Line[] }; aiNote?: string }
@@ -77,11 +78,7 @@ export function Ask({ project }: StepProps) {
             Ask
           </button>
         </div>
-        {kept.length === 0 && (
-          <p className="soft">
-            You have no approved sources yet. <Link to={`/p/${project.id}/library`}>Approve some in your library</Link>.
-          </p>
-        )}
+        <FixFirst project={project} needs={['approved', 'text']} say />
       </form>
 
       {a && (

@@ -80,7 +80,7 @@ export function App() {
   else if (section === 'check') page = <Check />;
   else if (section === 'audit') page = <Audit />;
   else if (section === 'projects') page = <Projects />;
-  else if (section === 'p' && parts[1]) page = <ProjectShell projectId={parts[1]} step={parts[2] ?? 'plan'} />;
+  else if (section === 'p' && parts[1]) page = <ProjectShell projectId={parts[1]} step={parts[2] ?? ''} />;
   else if (section === 'lab') page = <Lab />;
   else if (section === 'rules') page = <Rules />;
   else if (section === 'guide') page = <Guide />;

@@ -8,6 +8,7 @@ import { buildGraph, layout } from '@/map/graph';
 import { db } from '@/store/db';
 import { SourceStamp } from '@/ui/Stamp';
 import css from './Map.module.css';
+import { FixFirst } from './Signposts';
 
 export function MapPage({ project }: StepProps) {
   const sources = useLiveQuery(() => db.sources.where('projectId').equals(project.id).toArray(), [project.id]);
@@ -91,6 +92,7 @@ export function MapPage({ project }: StepProps) {
           Nothing to map yet. <Link to={`/p/${project.id}/find`}>Find sources</Link> first.
         </p>
       )}
+      {sources && graph.nodes.length === 0 && <FixFirst project={project} />}
       {graph.nodes.length > 0 && (
         <>
           {gl && (

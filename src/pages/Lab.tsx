@@ -14,6 +14,7 @@ import { MEANING_MB } from '@/core/semantic/models';
 import { VerdictStamp } from '@/ui/Stamp';
 import css from './Lab.module.css';
 import { OwnerKey } from './OwnerKey';
+import { SeeAlso } from './Signposts';
 
 const INITIAL_ROWS: readonly LabRow[] = LAB_CORPUS.map((item) => ({ case: item, state: 'unrun' }));
 const EXPECTED: Record<LabExpectation, string> = {
@@ -366,6 +367,7 @@ function BenchmarkBody({ b, online }: { b: Benchmark; online: boolean }) {
           </table>
         </div>
         {m.unfitScores > 0 && <p className={css.note}>{m.unfitScores} recorded scores were left out because the closest sentence has changed since they were recorded. Record them again with MODEL=1.</p>}
+        <SeeAlso from="lab-claims" />
       </section>
 
       <section className="stack" aria-labelledby="lab-sweep-heading">
@@ -433,6 +435,7 @@ function BenchmarkBody({ b, online }: { b: Benchmark; online: boolean }) {
           <Metric title="Real references wrongly flagged" rate={refs.falseAlarms} bad={refs.real.falseAlarm > 0} note="False alarms, of the real references that got an answer. Lower is better." />
           <Metric title="Cases that got an answer" rate={refs.coverage} note={`Coverage. ${refs.total - refs.resolved} had no usable answer in the recording.`} />
         </ul>
+        <SeeAlso from="lab-refs" />
       </section>
 
       <section className="stack" aria-labelledby="lab-every-miss-heading">

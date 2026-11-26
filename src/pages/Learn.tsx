@@ -13,6 +13,7 @@ import { db } from '@/store/db';
 import { CLAIM_HANDOFF } from './Read';
 import { VerdictStamp } from '@/ui/Stamp';
 import css from './Learn.module.css';
+import { FixFirst } from './Signposts';
 
 export function Learn({ project }: StepProps) {
   const sources = useLiveQuery(() => db.sources.where('projectId').equals(project.id).toArray(), [project.id]);
@@ -24,7 +25,7 @@ export function Learn({ project }: StepProps) {
   const current = order.find((s) => s.id === selected) ?? order.find((s) => s.text?.trim()) ?? order[0];
   return <>
     <div className="stack"><h1>Study studio</h1><p className="soft">One paper, four short steps. Understand it, capture its evidence, question its limits, then try to recall it.</p></div>
-    {!current ? <section className={`card ${css.panel}`}><h2>Your first study session</h2><p>Keep a paper in Find, then return here. Study uses the actual text in your library.</p><Link className="btn main" to={`/p/${project.id}/find`}>Find a paper</Link></section> : <>
+    {!current ? <section className={`card ${css.panel}`}><h2>Your first study session</h2><p>Keep a paper in Find, then return here. Study uses the actual text in your library.</p><FixFirst project={project} /></section> : <>
       <label className="stack">Paper to study<select className="field" value={current.id} onChange={(e) => setSelected(e.target.value)}>{order.map((s) => <option key={s.id} value={s.id}>{titleOf(s)}{s.text?.trim() ? '' : ' · text needed'}</option>)}</select></label>
       <StudySession key={current.id} source={current} events={events} next={() => { const next = order[(order.findIndex((s) => s.id === current.id) + 1) % order.length]; if (next) setSelected(next.id); }} hasNext={order.length > 1} />
     </>}

@@ -3,6 +3,7 @@ import { CLAIM_TEXT, VERDICT_TEXT } from '@/core/contracts';
 import { LABELS, VERDICTS } from '@/ui/Legend';
 import { ClaimStamp, VerdictStamp } from '@/ui/Stamp';
 import css from './Guide.module.css';
+import { HowChecksWork } from './HowChecksWork';
 
 /** The whole site in plain words, for someone who has never seen it. */
 const STEPS: [string, string, string][] = [
@@ -14,7 +15,7 @@ const STEPS: [string, string, string][] = [
   ['Export', 'Your reference list in APA 7, Harvard, MLA, Chicago or IEEE, as Word, BibTeX or RIS, with a statement of any AI you used.', ''],
 ];
 const HELPERS: [string, string][] = [
-  ['Team', 'Runs all nine agents in order and stops whenever it needs you.'],
+  ['Study studio', 'One paper in four short steps: understand it, capture its evidence, question its limits, then try to recall it.'],
   ['Read', 'Sorts a paper’s own sentences into aim, method, findings and limits. Compares papers side by side.'],
   ['Map', 'Shows which of your papers cite each other, and papers you may be missing.'],
   ['Ask', 'Answers a question with exact sentences from sources you approved, or says “Not found”.'],
@@ -70,7 +71,8 @@ export function Guide() {
 
       <section className="stack" aria-label="The helpers">
         <h2>Six helpers</h2>
-        <p className="soft">Use them when you need them. None is required.</p>
+        <p className="soft">Use them when you need them. None is required. In a project, each one sits under the step it helps with.</p>
+        <p>Two pages cover the whole project. Compass shows where it stands and suggests the next step. Team runs all nine agents in order and stops whenever it needs you.</p>
         <dl className={css.helpers}>
           {HELPERS.map(([n, t]) => (
             <div key={n}>
@@ -113,6 +115,8 @@ export function Guide() {
           </div>
         </div>
       </section>
+
+      <HowChecksWork />
 
       <section className="stack" aria-label="Where your work is saved">
         <h2>Where your work is saved</h2>

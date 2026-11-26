@@ -1,4 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks';
+import { projectPath } from '@/app/places';
 import { Link } from '@/app/router';
 import { useSession } from '@/auth/accounts';
 import { CLAIM_TEXT, VERDICT_TEXT, type ClaimLabel, type Verdict } from '@/core/contracts';
@@ -77,7 +78,7 @@ export function Home() {
                 return (
                   <li key={p.id} className={`card ${css.project}`}>
                     <div className="stack">
-                      <Link to={`/p/${p.id}/compass`}>{p.question}</Link>
+                      <Link to={projectPath(p)}>{p.question}</Link>
                       <span className="soft">
                         {mine.length} {mine.length === 1 ? 'source' : 'sources'}, {mine.filter((x) => citable(x)).length} ready to cite
                       </span>

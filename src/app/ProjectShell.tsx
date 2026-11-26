@@ -8,7 +8,9 @@ import { setAiLevel } from '@/store/actions';
 import { db } from '@/store/db';
 import { Legend } from '@/ui/Legend';
 import css from './ProjectShell.module.css';
+import { projectHome } from './places';
 import { Link } from './router';
+import { HereNext, Trail } from './Trail';
 
 export interface StepProps {
   project: Project;
@@ -57,7 +59,7 @@ async function warm(style: CitationStyle): Promise<void> {
 interface Step { key: string; label: string; hint: string; gate?: boolean; Page: ComponentType<StepProps> }
 
 /** The way through, in order. */
-const MAIN: Step[] = [
+export const MAIN: Step[] = [
   { key: 'plan', label: 'Plan', hint: 'Choose the searches', gate: true, Page: Plan },
   { key: 'find', label: 'Find', hint: 'Keep or skip papers', gate: true, Page: Find },
   { key: 'library', label: 'Library', hint: 'Approve and organise', Page: Library },
@@ -65,9 +67,9 @@ const MAIN: Step[] = [
   { key: 'write', label: 'Write', hint: 'Draft and cite', Page: Write },
   { key: 'export', label: 'Export', hint: 'Take your reference list', Page: Export },
 ];
-/** Use them when you need them. `near` is the step each one belongs to. */
-const HELPERS: (Step & { near: string })[] = [
-  { key: 'compass', label: 'Compass', hint: 'Your research overview and next step', near: 'plan', Page: Compass },
+/** Use them when you need them. `near` is the step each one belongs to; empty means the whole project. */
+export const HELPERS: (Step & { near: string })[] = [
+  { key: 'compass', label: 'Compass', hint: 'Your research overview and next step', near: '', Page: Compass },
   { key: 'team', label: 'Team', hint: 'Run all the agents', near: '', Page: Team },
   { key: 'learn', label: 'Study studio', hint: 'Read, capture, question and recall', near: 'library', Page: Learn },
   { key: 'read', label: 'Read', hint: 'Method, findings, limits', near: 'library', Page: Read },
@@ -102,8 +104,10 @@ export function ProjectShell({ projectId, step }: { projectId: string; step: str
       </main>
     );
 
-  const helper = HELPERS.find((h) => h.key === step);
-  const here: Step = helper ?? MAIN.find((m) => m.key === step) ?? MAIN[0]!;
+  // A bare project address opens where the project starts: Plan, or Compass once the plan is approved.
+  const key = step || projectHome(project);
+  const helper = HELPERS.find((h) => h.key === key);
+  const here: Step = helper ?? MAIN.find((m) => m.key === key) ?? MAIN[0]!;
   const { Page } = here;
   // A helper sits beside a step: back goes to that step, on goes to the one after it.
   const spot = MAIN.findIndex((m) => m.key === (helper ? helper.near : here.key));
@@ -116,29 +120,7 @@ export function ProjectShell({ projectId, step }: { projectId: string; step: str
     <div className={css.shell}>
       <aside className={css.rail} aria-label="Your trail">
         <p className={css.q}>{project.question}</p>
-        <ol className={css.steps}>
-          {MAIN.map((m) => (
-            <li key={m.key} data-state={m.key === here.key ? 'now' : done[m.key] ? 'done' : 'next'} data-gate={!!m.gate}>
-              <Link to={`/p/${project.id}/${m.key}`} aria-current={m.key === here.key ? 'step' : undefined}>
-                {m.label}
-                {m.key === 'library' && n > 0 ? ` (${n})` : ''}
-                <small>{m.hint}</small>
-              </Link>
-            </li>
-          ))}
-        </ol>
-        <div className={css.helpers}>
-          <p>Helpers</p>
-          <ul>
-            {HELPERS.map((h) => (
-              <li key={h.key}>
-                <Link to={`/p/${project.id}/${h.key}`} title={h.hint} aria-current={h.key === here.key ? 'step' : undefined}>
-                  {h.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <Trail projectId={project.id} main={MAIN} helpers={HELPERS} here={here.key} done={done} count={n} />
         <label className={css.dial}>
           <span>AI allowed here</span>
           <select value={project.aiLevel} onChange={(e) => void setAiLevel(project.id, Number(e.target.value) as AiLevel)}>
@@ -154,6 +136,7 @@ export function ProjectShell({ projectId, step }: { projectId: string; step: str
         </button>
       </aside>
       <main className={css.main} id="main" tabIndex={-1}>
+        <HereNext projectId={project.id} main={MAIN} helpers={HELPERS} here={here.key} done={done} />
         <Suspense fallback={<p className="soft">Loading…</p>}>
           <Page key={`${project.id}/${here.key}`} project={project} />
         </Suspense>

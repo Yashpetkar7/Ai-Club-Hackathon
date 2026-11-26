@@ -29,7 +29,8 @@ export const go = (path: string): void => {
 /** Where Back goes when the tab was opened straight on this page. */
 export function parentOf(path: string): string {
   const parts = path.split('?')[0]!.split('/').filter(Boolean);
-  if (parts[0] === 'p') return parts[2] && parts[2] !== 'plan' ? `/p/${parts[1]}/plan` : '/projects';
+  // Above a project page is the project's own address, which opens on Plan or Compass. Above those is Projects.
+  if (parts[0] === 'p') return parts[2] && parts[2] !== 'plan' && parts[2] !== 'compass' ? `/p/${parts[1]}` : '/projects';
   if (parts[0] === 'projects' || parts[0] === 'account') return '/home';
   return '/';
 }

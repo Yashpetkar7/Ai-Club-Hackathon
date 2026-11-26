@@ -12,6 +12,7 @@ import { Receipt } from '@/ui/Receipt';
 import { Legend } from '@/ui/Legend';
 import { NotVerified, Stamp, VerdictStamp } from '@/ui/Stamp';
 import css from './Check.module.css';
+import { SeeAlso } from './Signposts';
 
 interface Item {
   id: number;
@@ -103,6 +104,7 @@ export function Check() {
       <div className="stack">
         <h1>Check references</h1>
         <p className="soft">Paste a paragraph, a reference list or a DOI. We look each one up in Crossref and OpenAlex and tell you which are real. No AI takes part.</p>
+        <SeeAlso from="check" />
       </div>
 
       <form

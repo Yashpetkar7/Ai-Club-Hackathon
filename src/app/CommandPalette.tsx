@@ -2,6 +2,8 @@ import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { cleanTitle, norm } from '@/core/verify/normalise';
 import { db } from '@/store/db';
 import css from './CommandPalette.module.css';
+import { PAGE_PLACES, PROJECT_WORDS, projectPath } from './places';
+import { HELPERS, MAIN } from './ProjectShell';
 import { go } from './router';
 
 interface Item {
@@ -9,20 +11,13 @@ interface Item {
   label: string;
   kind: string;
   to: string;
+  /** Matched as well as the label, never shown. */
+  words?: string;
 }
 
-const PAGES: Item[] = [
-  { key: 'p-desk', label: 'Home', kind: 'Page', to: '/home' },
-  { key: 'p-check', label: 'Check references', kind: 'Page', to: '/check' },
-  { key: 'p-audit', label: 'Audit a paragraph', kind: 'Page', to: '/audit' },
-  { key: 'p-projects', label: 'Projects', kind: 'Page', to: '/projects' },
-  { key: 'p-guide', label: 'How it works', kind: 'Page', to: '/guide' },
-  { key: 'p-lab', label: 'Integrity Lab', kind: 'Page', to: '/lab' },
-  { key: 'p-rules', label: 'House rules', kind: 'Page', to: '/rules' },
-  { key: 'p-account', label: 'Account', kind: 'Page', to: '/account' },
-  { key: 'p-home', label: 'Start page', kind: 'Page', to: '/' },
-];
-const STEPS = ['Team', 'Plan', 'Find', 'Library', 'Read', 'Map', 'Evidence', 'Challenge', 'Ask', 'Write', 'Review', 'Export'];
+const PAGES: Item[] = PAGE_PLACES.map((p) => ({ ...p, kind: 'Page' }));
+/** Every page of a project, in the order of the trail: the whole-project pages, then each step and its helpers. */
+const STEPS = [...HELPERS.filter((h) => !h.near), ...MAIN.flatMap((m) => [m, ...HELPERS.filter((h) => h.near === m.key)])];
 
 export function CommandPalette() {
   const dialog = useRef<HTMLDialogElement>(null);
@@ -40,9 +35,9 @@ export function CommandPalette() {
       const [projects, sources] = await Promise.all([db.projects.orderBy('createdAt').reverse().limit(50).toArray(), db.sources.limit(500).toArray()]);
       const here = window.location.hash.match(/^#\/p\/([^/]+)/)?.[1];
       setItems([
-        ...(here ? STEPS.map((s) => ({ key: `s-${s}`, label: s, kind: 'This project', to: `/p/${here}/${s.toLowerCase()}` })) : []),
+        ...(here ? STEPS.map((s) => ({ key: `s-${s.key}`, label: s.label, kind: 'This project', to: `/p/${here}/${s.key}`, words: `${s.hint} ${PROJECT_WORDS[s.key] ?? ''}` })) : []),
         ...PAGES,
-        ...projects.map((p) => ({ key: p.id, label: p.question, kind: 'Project', to: `/p/${p.id}/${p.plan?.approvedAt ? 'library' : 'plan'}` })),
+        ...projects.map((p) => ({ key: p.id, label: p.question, kind: 'Project', to: projectPath(p) })),
         ...sources.map((s) => ({ key: s.id, label: cleanTitle(s.record?.title ?? s.raw?.title ?? s.raw?.raw ?? 'Untitled'), kind: 'Source', to: `/p/${s.projectId}/library` })),
       ]);
     };
@@ -64,7 +59,7 @@ export function CommandPalette() {
 
   const hits = useMemo(() => {
     const words = norm(q).split(' ').filter(Boolean);
-    return items.filter((i) => words.every((w) => norm(`${i.label} ${i.kind}`).includes(w))).slice(0, 12);
+    return items.filter((i) => words.every((w) => norm(`${i.label} ${i.kind} ${i.words ?? ''}`).includes(w))).slice(0, 12);
   }, [q, items]);
   const pick = (i: Item | undefined) => {
     if (!i) return;

@@ -24,6 +24,7 @@ import { CLAIM_HANDOFF } from '@/pages/Read';
 import { ExplainLabel } from '@/pages/ExplainLabel';
 import { ClaimStamp, VerdictStamp } from '@/ui/Stamp';
 import css from './Evidence.module.css';
+import { FixFirst, SeeAlso } from './Signposts';
 
 /** A sentence (or two neighbours) from the source, with its ranking aids. Ranking aids never decide a label. */
 type Cand = { text: string; start: number; end: number; words: number; meaning: number | null };
@@ -298,6 +299,7 @@ export function Evidence({ project }: StepProps) {
           <p className="soft">
             <Link to={`/p/${project.id}/find`}>Keep a source</Link> first. Then write a claim and we show you the exact sentence that supports it, or say that none does.
           </p>
+          <FixFirst project={project} />
         </div>
       </>
     );
@@ -310,6 +312,7 @@ export function Evidence({ project }: StepProps) {
       <div className="stack">
         <h1>Evidence</h1>
         <p className="soft">Write what you want to say. We show the closest sentence in the source and whether it says the same.</p>
+        <SeeAlso from="evidence" />
       </div>
 
       <form

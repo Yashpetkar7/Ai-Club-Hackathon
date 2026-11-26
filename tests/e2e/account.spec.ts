@@ -185,6 +185,8 @@ test('Back goes where you came from, and never leaves the site', async ({ page }
   await mockRegistries(tab);
   await tab.goto(url);
   await tab.getByRole('button', { name: 'Back' }).click();
-  await expect(tab).toHaveURL(/\/plan$/);
+  // Up to the project's own address, which opens on Plan while the plan is not approved.
+  await expect(tab).toHaveURL(/#\/p\/[^/]+$/);
+  await expect(tab.getByRole('heading', { name: 'Plan the search' })).toBeVisible();
   await tab.close();
 });

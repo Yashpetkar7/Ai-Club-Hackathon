@@ -16,6 +16,7 @@ import { editSource } from '@/store/actions';
 import { db } from '@/store/db';
 import { AiMark, VerdictStamp } from '@/ui/Stamp';
 import css from './Read.module.css';
+import { FixFirst } from './Signposts';
 
 /** Carries a sentence to Evidence, where it is checked like any other claim. */
 export const CLAIM_HANDOFF = 'pt-claim';
@@ -41,6 +42,7 @@ export function Read({ project }: StepProps) {
           <p className="soft">
             <Link to={`/p/${project.id}/find`}>Keep a source</Link> or <Link to={`/p/${project.id}/library`}>add one to your library</Link>.
           </p>
+          <FixFirst project={project} />
         </div>
       ) : (
         <>
