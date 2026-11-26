@@ -122,6 +122,8 @@ export async function checkReference(ref: RawReference, reg: Registries, now: ()
     // None of the student's authors is on the DOI's record: the DOI belongs to other people's work, even with the same title.
     if (viaDoi && !bareDoi && (ref.authors?.length ?? 0) > 0 && !c.authorsUnknown && !c.firstAuthor && c.authors === 0) return done('wrong-paper', ['DOI_IS_ANOTHER_PAPER', 'AUTHOR_DIFFERS'], record, c);
     if (record.retracted) return done('retracted', ['RETRACTED', ...(bareDoi ? [] : reasonsFrom(c))], record, c);
+    // Found by title alone, with no author, year or DOI to tell works apart: never Confirmed.
+    if (!viaDoi && !ref.authors?.length && !ref.year) return done('details-differ', ['TITLE_ONLY'], record, c);
     // A clean match that only one registry could vouch for is never shown as Confirmed.
     const clean = (): ReferenceCheck => (second === 'matched' ? done('confirmed', [], record, c) : done('one-registry', [second === 'disagrees' ? 'REGISTRY_METADATA_DISAGREES' : second === 'missing' ? 'SECOND_REGISTRY_NO_RECORD' : 'SECOND_REGISTRY_UNREACHABLE'], record, c));
     if (bareDoi) return clean();

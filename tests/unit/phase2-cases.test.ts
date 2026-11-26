@@ -39,6 +39,19 @@ describe('real DOI, wrong paper', () => {
   });
 });
 
+describe('a title alone is never enough to confirm', () => {
+  it('a match found by title only is Details differ (TITLE_ONLY), with no fix offered', async () => {
+    const other = rec({ title: 'Memory and sleep in adolescents', authors: [{ family: 'Mendes' }], year: 2025 });
+    const ref = parseReference('Sleep and memory in adolescents');
+    const c = await checkReference({ ...ref, title: ref.title ?? ref.raw }, reg({ search: [other], openalex: other }));
+    expect(c.verdict).not.toBe('confirmed');
+    if (c.verdict === 'details-differ') {
+      expect(c.reasons).toEqual(['TITLE_ONLY']);
+      expect(registryFix(ref, c)).toBeNull();
+    }
+  });
+});
+
 describe('a small error: a fix is offered, never applied', () => {
   it('builds the fix from the registry record only, listing what would change', async () => {
     const ref = parseReference('Rivera, M., & Okafor, J. (2021). Sleep and memory in adolescents. https://doi.org/10.5555/sample.1');

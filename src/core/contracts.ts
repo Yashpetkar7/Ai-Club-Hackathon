@@ -29,6 +29,7 @@ export type ReasonCode =
   | 'SECOND_REGISTRY_NO_RECORD'
   | 'NO_DOI_ONE_REGISTRY'
   | 'WEB_SOURCE'
+  | 'TITLE_ONLY'
   | 'REGISTRY_METADATA_DISAGREES'
   | 'NOT_ENOUGH_TO_SEARCH'
   | 'QUOTE_NOT_IN_SOURCE'
@@ -301,6 +302,7 @@ export const REASON_TEXT: Record<ReasonCode, string> = {
   SECOND_REGISTRY_NO_RECORD: 'The second registry answered but has no record for this DOI.',
   NO_DOI_ONE_REGISTRY: 'Found by title and authors in one registry, with no DOI. Many real papers have none. Check the publisher’s page before you rely on it.',
   WEB_SOURCE: 'A web page, not a scholarly work, so it was not checked in a scholarly database. Open the page and check who published it and when.',
+  TITLE_ONLY: 'Only a title was given, and different works can share a title. Add the authors and year, or the DOI, and check again.',
   REGISTRY_METADATA_DISAGREES: 'The registries returned different identity metadata. Review the original records.',
   NOT_ENOUGH_TO_SEARCH: 'There is not enough here to search with. Add a title or a DOI.',
   QUOTE_NOT_IN_SOURCE: 'These words are not in the source.',

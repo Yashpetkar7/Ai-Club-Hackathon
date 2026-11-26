@@ -9,6 +9,8 @@ import { handleNode } from './router.mjs';
 loadEnvFile();
 const root = resolve('dist');
 const port = Number(process.env.PORT ?? 4173);
+// A host such as Render needs HOST=0.0.0.0 to reach the server. On a laptop it stays on this machine only.
+const host = process.env.HOST ?? '127.0.0.1';
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.json': 'application/json', '.csl': 'application/xml', '.xml': 'application/xml', '.wasm': 'application/wasm', '.woff2': 'font/woff2', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp' };
 
 createServer(async (req, res) => {
@@ -26,4 +28,4 @@ createServer(async (req, res) => {
     if (!res.headersSent) res.writeHead(500, { 'content-type': 'application/json' });
     res.end('{"error":"server error"}');
   }
-}).listen(port, '127.0.0.1', () => console.log(`Paper Trail is running at http://127.0.0.1:${port}`));
+}).listen(port, host, () => console.log(`Paper Trail is running at http://${host}:${port}`));

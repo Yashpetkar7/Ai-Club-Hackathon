@@ -14,6 +14,8 @@ export interface Fix {
 
 export function registryFix(ref: RawReference, check: ReferenceCheck | undefined): Fix | null {
   if (!check || check.verdict !== 'details-differ' || !check.record) return null;
+  // A match found by title alone may be another work: nothing is offered to fill in from it.
+  if (check.reasons.includes('TITLE_ONLY')) return null;
   const r = check.record;
   const wrong = new Set(check.fields.filter((f) => !f.ok).map((f) => f.field));
   const changes: Fix['changes'] = [];

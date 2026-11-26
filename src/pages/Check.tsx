@@ -26,12 +26,15 @@ interface Item {
 
 const FIELD_WORD = { title: 'Title', authors: 'Authors', year: 'Year', doi: 'DOI' } as const;
 
+/** One paste checks at most this many. The rest are never dropped silently: the page says how many were left out. */
+const MAX_REFS = 60;
 const ORDER: Verdict[] = ['confirmed', 'one-registry', 'details-differ', 'wrong-paper', 'retracted', 'not-found', 'could-not-check'];
 export const HANDOFF = 'pt-check-text';
 
 export function Check() {
   const [text, setText] = useState('');
   const [items, setItems] = useState<Item[] | null>(null);
+  const [leftOut, setLeftOut] = useState(0);
   const [orphans, setOrphans] = useState<string[]>([]);
   const [given, setGiven] = useState('');
   const [running, setRunning] = useState(false);
@@ -62,7 +65,8 @@ export function Check() {
   async function start(input: string) {
     const mine = ++run.current;
     const x = extractReferences(input);
-    const list: Item[] = x.references.slice(0, 60).map((ref, id) => ({ id, ref }));
+    const list: Item[] = x.references.slice(0, MAX_REFS).map((ref, id) => ({ id, ref }));
+    setLeftOut(Math.max(0, x.references.length - MAX_REFS));
     setOrphans(x.orphanCitations);
     setGiven(input.trim());
     setItems(list);
@@ -218,6 +222,11 @@ export function Check() {
           {orphans.length > 0 && (
             <p className={css.orphans}>
               <NotVerified /> Cited in the text with no entry in the list: <strong>{orphans.join('; ')}</strong>
+            </p>
+          )}
+          {leftOut > 0 && (
+            <p className={css.orphans} role="status">
+              Only the first {MAX_REFS} references were checked. {leftOut} more {leftOut === 1 ? 'was' : 'were'} not checked: paste {leftOut === 1 ? 'it' : 'them'} in a second batch.
             </p>
           )}
           {groups.map((g) => (
