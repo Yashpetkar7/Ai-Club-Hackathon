@@ -21,6 +21,7 @@ import { POLICY } from '@/policy/policy';
 import { editSource } from '@/store/actions';
 import { db } from '@/store/db';
 import { CLAIM_HANDOFF } from '@/pages/Read';
+import { ExplainLabel } from '@/pages/ExplainLabel';
 import { ClaimStamp, VerdictStamp } from '@/ui/Stamp';
 import css from './Evidence.module.css';
 
@@ -459,6 +460,7 @@ export function Evidence({ project }: StepProps) {
             {passage && <Checks claim={claim} passage={passage.text} judged={judged} />}
             {passage && <ModelScores support={support} scoring={scoring} wordForWord={judged.wordForWord} />}
             {passage && <Aids words={passage.words} meaning={passage.meaning} />}
+            {passage && <ExplainLabel project={project} claim={claim} sentence={passage.text} judged={judged} support={support} />}
             {judged.wordForWord && words >= 8 && <p className={css.own}>These are the source’s own words. Put them in quotation marks, or say it in your own words.</p>}
             {!judged.wordForWord && passage && <ModelBox state={model} />}
             <div className={css.decide}>

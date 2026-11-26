@@ -13,6 +13,7 @@ import { cancelMeaning, embedder, loadMeaning, meaningState, onMeaning } from '@
 import { MEANING_MB } from '@/core/semantic/models';
 import { VerdictStamp } from '@/ui/Stamp';
 import css from './Lab.module.css';
+import { OwnerKey } from './OwnerKey';
 
 const INITIAL_ROWS: readonly LabRow[] = LAB_CORPUS.map((item) => ({ case: item, state: 'unrun' }));
 const EXPECTED: Record<LabExpectation, string> = {
@@ -596,6 +597,7 @@ export function Lab() {
         <h1>Integrity Lab</h1>
         <p className="soft">We test our own checker here, in public. Half of these references are real and half are invented on purpose. Every miss stays on this page.</p>
       </div>
+      <OwnerKey />
 
       <BenchmarkSection online={online} onGoToLive={goToLive} />
 

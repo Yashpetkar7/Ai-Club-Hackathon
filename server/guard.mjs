@@ -1,4 +1,6 @@
 // Runs before the AI handler. Keeps strangers and nonsense away from it.
+import { OWNER_HEADER, ownerKeyFrom } from './ownerKey.mjs';
+
 const seen = new Map();
 
 /** Simple sliding window per address. In memory, so it resets when the server restarts. */
@@ -29,7 +31,9 @@ export async function guardAi(req) {
   // The level is the student's own declaration. The server holds them to it and refuses anything that is not a real level.
   if (!Number.isInteger(body?.level) || body.level < 0 || body.level > 3) return no(400, 'bad level');
   if (typeof body.task !== 'string') return no(400, 'unknown task');
-  return { req: new Request(req.url, { method: 'POST', headers: { 'content-type': 'application/json' }, body: text }) };
+  // The owner's own key goes on only when it is shaped like a Groq key. Anything else is dropped here.
+  const owner = ownerKeyFrom(req);
+  return { req: new Request(req.url, { method: 'POST', headers: { 'content-type': 'application/json', ...(owner ? { [OWNER_HEADER]: owner } : {}) }, body: text }) };
 }
 
 /** Other sites may not use our proxy, and one network may not use it without end. */

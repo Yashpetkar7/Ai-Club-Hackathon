@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { Project } from './contracts';
+import { getOwnerKey, OWNER_HEADER } from '@/core/ownerKey';
 import { hasNoAi } from '@/core/registries/http';
 import { record } from '@/log/log';
 import { agentAllowed, POLICY, type AgentId } from '@/policy/policy';
@@ -8,17 +9,26 @@ import { db } from '@/store/db';
 /** The page side of the AI gateway. Checks the level and the cap before asking, and logs every call. */
 export type AiResult<T> = { ok: true; data: T; model: string } | { ok: false; reason: 'locked' | 'cap' | 'unavailable' | 'bad-answer' };
 
-const AGENT = { plan: 'planner', read: 'reader', challenge: 'challenger' } as const satisfies Record<string, AgentId>;
+// explain puts a label's checks into words, which is the Reader's level (2), so policy.ts needs no new agent.
+const AGENT = { plan: 'planner', read: 'reader', challenge: 'challenger', explain: 'reader' } as const satisfies Record<string, AgentId>;
+export type AiTask = keyof typeof AGENT;
 
 export const aiCallsUsed = (projectId: string): Promise<number> => db.log.where('projectId').equals(projectId).filter((e) => e.actor === 'ai').count();
 
-export async function askAi<T>(project: Project, task: keyof typeof AGENT, input: unknown, shape: z.ZodType<T>): Promise<AiResult<T>> {
+/** The one place the page posts to /api/ai. When the site owner saved a key in this browser, it goes along as one header. */
+export function postAi(body: { task: AiTask; level: number; input: unknown }): Promise<Response> {
+  const key = getOwnerKey();
+  return fetch('/api/ai', { method: 'POST', headers: { 'content-type': 'application/json', ...(key ? { [OWNER_HEADER]: key } : {}) }, body: JSON.stringify(body), signal: AbortSignal.timeout(25_000) });
+}
+
+export async function askAi<T>(project: Project, task: AiTask, input: unknown, shape: z.ZodType<T>): Promise<AiResult<T>> {
   if (!agentAllowed(AGENT[task], project.aiLevel)) return { ok: false, reason: 'locked' };
   if ((await aiCallsUsed(project.id)) >= POLICY.maxAiCallsPerProject) return { ok: false, reason: 'cap' };
-  if (await hasNoAi()) return { ok: false, reason: 'unavailable' };
+  // A server with no key of its own can still answer with the owner's key.
+  if (!getOwnerKey() && (await hasNoAi())) return { ok: false, reason: 'unavailable' };
   let body: unknown;
   try {
-    const r = await fetch('/api/ai', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ task, level: project.aiLevel, input }), signal: AbortSignal.timeout(25_000) });
+    const r = await postAi({ task, level: project.aiLevel, input });
     body = await r.json();
   } catch {
     return { ok: false, reason: 'unavailable' };

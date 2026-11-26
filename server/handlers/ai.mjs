@@ -2,7 +2,10 @@
 // Contract: POST { task, level, input } -> { ok, data, model } | { ok: false, reason }.
 // The permission level is checked here as well as in the page. Nothing here logs a prompt, an answer or a key.
 // Any failure is { ok: false }, and the page carries on without AI.
-const MIN_LEVEL = { plan: 1, read: 2, challenge: 3 };
+import { ownerKeyFrom } from '../ownerKey.mjs';
+import { explainTask } from './explain.mjs';
+
+const MIN_LEVEL = { plan: 1, read: 2, challenge: 3, explain: 2 };
 const TIMEOUT_MS = 20_000;
 const MAX_PROMPT = 12_000; // characters, about 3,000 tokens
 
@@ -45,11 +48,12 @@ const TASKS = {
       return query ? { query } : null;
     },
   },
+  explain: explainTask,
 };
 
 async function getJson(url, init) {
   const r = await fetch(url, { ...init, signal: AbortSignal.timeout(TIMEOUT_MS) });
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  if (!r.ok) throw Object.assign(new Error(`HTTP ${r.status}`), { status: r.status });
   return r.json();
 }
 
@@ -57,17 +61,17 @@ async function getJson(url, init) {
 const chosen = new Map();
 export const resetModels = () => chosen.clear();
 
-async function groqModel(key) {
+async function groqModel(key, slot) {
   if (process.env.GROQ_MODEL) return process.env.GROQ_MODEL;
-  if (!chosen.has('groq')) {
+  if (!chosen.has(slot)) {
     const want = ['openai/gpt-oss-120b', 'openai/gpt-oss-20b', 'llama-3.3-70b-versatile', 'llama-3.1-8b-instant'];
     const list = await getJson('https://api.groq.com/openai/v1/models', { headers: { authorization: `Bearer ${key}` } });
     const have = new Set((list.data ?? []).map((m) => m.id));
     const pick = want.find((m) => have.has(m));
     if (!pick) throw new Error('no model');
-    chosen.set('groq', pick);
+    chosen.set(slot, pick);
   }
-  return chosen.get('groq');
+  return chosen.get(slot);
 }
 
 async function geminiModel(key) {
@@ -85,13 +89,17 @@ async function geminiModel(key) {
   return chosen.get('gemini');
 }
 
-async function groq(system, user) {
-  const key = process.env.GROQ_API_KEY;
-  const model = await groqModel(key);
+// The gpt-oss models reason before they answer. Low effort, with the reasoning left out of the reply, is the cheapest
+// setting Groq offers for them (console.groq.com/docs/reasoning); other models refuse these fields, so they get none.
+const reasoning = (model) => (model.startsWith('openai/gpt-oss') ? { reasoning_effort: 'low', include_reasoning: false } : {});
+
+/** key and slot default to the server's own key. The owner's key has its own slot in the model cache. */
+async function groq(system, user, key = process.env.GROQ_API_KEY, slot = 'groq') {
+  const model = await groqModel(key, slot);
   const j = await getJson('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
     headers: { 'content-type': 'application/json', authorization: `Bearer ${key}` },
-    body: JSON.stringify({ model, temperature: 0.2, max_completion_tokens: 1200, response_format: { type: 'json_object' }, messages: [{ role: 'system', content: system }, { role: 'user', content: user }] }),
+    body: JSON.stringify({ model, temperature: 0.2, max_completion_tokens: 1200, response_format: { type: 'json_object' }, ...reasoning(model), messages: [{ role: 'system', content: system }, { role: 'user', content: user }] }),
   });
   return { model: `${model} (Groq)`, text: j.choices?.[0]?.message?.content };
 }
@@ -123,8 +131,20 @@ export async function ai(req) {
   if (!input) return Response.json({ ok: false, reason: 'bad input' }, { status: 400 });
   const user = JSON.stringify(input);
   if (user.length > MAX_PROMPT) return Response.json({ ok: false, reason: 'too long' }, { status: 413 });
-  if (!aiConfigured()) return Response.json({ ok: false, reason: 'no-key' }, { status: 503 });
+  const owner = ownerKeyFrom(req);
+  if (!aiConfigured() && !owner) return Response.json({ ok: false, reason: 'no-key' }, { status: 503 });
 
+  // The site owner's own key is tried first. A key Groq refuses is said plainly so the owner can fix it;
+  // nothing else about the failure, and never the key, goes back.
+  if (owner) {
+    try {
+      const { model, text } = await groq(task.system, user, owner, 'groq-owner');
+      const data = task.output(JSON.parse(text), input);
+      if (data) return Response.json({ ok: true, data, model, owner: true });
+    } catch (e) {
+      if (e?.status === 401 || e?.status === 403) return Response.json({ ok: false, reason: 'key-rejected' }, { status: 401 });
+    }
+  }
   const services = [process.env.GROQ_API_KEY && groq, process.env.GEMINI_API_KEY && gemini].filter(Boolean);
   for (const ask of services) {
     try {

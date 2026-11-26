@@ -1,0 +1,10 @@
+.panel { padding: 20px 22px; display: grid; gap: var(--s2); min-width: 0; border: 2px solid var(--gate); }
+.panel p { overflow-wrap: anywhere; }
+.state { font-weight: 600; }
+.check { display: inline-flex; gap: 10px; align-items: center; cursor: pointer; justify-self: start; }
+.check input { width: 18px; height: 18px; accent-color: var(--accent); margin: 0; }
+.note { background: var(--mute-bg); color: var(--mute); padding: 10px 14px; max-width: none; }
+.error { color: var(--bad); background: var(--bad-bg); padding: 10px 14px; max-width: none; }
+.error:empty, .result:empty { padding: 0; }
+.result { color: var(--ink); max-width: none; }
+@media (max-width: 620px) { .panel { padding: 16px; } }

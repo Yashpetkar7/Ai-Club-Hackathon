@@ -100,3 +100,9 @@ Produced, one agent at a time: find-by-meaning and a claim scorecard on Evidence
 ### Exact push and guide request
 
 > push to my branch only and after everything is done update my guide html which is already available.
+
+### Exact alignment request (hidden owner key and "explain" slice)
+
+> You are buildind in a way that our work is in separate pages or tabs and buildind accordingly with alignment with already existing implementation right?
+
+Produced, as its own components and modules next to the existing code: a hidden owner panel at `#/lab?owner` (`src/pages/OwnerKey.tsx`, `src/core/ownerKey.ts`) that keeps a Groq key in this tab, or on this device only when ticked, and sends it only as one header to our own `/api/ai`; and one new AI task, "explain" (`server/handlers/explain.mjs`, `src/core/lab/explain.ts`, `src/pages/ExplainLabel.tsx`), which puts the checks behind a claim label into at most three sentences, is checked on the server and the page, and never changes the label. Other people's files got only small hooks (listed in the handover for their owners). AI answers in the browser tests are stubs marked test-model.
