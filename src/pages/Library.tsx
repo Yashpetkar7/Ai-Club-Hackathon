@@ -488,6 +488,8 @@ function AddSource({ projectId, onAdded, onBusy }: { projectId: string; onAdded:
   }
 
   async function addItems(kind: 'doi' | 'bibtex' | 'ris', items: ListItem[]) {
+    // Keep this panel open once the library is no longer empty, so the labels and duplicate offers stay in view.
+    onBusy();
     setError('');
     setSaid('');
     setRows([]);
