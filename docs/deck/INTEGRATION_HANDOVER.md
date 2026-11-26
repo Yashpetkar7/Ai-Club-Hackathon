@@ -1,6 +1,6 @@
 # Handover for Yash: `hemanth/lab-governance`
 
-**Branch:** `hemanth/lab-governance`, pushed as hbasired with normal fast-forward pushes (no force). On 26 November it was brought up to date with `main` (`a39d992`, merge commit `553b3d3`), so merging it back into `main` has no conflicts (checked with `git merge-tree`). **Deploying is not automatic:** `vercel.json` has `"git": {"deploymentEnabled": false}`, so after merging, deploy by hand as before.
+**Branch:** `hemanth/lab-governance`, pushed as hbasired with normal fast-forward pushes (no force). On 26 November it was brought up to date with `main` twice (`a39d992` in `553b3d3`, then `bc4d6e1` in `b595ad6`; the one conflict, `getJson()` in `server/handlers/ai.mjs`, keeps your per-call timeout and this branch's HTTP status on the error), so merging it back into `main` has no conflicts (checked with `git merge-tree`). **Deploying is not automatic:** `vercel.json` has `"git": {"deploymentEnabled": false}`, so after merging, deploy by hand as before.
 
 Product direction and what is still open: [vision and roadmap](../VISION_AND_ROADMAP.md). Test output and measured numbers: [current validation](VALIDATION_CURRENT.md). Phase 2 case by case: [PHASE2_CASES.md](PHASE2_CASES.md).
 

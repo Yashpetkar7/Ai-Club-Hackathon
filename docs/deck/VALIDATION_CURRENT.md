@@ -15,10 +15,17 @@
   The fine-tuned model is as safe on these claims, but disputes fewer false ones. Which model ships is Yash's decision (`SUPPORT.key` in `src/core/claims/support.ts`). The Lab follows that key, and a test fails if they drift apart.
 - Real-model run in Chrome: both models in one worker, with the fine-tune (`tests/unit/fixtures/nli-candidates-scifact.json`, 449 runs, load 18.6 s). The start-at rule still gives no false Verified and no true Disputed.
 - The Phase 2 test pack was run live against the registries, and the results are in [PHASE2_CASES.md](PHASE2_CASES.md). The new rules are covered by `tests/unit/phase2-cases.test.ts`, with 16 cases.
-- After the Phase 2 changes:
-  - tsc: clean.
-  - vitest (full run): 1,078 passed, 3 skipped; the only failure was the Lab sample's hash, which was then re-recorded with no verdict change. The final run is in the commit message.
-  - Browser tests in Chrome for the pages touched: see the commit message.
+- After the Phase 2 changes and a second merge of `main` (`bc4d6e1`, merge commit `b595ad6`):
+  - `npm run verify`: tsc clean; vitest 1,099 passed, 3 skipped; offline tests 27 of 27; build ok.
+  - Browser tests in Chrome for the pages touched (checks, journey, buttons, library, trust, audit, lead): 31 passed, 1 skipped.
+  - Live runs on the local app in Chrome, against the real registries:
+    - All 8 test-pack references are listed with the expected labels.
+    - A's fix (1981 to 1979) was accepted, checked again and came back Confirmed.
+    - The duplicate merged, from 8 entries to 7 (from 7 to 6 in the run before H was kept).
+    - Request 1 gave "Not found".
+    - Request 2 gave "Could not confirm this quotation".
+    - The note in request 3 was flagged, and the source stayed Confirmed.
+    - No page errors.
 
 ## Where the work is
 
