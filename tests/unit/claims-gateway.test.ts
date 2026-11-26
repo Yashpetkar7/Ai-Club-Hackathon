@@ -77,6 +77,24 @@ describe('AI gateway', () => {
     services({ groq: 'not json', gemini: { query: 'second' } });
     expect((await call({ task: 'challenge', level: 3, input: { claim: 'Remote work raises output' } })).body.data).toEqual({ query: 'second' });
   });
+  it('a busy or retired Gemini model is skipped, lite models first, and the one that answered is asked first next time', async () => {
+    vi.stubEnv('GEMINI_API_KEY', 'placeholder');
+    const tried: string[] = [];
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async (u) => {
+      const url = String(u);
+      if (url.includes('/v1beta/models?'))
+        return Response.json({ models: ['gemini-3.6-flash', 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-2.5-flash'].map((n) => ({ name: `models/${n}`, supportedGenerationMethods: ['generateContent'] })) });
+      const model = url.match(/models\/([^:]+):/)![1]!;
+      tried.push(model);
+      if (model === 'gemini-3.5-flash-lite') return new Response('{"error":{"message":"high demand"}}', { status: 503 });
+      return Response.json({ candidates: [{ content: { parts: [{ text: JSON.stringify({ queries: ['remote work performance'] }) }] } }] });
+    });
+    expect((await call(plan)).body).toEqual({ ok: true, data: { queries: ['remote work performance'] }, model: 'gemini-3.1-flash-lite (Gemini)' });
+    expect(tried).toEqual(['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite']);
+    tried.length = 0;
+    await call(plan);
+    expect(tried).toEqual(['gemini-3.1-flash-lite']);
+  });
   it('when everything fails the page gets a plain no', async () => {
     vi.stubEnv('GROQ_API_KEY', 'placeholder');
     services({ groq: { wrong: 1 } });
