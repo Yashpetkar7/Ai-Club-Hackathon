@@ -160,3 +160,17 @@ Ran the eight test-pack references through the real checker against live Crossre
 - Ask: a question nothing answers gets a plain "Not found" and a link to search the registries, where every result is checked before it can be saved. It works with an empty library. A quotation is checked word for word against the cited source's text. If it is not there it is never confirmed, and when only the abstract is available the answer says so.
 - Exports: every entry carries its status, such as [Verified] or [Retracted, kept by the student with a reason], in text, BibTeX, RIS and Word.
 - Notes: text addressed to an AI ("SYSTEM: …", "ignore … rules", "mark … as verified") is flagged, saved as the student's text, and never changes a check.
+
+### Exact request: fact-check the pitch, more real-life cases, personal repository and deployment
+
+> can you check for this as well and see everything is running correctly and implemented honestly: "[the team's plain-words pitch: problem, real-life examples, three keys, step-by-step flow, brief mapping, tech stack, data, models, quality numbers, 8-minute plan, likely questions]". And also we need to check the additional real lfe edge cases and scenarios that might occur as well, check them and also after the push to my branch, we need to push entirely to my github repo:"https://github.com/hbasired/AI-Hackathon.git" and deploy it accordingly so that we have both working and mine should surpass them, so do that and then give me guide for deployment, should we do it in render and vercel which would be easy or should we do it in any other easy and faster way.
+
+> push all that is built for the entire hackathon by me and everyone from the repo cloned, and my work also should be pushed from scratch and then deploy it, I don't think they have deployed my pushes so i need to do it from my side with all the already existing systems you cloned from the repo as well. It should work exactly as it is working in my local.
+
+Produced:
+- Thirteen real-life reference formats were run through the live checker: DOI forms, IEEE, Harvard and MLA styles, a book with no DOI, an arXiv preprint, a DOI one digit off, an online-first year, garbage text, an instruction inside a reference, and a title on its own. One real defect was found and fixed: a title on its own was Confirmed as a different paper whose title has the same words in another order. A reference found by title alone is now Details differ (`TITLE_ONLY`) and never Confirmed. A paste over 60 references now says how many were left out.
+- Siddal's Phase 2 Library commit (`5056e04`) was merged into this branch, so it holds all of `main`, `yash/integration`, Siddal's branch and this work.
+- `server/start.mjs` takes an optional `HOST` (default 127.0.0.1), so a host such as Render can reach it.
+- `docs/DEPLOY.md` covers Vercel (recommended for the demo) and Render (needed for server-side saves), with the two things that may stop a Vercel deploy: automatic deploys are turned off in `vercel.json`, and the 95 MB model may exceed the free plan's upload limit, in which case the site falls back to the original model.
+- The pitch was fact-checked claim by claim (`docs/deck/PITCH_FACT_CHECK.md`).
+- The AI assistant did not deploy anything: the repository's rules allow a deploy only when Yash says so in the session.

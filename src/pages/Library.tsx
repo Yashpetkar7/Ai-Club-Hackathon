@@ -503,6 +503,9 @@ function AddSource({ projectId, onAdded, onBusy }: { projectId: string; onAdded:
       const added = out.filter((r) => r.isNew).length;
       const dup = out.filter((r) => r.source && !r.isNew).length;
       setRows(out);
+      // Open the last one checked, as before, so its receipt and Approve are one step away.
+      const last = [...out].reverse().find((r) => r.source)?.source?.id;
+      if (last) onAdded(last);
       setSaid([`${added} added${dup ? `, ${dup} duplicate${dup > 1 ? 's' : ''} not saved twice` : ''}. Each one shows its label below. Nothing is approved until you approve it.`, items.length > 60 ? 'Only the first 60 were read.' : ''].filter(Boolean).join(' '));
       setLine('');
       setFile('');

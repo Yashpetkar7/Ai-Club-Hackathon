@@ -40,7 +40,8 @@ test('add, tag, filter, approve, cite, export', async ({ page }) => {
   await page.getByRole('button', { name: 'Add a source' }).click();
   await page.getByLabel('DOI, DOI link or title').fill('10.1126/science.adh2586');
   await page.getByRole('button', { name: 'Check and add', exact: true }).click();
-  await expect(page.getByText('1 already in your library.')).toBeVisible({ timeout: 20_000 });
+  // Siddal, 26 November: duplicates are reported in the list view, and never saved twice.
+  await expect(page.getByText(/0 added, 1 duplicate not saved twice\./)).toBeVisible({ timeout: 20_000 });
 
   // BibTeX with a wrong year is flagged, and needs a reason
   await page.getByRole('button', { name: 'BibTeX or RIS' }).click();
