@@ -6,7 +6,7 @@ import { titleOf } from '@/core/cite/preflight';
 import { directionSides, numberSides, scopeSides, type Bit, type Sides } from '@/core/claims/explain';
 import { coverage, runGuards } from '@/core/claims/guards';
 import { judge, type Judged, type Support } from '@/core/claims/label';
-import { mostSupported } from '@/core/claims/nli';
+import { mostSupported, startAt } from '@/core/claims/nli';
 import { rankSentences } from '@/core/claims/rank';
 import { removeClaim, saveClaim } from '@/core/claims/store';
 import { cancelSupport, loadSupport, onSupport, scoreSupport, scoreSupportMany, SUPPORT_MB, SUPPORT_MODEL, supportState } from '@/core/claims/support';
@@ -190,8 +190,9 @@ export function Evidence({ project }: StepProps) {
           if (s) next[at(list[i]!)] = s;
         });
         setScores(next);
-        // Start on the sentence the model backs most. The student can pick another, and a sentence against the claim is shown too.
-        const best = mostSupported(got);
+        // Start on the sentence the model backs most, unless one of them disputes the claim: then start there,
+        // so the disagreement is the first thing seen. The student can pick another.
+        const best = source ? startAt(list.map((c, i) => judge(claim, source, c.text, got[i] ?? null)), got) : mostSupported(got);
         if (!chosen.current && best >= 0) {
           setPick(best);
           setMoved(best > 0);

@@ -8,7 +8,7 @@ import { extractReferences, type Extracted } from '@/core/verify/parse';
 import { POLICY } from '@/policy/policy';
 import { directionWords, numbers, subjectWords } from './guards';
 import { judge, type Judged, type Support } from './label';
-import { mostSupported } from './nli';
+import { startAt } from './nli';
 
 /**
  * Auditing a pasted paragraph. Plain code cuts it into claims, finds what each claim cites, and asks judge()
@@ -284,9 +284,10 @@ export async function checkPair(claim: string, source: Pick<Source, 'check' | 't
   }
   const support: (Support | null)[] = [];
   for (const c of candidates) support.push(o.score ? await o.score(c.text, claim).catch(() => null) : null);
-  const best = mostSupported(support);
-  const pick = candidates.length ? Math.max(0, best) : -1;
-  const judged = judge(claim, source, candidates[pick]?.text, support[pick] ?? null);
+  // Every candidate is judged. Start on one that disputes the claim if there is one, else on the best supported.
+  const all = candidates.map((c, i) => judge(claim, source, c.text, support[i] ?? null));
+  const pick = candidates.length ? startAt(all, support) : -1;
+  const judged = all[pick] ?? judge(claim, source, undefined, null);
   const against = candidates.findIndex((_, i) => i !== pick && (support[i]?.contradicts ?? 0) >= POLICY.thresholds.contradiction);
   return { candidates, support, pick, judged, hasText: true, against, fellBack };
 }
