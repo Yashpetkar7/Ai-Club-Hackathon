@@ -153,11 +153,16 @@ describe('real metadata checker through the existing offline replay', () => {
       expect(check.trace.some((t) => t.status === 'error')).toBe(true);
       return;
     }
-    if (c.expected === 'metadata-match') expect(check.verdict, c.id).toBe('confirmed');
+    if (c.expected === 'metadata-match') {
+      if (check.verdict === 'one-registry') {
+        expect(check.reasons.some((r) => ['SECOND_REGISTRY_NO_RECORD', 'REGISTRY_METADATA_DISAGREES', 'SECOND_REGISTRY_UNREACHABLE'].includes(r))).toBe(true);
+        expect(check.trace.some((t) => t.registry === 'openalex' && t.status !== 'match')).toBe(true);
+      } else expect(check.verdict, c.id).toBe('confirmed');
+    }
     else if (c.expected === 'retraction-flag') expect(check.verdict, c.id).toBe('retracted');
     else {
       // Retain any confirmed invented case in measured output; a miss is evaluation data.
-      expect(['confirmed', 'details-differ', 'wrong-paper', 'retracted', 'not-found', 'could-not-check']).toContain(check.verdict);
+      expect(['confirmed', 'one-registry', 'details-differ', 'wrong-paper', 'retracted', 'not-found', 'could-not-check']).toContain(check.verdict);
       if (c.mutation?.method === 'replace-author') expect(check.fields.some((f) => f.field === 'authors')).toBe(true);
       if (c.mutation?.method === 'shift-year') expect(check.fields.some((f) => f.field === 'year')).toBe(true);
       if (c.family === 'hijacked-identifier') expect(check.record?.doi).toBe(c.reference.doi);

@@ -2,7 +2,7 @@ import { findDoi } from '@/core/verify/normalise';
 import { findInstructions } from './injection';
 import { PAGE_BREAK } from './pages';
 
-export interface PdfRead { text: string; pages: number; doi?: string; title?: string; instructions: string[] }
+export interface PdfRead { text: string; pages: number; extractedPages: number; doi?: string; title?: string; instructions: string[] }
 export class PdfError extends Error {}
 
 /** Reads a PDF inside the browser. The file never leaves the device. */
@@ -32,7 +32,7 @@ export async function readPdf(file: Blob, onPage?: (n: number, of: number) => vo
     const meta = (await doc.getMetadata().catch(() => null))?.info as { Title?: string } | undefined;
     const doi = findDoi(pages.slice(0, 2).join(' '));
     const title = meta?.Title?.trim();
-    return { text, pages: doc.numPages, instructions: findInstructions(text), ...(doi ? { doi } : {}), ...(title && title.length > 8 && !/\.(docx?|pdf|tex)$|^microsoft|untitled/i.test(title) ? { title } : {}) };
+    return { text, pages: doc.numPages, extractedPages: n, instructions: findInstructions(text), ...(doi ? { doi } : {}), ...(title && title.length > 8 && !/\.(docx?|pdf|tex)$|^microsoft|untitled/i.test(title) ? { title } : {}) };
   } finally {
     await task.destroy();
   }

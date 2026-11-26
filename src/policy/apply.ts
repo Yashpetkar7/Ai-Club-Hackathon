@@ -1,4 +1,4 @@
-import type { Policy, RegistryRecord, Source } from '@/core/contracts';
+import { exportable, type Policy, type RegistryRecord, type Source } from '@/core/contracts';
 import { POLICY } from './policy';
 
 /** House rules applied to one work. An empty list means it is inside the rules. Plain code, shown to the student. */
@@ -18,7 +18,16 @@ export function policyIssues(rec: RegistryRecord | undefined, policy: Policy = P
 const TYPE_ALIAS: Record<string, string> = { article: 'journal-article', preprint: 'posted-content', review: 'journal-article', text: 'posted-content', journalarticle: 'journal-article', conferencepaper: 'proceedings-article' };
 const PEER_REVIEWED = new Set(['journal-article', 'proceedings-article']);
 
-export const sourceIssues = (s: Source, policy: Policy = POLICY): string[] => policyIssues(s.record, policy);
+export const sourceIssues = (s: Source, policy: Policy = POLICY): string[] => [
+  ...(s.check?.sample ? ['This is a SAMPLE check. Run a live check before approving or citing this source.'] : []),
+  ...policyIssues(s.record, policy),
+];
+
+/** Sample receipts cannot become live evidence, even through a written exception. */
+export const canCiteSource = (s: Source, policy: Policy = POLICY): boolean => !s.check?.sample && (
+  (exportable(s) && !sourceIssues(s, policy).length) ||
+  (s.keys.approved && !!s.keptWithReason && (!!s.record || s.origin === 'web' || s.origin === 'manual'))
+);
 
 /** One plain line per rule, for the House rules page. */
 export function policyLines(p: Policy = POLICY): string[] {

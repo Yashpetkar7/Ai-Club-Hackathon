@@ -1,3 +1,5 @@
+> Historical snapshot: the current candidate and regenerated Lab evidence are described in [VALIDATION_CURRENT.md](VALIDATION_CURRENT.md) and [INTEGRATION_HANDOVER.md](INTEGRATION_HANDOVER.md). Do not quote the totals below as a new run.
+
 # Integrity Lab: measured results and limits
 
 ## Task 3 recorded fallback: actual case-level evidence

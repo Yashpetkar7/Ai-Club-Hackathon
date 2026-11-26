@@ -10,9 +10,9 @@ const POLICY_URL = 'https://www.spjain.ae/hubfs/policies-pdf/Academic-Integrity-
 const CLAUSES: [string, string, string][] = [
   ['s10(h)(vi)', 'Students acknowledge other people’s work, using APA.', 'APA 7 is the default style. A list leaves only through pre-flight.'],
   ['s10(h)(vii)', 'Generative AI is used only as the assessment allows.', 'Each project carries an AI level from 0 to 3. The server refuses anything above it.'],
-  ['s10(h)(viii)', 'Students name the AI tools and prompts they used.', 'Every AI call is logged with its model and prompt. The AI-use statement is written from that log.'],
+  ['s10(h)(viii)', 'Students acknowledge AI use as required for their assessment.', 'The statement shows recorded AI activity. Missing prompts, uses outside this app and paper sections need the student’s own disclosure.'],
   ['s10(h)(ix)', 'Students watch for references that AI made up.', 'The Checker and the three keys. AI can never add a reference.'],
-  ['s3(a)(ii), s3(b)(iv)', 'Work an AI produced is not handed in as your own unless allowed.', 'There is no writing feature. At level 0 every AI agent is locked.'],
+  ['s3(a)(ii), s3(b)(iv)', 'Work an AI produced is not handed in as your own unless allowed.', 'The student writes in the editor. There is no assignment-generation feature. At level 0 the AI agents are locked.'],
   ['s10(g)(vi)', 'Faculty check references and citations.', 'The evidence report shows every verdict, reason and exact sentence on one page.'],
 ];
 const CAN = ['Whether a reference matches a work in Crossref, OpenAlex, DataCite or doi.org', 'Whether your draft repeats eight or more words in a row from a source in your library', 'Whether a quotation in your draft is in the source you cite', 'Whether a journal has retracted, corrected or warned about a work', 'Which of title, authors, year or DOI differs', 'Whether a registry marks the work as retracted', 'Whether the exact words you quote are in the text we could read', 'Whether a number, direction or scope word in your claim differs from that sentence'];
@@ -68,7 +68,7 @@ export function Rules() {
     <main className="wrap page" id="main" tabIndex={-1}>
       <div className="stack">
         <h1>House rules</h1>
-        <p className="soft">This page reads the same policy file the checker uses, so it cannot say one thing while the site does another.</p>
+        <p className="soft">The rules below read the shared policy configuration. They describe product controls; they do not certify compliance or prevent all misuse.</p>
       </div>
       <section className="stack">
         <h2>Rules in force</h2>
@@ -101,7 +101,7 @@ export function Rules() {
       <section className="stack">
         <h2>How this follows the school’s policy</h2>
         <p className="soft">
-          Our summary of SP Jain’s Academic Integrity Policy, version 2, 24 February 2026.{' '}
+          Our paraphrase of the publicly linked SP Jain Academic Integrity Policy. The accessible PDF lists an amendment date of 21 February 2024; check your assessment’s current policy before relying on this summary.{' '}
           <a href={POLICY_URL} target="_blank" rel="noreferrer">
             Read the policy itself
           </a>
@@ -133,7 +133,7 @@ export function Rules() {
       </section>
       <section className={css.danger}>
         <h2>Delete everything</h2>
-        <p>Removes every project, source, claim, draft and log entry from the library you have open now. Nobody else has a copy, so it cannot be undone. To remove an account as well, open Account.</p>
+        <p>Removes projects, sources, claims, drafts, study progress and log entries from the library open in this browser. Downloads, browser caches and copies on other devices are not erased by this action. An account may also have an encrypted server copy; use Account to remove that account. Deletion cannot be undone here.</p>
         {asking ? (
           <div className="row" role="alert">
             <button

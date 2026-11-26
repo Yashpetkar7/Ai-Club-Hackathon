@@ -1,7 +1,7 @@
-import { exportable, VERDICT_TEXT, type AiLevel, type CitationStyle, type Project, type RawReference, type ReferenceCheck, type RegistryRecord, type SearchPlan, type Source, type SourceOrigin } from '@/core/contracts';
+import { VERDICT_TEXT, type AiLevel, type CitationStyle, type Project, type RawReference, type ReferenceCheck, type RegistryRecord, type SearchPlan, type Source, type SourceOrigin } from '@/core/contracts';
 import { cleanTitle } from '@/core/verify/normalise';
 import { record as log } from '@/log/log';
-import { sourceIssues } from '@/policy/apply';
+import { canCiteSource, sourceIssues } from '@/policy/apply';
 import { POLICY } from '@/policy/policy';
 import { db, newId } from './db';
 
@@ -42,7 +42,7 @@ export async function addSource(projectId: string, origin: SourceOrigin, input: 
     id: newId(),
     projectId,
     origin,
-    keys: { found: !!rec, checked: input.check?.verdict === 'confirmed', approved: false },
+    keys: { found: !!rec, checked: input.check?.verdict === 'confirmed' && !input.check.sample, approved: false },
     tags: [],
     notes: '',
     addedAt: new Date().toISOString(),
@@ -62,6 +62,7 @@ export async function addSource(projectId: string, origin: SourceOrigin, input: 
 export async function approveSource(sourceId: string, reason?: string): Promise<Source> {
   const s = await db.sources.get(sourceId);
   if (!s) throw new Error('This source no longer exists.');
+  if (s.check?.sample) throw new Error('Run a live check before approving a SAMPLE source.');
   const clean = s.keys.found && s.keys.checked && !sourceIssues(s).length;
   if (!clean && (reason ?? '').trim().length < POLICY.overrideReasonMinChars) throw new Error(`Write at least ${POLICY.overrideReasonMinChars} characters on why you are keeping a source that is not confirmed or is outside house rules.`);
   const keys = { ...s.keys, approved: true };
@@ -93,8 +94,8 @@ export async function recheckSource(sourceId: string, check: ReferenceCheck): Pr
   const s = await db.sources.get(sourceId);
   if (!s) return;
   const rec = check.record ?? s.record;
-  const checked = check.verdict === 'confirmed';
-  const keys = { found: !!rec, checked, approved: s.keys.approved && (checked || !!s.keptWithReason) };
+  const checked = check.verdict === 'confirmed' && !check.sample;
+  const keys = { found: !!rec, checked, approved: !check.sample && s.keys.approved && (checked || !!s.keptWithReason) };
   await db.sources.update(sourceId, { check, keys, ...(rec ? { record: rec } : {}), ...(!s.text && rec?.abstract ? { text: rec.abstract, textOrigin: 'abstract' as const } : {}) });
   await log(s.projectId, 'code', 'source.rechecked', `${rec?.title ?? s.raw?.raw.slice(0, 120)} [${VERDICT_TEXT[check.verdict].label}]`);
 }
@@ -108,7 +109,7 @@ export async function recordAiDecision(projectId: string, task: 'plan' | 'read' 
 }
 
 /** What may be cited: all three keys, or kept with a written reason (shown as such). */
-export const citable = (s: Source, policy = POLICY): boolean => (exportable(s) && !sourceIssues(s, policy).length) || (s.keys.approved && !!s.keptWithReason && (!!s.record || s.origin === 'web' || s.origin === 'manual'));
+export const citable = canCiteSource;
 
 /** One button. Removes everything this site has stored in this browser. */
 export async function deleteEverything(): Promise<void> {

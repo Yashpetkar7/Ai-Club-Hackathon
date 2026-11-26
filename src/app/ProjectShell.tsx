@@ -15,6 +15,8 @@ export interface StepProps {
 }
 
 const load = {
+  compass: () => import('@/pages/Compass'),
+  learn: () => import('@/pages/Learn'),
   team: () => import('@/pages/Team'),
   library: () => import('@/pages/Library'),
   read: () => import('@/pages/Read'),
@@ -27,6 +29,8 @@ const load = {
   export: () => import('@/pages/Export'),
 };
 const Team = lazy(() => load.team().then((m) => ({ default: m.Team })));
+const Compass = lazy(() => load.compass().then((m) => ({ default: m.Compass })));
+const Learn = lazy(() => load.learn().then((m) => ({ default: m.Learn })));
 const Read = lazy(() => load.read().then((m) => ({ default: m.Read })));
 const Review = lazy(() => load.review().then((m) => ({ default: m.Review })));
 const Library = lazy(() => load.library().then((m) => ({ default: m.Library })));
@@ -63,7 +67,9 @@ const MAIN: Step[] = [
 ];
 /** Use them when you need them. `near` is the step each one belongs to. */
 const HELPERS: (Step & { near: string })[] = [
+  { key: 'compass', label: 'Compass', hint: 'Your research overview and next step', near: 'plan', Page: Compass },
   { key: 'team', label: 'Team', hint: 'Run all the agents', near: '', Page: Team },
+  { key: 'learn', label: 'Study studio', hint: 'Read, capture, question and recall', near: 'library', Page: Learn },
   { key: 'read', label: 'Read', hint: 'Method, findings, limits', near: 'library', Page: Read },
   { key: 'map', label: 'Map', hint: 'How papers connect', near: 'library', Page: MapPage },
   { key: 'ask', label: 'Ask', hint: 'Question your sources', near: 'evidence', Page: Ask },
@@ -149,7 +155,7 @@ export function ProjectShell({ projectId, step }: { projectId: string; step: str
       </aside>
       <main className={css.main} id="main" tabIndex={-1}>
         <Suspense fallback={<p className="soft">Loading…</p>}>
-          <Page project={project} />
+          <Page key={`${project.id}/${here.key}`} project={project} />
         </Suspense>
         <Legend />
         <nav className={css.nextprev} aria-label="Steps">

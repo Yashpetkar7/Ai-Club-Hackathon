@@ -13,14 +13,15 @@ interface Decided { kept: string[]; changed: string[]; rejected: string[] }
 const decided = (e: LogEvent): Decided | null => {
   try {
     const d = JSON.parse(e.detail) as Partial<Decided>;
-    return Array.isArray(d.kept) && Array.isArray(d.changed) && Array.isArray(d.rejected) ? (d as Decided) : null;
+    return d && [d.kept, d.changed, d.rejected].every((list) => Array.isArray(list) && list.every((x: unknown) => typeof x === 'string')) ? (d as Decided) : null;
   } catch {
     return null;
   }
 };
 
 export function statementLines(log: LogEvent[], project: Pick<Project, 'aiLevel'>): string[] {
-  const calls = log.filter((e) => e.actor === 'ai' && e.action in TASK);
+  const ordered = [...log].sort((a, b) => a.seq - b.seq);
+  const calls = ordered.filter((e) => e.actor === 'ai' && Object.hasOwn(TASK, e.action));
   const levels = log.filter((e) => e.action === 'ai.level');
   const device = log.filter((e) => e.action === 'support.model-ran');
   const out: string[] = [];
@@ -40,17 +41,27 @@ export function statementLines(log: LogEvent[], project: Pick<Project, 'aiLevel'
     const sum = (k: keyof Decided) => ds.reduce((n, d) => n + d[k].length, 0);
     if (ds.length) out.push(`Of the suggestions I decided on, I kept ${sum('kept')}, changed ${sum('changed')} and rejected ${sum('rejected')}.`);
     else out.push('The log does not record which suggestions I kept, changed or rejected.');
+    const prompts = calls.filter((e) => e.prompt?.trim());
+    for (const e of prompts) out.push(`Recorded prompt on ${day(e.at)} (${e.model ?? 'model not recorded'}): ${e.prompt}`);
+    if (prompts.length < calls.length) out.push(`Prompts are missing for ${calls.length - prompts.length} recorded AI calls. I need to review my own records before submission.`);
+    out.push('The log cannot infer which sections of my submitted paper contain these ideas or how I incorporated them. I must describe that explicitly.');
   }
   if (device.length) out.push(`A small language model ran on my own device ${times(device.length)} to compare a claim with a sentence from its source. It wrote no text, and no claim was sent anywhere.`);
   const checks = log.filter((e) => e.action === 'draft.checked').length;
   const fixes = log.filter((e) => e.action === 'draft.fix').length;
   if (checks) out.push(`A rule-based check, which is not AI, compared my draft with my own sources and looked for slips ${times(checks)}. ${fixes ? `I applied ${fixes === 1 ? 'one of its corrections' : `${fixes} of its corrections`}, each with a click.` : 'I applied none of its corrections.'}`);
   out.push('Paper Trail did not write any of my assignment. It has no feature that does.');
-  out.push(`The AI permission level was ${project.aiLevel} (${AI_LEVELS[project.aiLevel]?.name ?? 'unknown'})${levels.length ? `, and was changed ${times(levels.length)}` : ''}. The level is my own declaration.`);
+  out.push(`The current AI permission level is ${project.aiLevel} (${AI_LEVELS[project.aiLevel]?.name ?? 'unknown'}). ${levels.length ? `${levels.length} level-change events are recorded. ` : ''}This does not establish the permission level at every earlier action. The level is my own declaration.`);
   const ok = log.filter((e) => e.action === 'source.approved').length;
   const reason = log.filter((e) => e.action === 'source.kept-with-reason').length;
-  const n = (k: number) => `${k} ${k === 1 ? 'source' : 'sources'}`;
-  if (ok || reason) out.push(`The log records that ${[ok ? `I approved ${n(ok)} after plain code had checked them in scholarly registries` : '', reason ? `I kept ${n(reason)} that did not pass, each with a written reason` : ''].filter(Boolean).join(', and that ')}.`);
+  if (ok || reason) out.push(`The log records ${ok} source-approval events and ${reason} written-exception events. Repeated decisions may refer to the same source; these are event counts, not unique sources or current verification results.`);
+  for (const e of ordered.filter((e) => e.actor === 'student' && e.action === 'ai.disclosure')) {
+    try {
+      const d = JSON.parse(e.detail) as { sections?: unknown; incorporation?: unknown };
+      if (typeof d.sections === 'string' && typeof d.incorporation === 'string') out.push(`My additional disclosure (${day(e.at)}): Sections affected: ${d.sections}. How I used the ideas: ${d.incorporation}. This is my own account, not an independently checked event.`);
+    } catch { /* Incomplete disclosure remains absent rather than guessed. */ }
+  }
+  out.push('This record does not establish that every source is scientifically correct, every claim was checked, or the history is complete.');
   out.push('This statement covers only what happened inside Paper Trail. Any AI tool I used elsewhere is not recorded here and must be declared separately.');
   return out;
 }

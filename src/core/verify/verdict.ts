@@ -1,7 +1,7 @@
 import type { RawReference, ReasonCode, ReferenceCheck, RegistryRecord, RegistryTrace, Verdict } from '@/core/contracts';
 import { POLICY } from '@/policy/policy';
 import { compare, rank, type Comparison } from './compare';
-import { tokens } from './normalise';
+import { tokens, titleScore } from './normalise';
 
 /**
  * The Checker. Plain code, no AI, no randomness. Registries are passed in, so tests run offline.
@@ -48,14 +48,31 @@ export async function checkReference(ref: RawReference, reg: Registries, now: ()
     ...(record ? { record } : {}),
   });
 
+  // The DOI OpenAlex answered with on the last lookup. It can differ when OpenAlex merged versions of a work.
+  let secondDoi: string | undefined;
   const judge = async (rec: RegistryRecord, viaDoi: boolean): Promise<ReferenceCheck> => {
     let c = compare(ref, rec);
     let record = rec;
-    let second: 'answered' | 'silent' | 'none' = 'none';
+    let second: 'matched' | 'silent' | 'missing' | 'disagrees' | 'none' = 'none';
+    secondDoi = undefined;
     if (rec.doi) {
       const oa = await timed(trace, 'openalex', () => reg.openalexByDoi(rec.doi!), (v) => (v ? 'match' : 'not-found'));
-      second = oa.ok ? 'answered' : 'silent';
+      second = oa.ok ? 'missing' : 'silent';
       if (oa.ok && oa.value) {
+        secondDoi = oa.value.doi;
+        const identity = compare({ raw: rec.title, title: rec.title, authors: rec.authors.map((a) => a.family), ...(rec.year ? { year: rec.year } : {}) }, oa.value);
+        const sameDoi = !oa.value.doi || oa.value.doi.toLowerCase() === rec.doi.toLowerCase();
+        // With the same DOI, title and authors settle identity. OpenAlex gives the year of the earliest
+        // version (a working paper, say), so a year gap alone is not another work. The student's year
+        // is still compared with the first registry below.
+        const fieldsAgree = identity.fields.every((f) => f.ok || (sameDoi && f.field === 'year'));
+        second = sameDoi && titleScore(rec.title, oa.value.title) >= th.titleMatch && fieldsAgree ? 'matched' : 'disagrees';
+        if (second === 'disagrees') {
+          trace[trace.length - 1]!.status = 'no-match';
+          trace[trace.length - 1]!.note = 'The second registry returned different identity metadata. Review both records.';
+        }
+        // Never attach an abstract, citation graph or retraction from a different work.
+        if (second === 'matched') {
         record = {
           ...rec,
           abstract: rec.abstract ?? oa.value.abstract,
@@ -70,13 +87,14 @@ export async function checkReference(ref: RawReference, reg: Registries, now: ()
           const other = compare(ref, { ...rec, title: oa.value.title });
           if (other.title >= th.titleMatch) c = other;
         }
+        }
       }
     }
     const bareDoi = viaDoi && !ref.title && !ref.authors?.length && tokens(ref.raw).length <= 8;
     if (viaDoi && !bareDoi && ref.title && c.title < 0.6) return done('wrong-paper', ['DOI_IS_ANOTHER_PAPER'], record, c);
     if (record.retracted) return done('retracted', ['RETRACTED', ...(bareDoi ? [] : reasonsFrom(c))], record, c);
     // A clean match that only one registry could vouch for is never shown as Confirmed.
-    const clean = (): ReferenceCheck => (second === 'answered' ? done('confirmed', [], record, c) : done('one-registry', ['SECOND_REGISTRY_UNREACHABLE'], record, c));
+    const clean = (): ReferenceCheck => (second === 'matched' ? done('confirmed', [], record, c) : done('one-registry', [second === 'disagrees' ? 'REGISTRY_METADATA_DISAGREES' : second === 'missing' ? 'SECOND_REGISTRY_NO_RECORD' : 'SECOND_REGISTRY_UNREACHABLE'], record, c));
     if (bareDoi) return clean();
     const reasons = reasonsFrom(c);
     if (c.title >= th.titleMatch && !reasons.length) return clean();
@@ -106,7 +124,8 @@ export async function checkReference(ref: RawReference, reg: Registries, now: ()
 
   const s = await timed(trace, 'crossref', () => reg.crossrefSearch(query), (v) => (v.length ? 'match' : 'no-match'), (v) => `${v.length} candidates`);
   if (!s.ok) return done('could-not-check', ['REGISTRY_UNREACHABLE', ...(doiMissing ? (['DOI_DOES_NOT_EXIST'] as ReasonCode[]) : [])]);
-  const best = s.value.map((r) => ({ r, c: compare(ref, r) })).sort((a, b) => rank(b.c) - rank(a.c))[0];
+  const ranked = s.value.map((r) => ({ r, c: compare(ref, r) })).sort((a, b) => rank(b.c) - rank(a.c));
+  const best = ranked[0];
   const last = trace[trace.length - 1]!;
 
   if (!best || best.c.title < th.titlePossible) {
@@ -118,7 +137,18 @@ export async function checkReference(ref: RawReference, reg: Registries, now: ()
     last.status = 'no-match';
     return done('not-found', doiMissing ? ['DOI_DOES_NOT_EXIST', 'NO_MATCH_IN_REGISTRIES'] : ['NO_MATCH_IN_REGISTRIES'], undefined, best.c);
   }
-  const res = await judge(best.r, false);
+  let res = await judge(best.r, false);
+  // A search can rank a preprint level with the published article. When OpenAlex files the preprint
+  // under another DOI that is also a candidate here and fits the reference just as well, judge that
+  // version instead. Both lookups stay in the trace.
+  const merged = secondDoi?.toLowerCase();
+  if (res.reasons.includes('REGISTRY_METADATA_DISAGREES') && merged && merged !== best.r.doi?.toLowerCase()) {
+    const alt = ranked.find((x) => x.r.doi?.toLowerCase() === merged);
+    if (alt && rank(alt.c) >= rank(best.c) - 1e-9) {
+      const again = await judge(alt.r, false);
+      if (!again.reasons.includes('REGISTRY_METADATA_DISAGREES')) res = again;
+    }
+  }
   // The DOI could not be looked up and the search led to a work with another DOI: we cannot tell which is right.
   if (doiUnknown && res.record?.doi !== ref.doi) return { ...res, verdict: 'could-not-check', reasons: ['REGISTRY_UNREACHABLE'] };
   if (doiMissing && res.verdict !== 'retracted') {

@@ -117,7 +117,7 @@ export async function ai(req) {
   }
   const min = Object.hasOwn(MIN_LEVEL, body?.task) ? MIN_LEVEL[body.task] : undefined;
   if (min === undefined) return Response.json({ ok: false, reason: 'unknown task' }, { status: 400 });
-  if (!(Number(body.level) >= min)) return Response.json({ ok: false, reason: 'locked', detail: `This assessment allows AI level ${Number(body.level) || 0}. This step needs level ${min}.` }, { status: 403 });
+  if (!Number.isInteger(body.level) || body.level < 0 || body.level > 3 || body.level < min) return Response.json({ ok: false, reason: 'locked', detail: 'This task requires an allowed integer AI level from 0 to 3.' }, { status: 403 });
   const task = TASKS[body.task];
   const input = task.input(body.input);
   if (!input) return Response.json({ ok: false, reason: 'bad input' }, { status: 400 });

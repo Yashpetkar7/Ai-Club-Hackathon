@@ -33,7 +33,11 @@ describe('real references are confirmed in every common style', () => {
   ];
   it.each(real)('%s', async (_n, line) => {
     const r = await verdictOf(line);
-    expect(r, JSON.stringify(r)).toEqual({ verdict: 'confirmed', reasons: [] });
+    // The recorded OpenAlex response for this journal DOI points to the working-paper DOI.
+    // Preserve that uncertainty instead of treating related versions as identity confirmation.
+    expect(r, JSON.stringify(r)).toEqual(line.includes('10.1086/261763')
+      ? { verdict: 'one-registry', reasons: ['REGISTRY_METADATA_DISAGREES'] }
+      : { verdict: 'confirmed', reasons: [] });
   }, 40_000);
 });
 
@@ -147,9 +151,10 @@ describe('one registry is not enough for green', () => {
   const fail = async (): Promise<never> => { throw new Error('network error'); };
   const base: Registries = { crossrefByDoi: async () => rec, openalexByDoi: async () => ({ ...rec, registry: 'openalex' }), dataciteByDoi: none, doiExists: async () => true, crossrefSearch: async () => [rec] };
   it('both answer: confirmed', async () => expect((await checkReference(parseReference(line), base)).verdict).toBe('confirmed'));
-  it('the second answers that it has no record: confirmed, and the receipt says so', async () => {
+  it('the second answers that it has no record: one registry only, and the receipt says so', async () => {
     const c = await checkReference(parseReference(line), { ...base, openalexByDoi: none });
-    expect(c.verdict).toBe('confirmed');
+    expect(c.verdict).toBe('one-registry');
+    expect(c.reasons).toContain('SECOND_REGISTRY_NO_RECORD');
     expect(c.trace.find((x) => x.registry === 'openalex')?.status).toBe('not-found');
   });
   it.each([['full reference', line], ['bare DOI', '10.1234/x']])('the second is down, %s: one registry only', async (_n, l) => {

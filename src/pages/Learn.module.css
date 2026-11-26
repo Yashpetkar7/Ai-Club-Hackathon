@@ -1,0 +1,16 @@
+.panel, .context { padding: 22px; display: grid; align-content: start; gap: 16px; min-width: 0; }
+.context { border-left: 4px solid var(--accent); }
+.context strong { font-size: 1.1rem; }
+.progress { display: grid; gap: 10px; }
+.progress progress { width: 100%; height: 10px; accent-color: var(--accent); }
+.stages { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.stage { display: grid; gap: 5px; text-align: left; padding: 14px; border: 1px solid var(--line); background: var(--sheet); cursor: pointer; }
+.stage span { font-size: .875rem; color: var(--soft); }
+.stage[aria-pressed='true'] { border: 2px solid var(--accent); background: var(--raise); }
+.stage:disabled { cursor: default; color: var(--soft); }
+.columns { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+.passages { display: grid; gap: 24px; max-height: 580px; overflow-y: auto; padding-right: 8px; }
+.passages blockquote { margin: 0; border-left: 2px solid var(--line); padding-left: 12px; }
+.fullText { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 440px; overflow-y: auto; margin-top: 14px; }
+@media (max-width: 850px) { .columns { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 520px) { .stages { grid-template-columns: repeat(2, minmax(0, 1fr)); } .panel, .context { padding: 16px; } }

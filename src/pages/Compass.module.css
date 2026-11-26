@@ -1,0 +1,14 @@
+.hero { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 24px; }
+.metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.metrics > div { display: grid; gap: 6px; padding: 18px; }
+.metrics strong { font: 400 2.5rem var(--display); }
+.metrics span { color: var(--soft); font-size: .9rem; }
+.automation { padding: 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 22px; }
+.automation > div:first-child { flex: 1 1 420px; min-width: 0; }
+.path { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.step { padding: 22px; display: grid; gap: 12px; text-decoration: none; color: var(--ink); }
+.step:hover { border-color: var(--accent); background: var(--raise); }
+.step p { color: var(--soft); }
+.state { font-size: .875rem; color: var(--accent); }
+@media (max-width: 900px) { .path { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .path { grid-template-columns: minmax(0, 1fr); } .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } .automation { padding: 18px; } }

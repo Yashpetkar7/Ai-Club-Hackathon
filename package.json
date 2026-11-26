@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "engines": {
-    "node": ">=20.19"
+    "node": ">=22.19"
   },
   "scripts": {
     "prepare": "node scripts/setup-hooks.mjs",
@@ -15,7 +15,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "e2e": "playwright test",
-    "verify": "npm run typecheck && npm run test && npm run build"
+    "test:compass": "node --experimental-strip-types --loader ./scripts/source-loader.mjs --test tests/offline/*.test.mjs",
+    "demo:check": "node scripts/demo-readiness.mjs",
+    "verify": "npm run typecheck && npm run test && npm run test:compass && npm run build"
   },
   "dependencies": {
     "@huggingface/transformers": "4.3.2",

@@ -43,3 +43,34 @@ The user's exact follow-up, including original spelling:
 > It only shows docs changed, is it only that much and no other critical files changes? Did you also mention in the slides what to improve and enhance and how to get the edge over other well established platforms and also be  a better platform and a most reliable platform by taking into consideration the users reviews of the established platforms and what users are experinecing from the other platforms to make out platform better than others in terms of functionality, features, working, reliability, and trust.
 
 The previous own-branch push changed eight documentation files; it did not implement the remaining product pages. This follow-up continues the already requested engineering work through the Task 3 Lab review checkpoint. It also requests first-hand user-experience research and actionable improvements in the private teaching guide. Public reports inform testable proposals; they do not establish comparative reliability or a claim that Paper Trail is the best platform. The original own-file, own-branch, no-PR, no-deploy and no-new-dependency boundaries still apply.
+
+## Current local integration session: 25–26 November 2026
+
+Tool: AI coding assistant; builder model identifier omitted in line with the existing preference. The following prompts produced the local candidate described in `docs/deck/INTEGRATION_HANDOVER.md`, updated six-slide presentation and private teaching guide; 27 dependency-free tests passed, but full verification and push remain pending. Earlier rows report earlier sessions and must not be read as current validation.
+
+### Exact integration request
+
+> the repo is "https://github.com/Yashpetkar7/Ai-Club-Hackathon", this  has main and also two more branches mine and Yash's so i have already downloaded his files and kept in the folder you can chech. And also you can clone mine and main branch and start building. The other files and html's are also built and the other folder also has some build, can you check and go ahead with complete build and push to my branch, I am hemanth. And use the hbasired username of the github and not the blackholeinfiverse114. The recent prompt I have given in chatgpt was "can you check the repo again, Yah has made many changes in his branches, can you check them and accordingly make updates on our side and then push, and if we can make something better and get the differentiator and edge in our system that will be better and with more correct and interactive  platform and also can we make or rank the researchs that are searched according to priority can build a solid system.
+> And also there are many platforms like hubspot and salesforce which have very interactive and dynamic learning platform that are very good can we implement something like that so that researching and getting inform,ation and reading becomes fun and the learning becomes easy and fast. Do one thing whatever we have planned for this from first our ideas and implement everything according to the system already built by yash that is pushed into repo and then fix anything and implement our ideas on top and our implementation that we will do now and then push into my branch. And also check eevrything is working. And also you mentioned some tasks are pending on my side so comple them as well and then push.", so check and proceed and make sure the reserach and getting and then entire flow of the research becomes so simple and imnteractive and addictive and that too with complete automation and verfication such that there is no faking, fooling or manipulating in the system. And it should not only be what is asked in the problem statement but it should be more than that with key indications, you can web search and then proceed accordingly as well.
+
+### Exact presentation and demo request
+
+> can you check and proceed and also there are new presentation and html guide can you check and see if everything aligns and correcr and if any updates can be made do it. And the slides should be 6 only. theere are changes and updates in yash's branch can you check that as well and then proceed and implement. But my html which i will read and completely understand which is already in the folder "Paper_Trail_Architecture_Guide (1).html" should be updated. The research tool should be efefctive and should work in the demo and we need to show the actual demo that will work on real data and the entire solution to the problem will be shown in the demo and also the edge of this system and the differentiator should be clear. Use different techniques and tools that are available and developed by big tech liks google, meta, etc that are open source or free API based which can be inteegrated in our system and build a good tool that crosses benchmarks set and becomes students favourite tool in the entire earth who can get it and use at ease and can help significantly. Do web search and then build and the push.
+
+### Exact access follow-ups
+
+> Why are you not able to get git fetch, means you did not even have an idea as well what is there in github repo and my branch? can you check and proceed. This is the website cab you check it and work acordingly. If git cannot be fetched or clones the it will be a problem, so please get git and proceed.
+
+Website supplied: `https://paper-trail-team1.vercel.app/`.
+
+> And why did codex setting changed, I give the you access to get git, if you needany setting to be changed then tell me.
+
+The user reported “Network access enabled”, then “Changed to Ask for approval”. A subsequent pre-approved remote-reference query returned all three heads, but object fetch and ordinary shell network access remained blocked; the escalation tool still reported `sandbox_approval=false`. No Codex setting, global Git identity, teammate branch, deployment or hook was changed by the assistant.
+
+The current request authorizes substantive integration work beyond the older file-ownership limit. Changes remain a separate local candidate until the actual branch objects are fetched, reconciled, fully verified and pushed as hbasired; neither benchmark superiority nor an impossible guarantee against manipulation is claimed.
+
+### Exact vision and unfinished-work request
+
+> can you build and then document what was not done and that can be done. And what is my vision and what should be done.
+
+Produced `docs/VISION_AND_ROADMAP.md`, linking the actual local implementation and validation to the requested global student research-and-learning vision. It separates release blockers, independent benchmark/learning evaluations and longer-term adoption work; the final package-registry probe failed with `EACCES`, so no production-build or live-demo success was claimed.

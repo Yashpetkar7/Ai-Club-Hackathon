@@ -12,6 +12,7 @@ interface Outcome {
   error?: string;
   check?: ReferenceCheck;
   pages?: number;
+  extractedPages?: number;
   instructions?: string[];
 }
 
@@ -36,7 +37,7 @@ export function PdfDrop({ projectId, onBusy, onAdded }: { projectId: string; onB
         const s = await addSource(projectId, 'pdf', { raw, check });
         await editSource(s.id, { text: pdf.text, textOrigin: 'pdf', pdfPages: pdf.pages });
         if (pdf.instructions.length) await log(projectId, 'code', 'pdf.instructions-found', `${file.name}: text aimed at an AI was found and ignored`);
-        out = { ...out, check, pages: pdf.pages, instructions: pdf.instructions };
+        out = { ...out, check, pages: pdf.pages, extractedPages: pdf.extractedPages, instructions: pdf.instructions };
         onAdded?.(s.id);
       } catch (e) {
         out = { ...out, error: e instanceof Error ? e.message : 'This file could not be read.' };
@@ -68,8 +69,9 @@ export function PdfDrop({ projectId, onBusy, onAdded }: { projectId: string; onB
             <>
               <div className="row">
                 <VerdictStamp verdict={o.check!.verdict} />
-                <span className="soft">{o.pages} {o.pages === 1 ? 'page' : 'pages'} read. Added to your library, waiting for your approval.</span>
+                <span className="soft">Text extracted from {o.extractedPages} of {o.pages} pages{o.extractedPages! < o.pages! ? ' (extraction stops after 80 pages)' : ''}. Added to your library, waiting for your approval.</span>
               </div>
+              <p className="soft">A DOI found inside a PDF may cite a different work. Review the returned title before approving; a metadata match does not authenticate this file.</p>
               {o.instructions!.length > 0 && <p className={css.warn}>This file contains text aimed at an AI, such as “{o.instructions![0]}”. It was ignored.</p>}
             </>
           )}

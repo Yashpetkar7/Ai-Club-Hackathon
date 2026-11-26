@@ -193,10 +193,10 @@ describe('the AI-use statement says only what the log says', () => {
     expect(now).toContain('once to suggest search terms');
     expect(now).toContain('kept 2, changed 0 and rejected 1');
     await setAiLevel(p.id, 2);
-    expect((await read()).join(' ')).toContain('was changed once');
+    expect((await read()).join(' ')).toContain('1 level-change events are recorded');
     expect(now).not.toContain('language model ran on my own device');
     expect(now).not.toMatch(/sources? I cite|I approved/);
     await addSource(p.id, 'doi', { check: check('confirmed', NOY), approve: true });
-    expect((await read()).join(' ')).toContain('I approved 1 source');
+    expect((await read()).join(' ')).toContain('1 source-approval events');
   });
 });

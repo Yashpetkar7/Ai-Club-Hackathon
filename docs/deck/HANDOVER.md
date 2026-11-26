@@ -1,3 +1,5 @@
+> Historical snapshot: the current candidate and regenerated Lab evidence are described in [VALIDATION_CURRENT.md](VALIDATION_CURRENT.md) and [INTEGRATION_HANDOVER.md](INTEGRATION_HANDOVER.md). Do not quote the totals below as a new run.
+
 # Hemanth handover
 
 ## Current Task 3 review handover: 25 November 2026

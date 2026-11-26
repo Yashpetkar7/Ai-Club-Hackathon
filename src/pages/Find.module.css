@@ -9,5 +9,10 @@
 .abs { font-size: 0.94rem; background: var(--raise); padding: 12px 14px; max-width: none; }
 .acts { display: flex; gap: 8px; align-items: center; }
 .kept { color: var(--accent); }
+.priority { display: grid; gap: 14px; padding: 20px; }
+.priority label { display: grid; gap: 6px; flex: 1 1 210px; }
+.priorityLine { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: .9rem; color: var(--soft); }
+.priorityLine strong { color: var(--ink); }
+.why { display: grid; gap: 8px; }
 .gate { border: 2px solid var(--gate); padding: 18px 20px; display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; justify-content: space-between; background: var(--sheet); position: sticky; bottom: 12px; }
 @media (max-width: 620px) { .hit { grid-template-columns: minmax(0, 1fr); } }

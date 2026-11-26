@@ -1,246 +1,316 @@
-# Paper Trail: six-slide deck draft
+# Paper Trail: exact six-slide deck text
 
-**For Hemanth's review.** Updated 25 November 2026, Dubai time. This is the text and diagram specification, not the final PowerPoint. Follow [the Phase 1 outline](../PHASE1_DECK_OUTLINE.md): convert only the six slide sections below into slides. Preparation notes and evidence are not extra slides.
+Current local candidate; see [validation](VALIDATION_CURRENT.md). The PowerPoint, including speaker notes, is the matching six-slide artifact. Historical test and accessibility claims have been removed from the current deck.
 
-**Runtime basis:** main `7b0391ff0ec90e8b8f9fd2a030845cc42d3a753d`, plus Hemanth's owned Lab implementation on `hemanth/lab-governance`. The Lab is not asserted to be merged into main or deployed; label it **Hemanth branch; integration pending** until Yash integrates and verifies it. The new Challenger, Map, local PDF import, evidence report, tour and command palette are present in that revision. Successful AI-provider tasks, the claim journey and citation exports are not. Code presence and unit verification do not establish that every feature has been exercised end to end. See [validation](VALIDATION.md), [research corrections](RESEARCH_AUDIT.md), [architecture alignment](NIHAL_ALIGNMENT.md) and [handover](HANDOVER.md).
-
-**Separate candidate:** integration `59a876d6acf9fbdc6ea2a71697a0f6f16e16dcd5` has additional changes. They are not included in the slides' **Built** claims. Main verification at 08:29:55 Dubai on 25 November recorded 91 passed, 1 skipped across four unit-test files, with typecheck and build passing. The candidate's separate run at 08:30:31 recorded 126 passed, 1 skipped across six files, with typecheck and build passing. Both skipped the final no-stub-page check; neither result is an accuracy benchmark or completion certificate. [Run records](VALIDATION.md).
-
-**Review blockers:** a genuine Check screenshot is still missing. The final citation-export behavior must resolve the strict three-key helper and the separate reason-based eligibility path. The Lab evidence is a labelled recorded-response run, not a live or competitive benchmark. No genuine screenshot, browser usability measurement or complete accessibility result is supplied by this document. The private teaching guide and [user-experience ledger](USER_EXPERIENCE_RESEARCH.md) explain improvement proposals; they are separate from these six assessed slides.
-
-## Preparation rules
-
-- Use Marcellus headings, Public Sans body text and existing tokens from `src/ui/tokens.css`; square corners and thin straight borders. Green means an observed successful check.
-- Use solid connectors for built paths and dashed connectors for planned paths. Label mixed components at the subcomponent level. A stub or successful mock response is not a working service.
-- **Exact slide words** is the visible copy, including source footers. The diagram arranges that copy; do not duplicate the whole text beside it. Diagram labels are also visible.
-- Aim for a silent reading of each composed slide within 60 seconds. That timing is a design target, not a measured usability result; conduct the reading before submission.
-- **Points targeted** means rubric coverage, not points awarded. Weights come from the team extraction and Phase 1 outline; verify against the organisers' original rubric.
-
-## Slide 1: The problem and our rule
-
-**Title:** A convincing reference can still be wrong
+## Slide 1: A research trail the student can inspect
 
 ### Exact slide words
 
-A polished citation can name the wrong paper. A real paper can still fail to support a claim. The student answers for both.
+- Find real records, check what they say, learn from the evidence, and keep the final decision.
 
-**Paper Trail's rule:** registry found, code checked, student approved. AI holds no key.
+- 3 keys
 
-**Built:** reference checks and receipts. Normal citation eligibility requires all keys and current rules; a separate approved-with-reason exception exists. **Planned:** complete citation exports with explicit exception handling.
+- Registry record, code check, student approval. Written exceptions remain labelled in exports.
 
-**Measured SAMPLE, Hemanth branch:** the real checker ran on **24 fixed Lab cases**. **Eight** lack recorded requests and remain unresolved. These are corpus results, not a platform-accuracy score. Integration is pending.
+- 4 steps
 
-**Source:** recorded replay, 25 November 2026, 09:30:38 Dubai; [Lab results](LAB_RESULTS.md), [validation](VALIDATION.md).
+- Understand, capture evidence, question limits, recall. Study progress never becomes a truth badge.
 
-**Screenshot slot:** actual Check result and receipt, labelled with mode, check time and completion status.
+- 27 / 27
 
-### Diagram and screenshot specification
+- Offline regression tests passed. Measured locally: npm run test:compass. This is not a live demo or benchmark result.
 
-| Box / area | Exact label | Connector |
-|---|---|---|
-| Registry | Registry found | To code: `Metadata` |
-| Code | Code checked | To student: `Verdict and receipt` |
-| Student | Student approved | To export: `Decision and any reason` |
-| Dashed export box | Planned citation export | No outgoing arrow |
-| Screenshot | Actual Check result and receipt | Caption states actual mode, check time and completion status |
+- Supplied screenshot from an earlier build. SAMPLE input; this is not a live run of the updated candidate.
 
-Keep the four boxes in one row. The screenshot must come from the running app; do not recreate a success or invent its data. The image is **not yet available**. Use the [capture procedure](VALIDATION.md#required-screenshot).
+- Core + local extensions implemented. Full build, browser rehearsal and latest-branch reconciliation remain pending.
 
-**Points targeted:** frames the five assessed areas; no additional scoring category.
+- Found / by a scholarly registry, never by an AI’s memory
 
-**Composer caveat:** `exportable()` in `src/core/contracts.ts` requires all three keys. `citable()` in `src/store/actions.ts` also permits an approved item with a saved reason when it has a record or a web/manual origin. `approveSource()` enforces the configured reason length for an unclean source; the reason does not turn its checked key on. Citation Export is still a stub. Do not promise strict exclusion until the team settles and tests the output boundary.
+- Checked / by code, with a second matching identity required for Confirmed
 
-## Slide 2: Workflow
+- Approved / by the student, one source at a time
 
-**Title:** The student controls the research journey
 
-### Exact slide words
+### Diagram and assessment coverage
 
-| Role, in order | Work and student control |
-|---|---|
-| Planner | **Built:** editable searches and code fallback; AI client wired, service unfinished. **Gate 1: approve plan.** |
-| Scout | **Built:** retrieve registry records. |
-| Checker | **Built:** compare metadata and show receipts. **Gate 2: keep or skip.** |
-| Reader | **Planned:** claims linked to passages, with quote and support checks. |
-| Challenger | **Built:** opposing searches, exact text slices and heuristic warnings. **Gate 3, planned: accept, rewrite or reject claims.** |
-| Clerk | **Built:** HTML evidence report. **Planned:** citation files and log-derived AI-use statement. |
+Three boxes: Found → Checked → Approved. The supplied earlier-build screenshot remains labelled SAMPLE, alongside the measured offline test result and a release-status line.
 
-Map and local PDF import support the journey. Library, Evidence, Ask, Write and citation Export remain unfinished. The student writes the assignment.
+Frames the problem and three-key rule.
 
-**Sources:** `src/pages/`, `src/core/challenge/`, `src/core/report/`, `server/handlers/ai.mjs`; `docs/BUILD_PLAN.md`.
 
-### Diagram specification
+### Speaker evidence and limits
 
-Arrange the six named roles in the stated order across three rows. Use these boxes and arrow labels; put Quote guard inside the planned Reader box.
+Source: docs/deck/VALIDATION_CURRENT.md and npm run test:compass (27 passing tests). The screenshot was supplied from an earlier build, not generated by this candidate. Local work has not yet been reconciled with the current remote branches. A passing offline suite does not establish scientific truth, competitive superiority or live availability.
 
-| From | Arrow label | To |
-|---|---|---|
-| Student question | `Question and declared AI level` | Planner |
-| Planner | `Editable searches` | Gate 1: approve plan |
-| Gate 1 | `Approved searches` | Scout |
-| Scout | `Registry records` | Checker |
-| Checker | `Verdict and receipt` | Gate 2: keep or skip |
-| Gate 2 | `Kept source text — planned` | Reader |
-| Reader | `Claims and passages — planned` | Challenger |
-| Student claim | `Claim to challenge — built` | Challenger |
-| Challenger | `Pointers and warnings — planned handoff` | Gate 3: accept, rewrite or reject |
-| Gate 3 | `Student decisions — planned` | Clerk |
-| Saved project | `Current records and log — built` | Clerk: evidence report |
-
-Keep normal paths through Gate 2 solid. Reader, Gate 3, their connecting paths, and the citation/statement part of Clerk are dashed. Challenger is a built standalone route; its connection to a completed claim-decision journey is planned. The built HTML report must not appear as a completed citation exporter. Map and PDF import are small supporting labels, not additional principal roles.
-
-**Points targeted:** workflow, **8**. Six roles, three gates and checking are visible. Weight source: `docs/PHASE1_DECK_OUTLINE.md`.
-
-## Slide 3: Architecture
-
-**Title:** Reference checking works without AI
+## Slide 2: Workflow: automate the legwork, preserve the student’s gates
 
 ### Exact slide words
 
-**Browser, built:** Check, planning, search, Challenger, Map and local PDF extraction. IndexedDB stores project data; the HTML report is downloadable.
+- Student / Asks a question. Declares how much AI the assessment allows
 
-**Registry handler, built:** allow-listed proxy and cache for Crossref, OpenAlex, DataCite and doi.org. Direct lookup fallback also exists.
+- Planner / Suggests search words / Cannot see or write a reference
 
-**AI handler, scaffold:** checks declared permission; provider tasks remain unfinished.
+- Gate 1 / The student approves the searches. Nothing is searched before.
 
-**Planned:** Reader, on-device inference, claim review, citation exports and statement. No PostgreSQL, vector index or publication monitor.
+- Scout / Registry search + explainable reading priority / Cannot approve a paper
 
-**Adaptation:** update policy, verify behavior and rerun the journey in the **90-minute** window announced at **13:15 on 26 November**.
+- Checker / Compares title, authors, year and DOI, then asks a second registry / Cannot be overruled by AI
 
-**Sources:** `src/core/`, `src/store/db.ts`, `server/router.mjs`, `server/handlers/`; event timing: `docs/PROBLEM_STATEMENT.md`.
+- Gate 2 / The student keeps or skips each paper, or keeps a flagged one with a written reason.
 
-### Diagram specification
+- Analyst + Study studio / Exact passages, reflection and recall / Cannot certify understanding
 
-| Box | Contents and status |
-|---|---|
-| Browser workspace | Check, Plan, Find, Challenger, Map, PDF reader, receipts — built |
-| Browser storage | IndexedDB: project data and log — built; some consumers planned |
-| HTML report | Download from current project data — built |
-| Registry handler | `/api/registry`: allow-list and cache — built |
-| AI handler | `/api/ai`: declared-level checks — scaffold |
-| Registry services | Crossref, OpenAlex, DataCite, doi.org — external metadata |
-| On-device inference | Browser worker — planned |
-| External AI service | Provider task execution — planned |
+- Reader / Points at sentences by number / Cannot return words
 
-| From | Arrow label | To |
-|---|---|---|
-| Browser workspace | `Read and save` | Browser storage |
-| Browser storage | `Current records and log` | HTML report |
-| Browser workspace | `DOI or search fields` | Registry handler |
-| Registry handler | `Lookups` | Registry services |
-| Registry services | `Metadata or failure` | Registry handler |
-| Registry handler | `Records and status` | Browser workspace |
-| Browser workspace | `Direct lookup fallback` | Registry services |
-| Browser workspace | `Task input and declared level — client built` | AI handler |
-| AI handler | `Selected task input — planned` | External AI service |
-| External AI service | `Candidate response — planned` | AI handler |
-| AI handler | `Candidate response — planned` | Browser workspace |
-| Browser workspace | `Local passage processing — planned` | On-device inference |
+- Challenger / Searches for evidence against the claim / Cannot edit a claim
 
-Put the two handlers inside a server boundary, with `/api/health` as a supporting route. Keep storage, PDF extraction, report generation and planned on-device inference inside the browser boundary. Use at most four boxes across. This shows data flow, not deployment or universal offline operation.
+- Quote guard / Finds the exact sentence. Compares numbers, direction and scope / Cannot pass a paraphrase
 
-**Points targeted:** architecture, **6**. Browser, two handlers, registries, planned on-device AI, storage, arrows and adaptation. Weight source: `docs/PHASE1_DECK_OUTLINE.md`.
+- Gate 3 / The student accepts, rewrites or rejects each claim.
 
-**Composer caveat:** follow the explicit 13:15 announcement and 90-minute window in the problem statement, not the build plan's inconsistent predicted timetable. The supplied future architecture image is not evidence of deployed database, vector or monitoring services.
+- Student / Writes in their own words and cites only from the library
 
-## Slide 4: Guardrails
+- Reviewer / Flags draft/source inconsistencies and copied passages in the available library. / Cannot approve or certify originality
 
-**Title:** A check explains its result
+- Clerk / Five citation styles, exports and log-derived disclosure. / Unapproved sources blocked; exceptions disclosed
 
-### Exact slide words
+- Student hands in / One evidence report shows faculty every verdict, reason and exact sentence
 
-| Failure | Mechanism and visible outcome |
-|---|---|
-| Missing reference or identifier | **Built:** lookup and search; Not found with a trace |
-| Real DOI, wrong paper | **Built:** title comparison; Wrong paper when its rule triggers |
-| Wrong author or year | **Built:** field comparison; Details differ |
-| Retraction | **Built:** available registry flags; Retracted, with incomplete coverage |
-| Required lookups unavailable | **Built:** preserve errors; Could not check in tested outage cases |
-| Invented quotation or unsupported claim | **Planned:** quote/support checks and claim labels |
-| Guess presented as evidence | **Planned:** separate AI reasoning from supported claims |
+- Incomplete lookup: uncertainty, never a pass.   No AI key: code workflow remains available.   Not found: not proof of fabrication.
 
-**Built Challenger:** exact text slices and word-based warnings are reading aids, not proof of support. **Confirmed** concerns metadata; optional enrichment can fail while main still confirms.
+- Plain code
 
-**Sources:** `src/core/verify/verdict.ts`, `src/core/challenge/challenge.ts`, `tests/unit/verify.test.ts`, `docs/BUILD_PLAN.md`.
+- AI, optional
 
-### Diagram specification
+- Student
 
-Use the table as the main visual. Under it place `Submitted fields` → `Checker` → `Receipt`, with arrow labels `Compare returned metadata` and `Verdict, reasons, trace`. A second, dashed path runs `Claim and passage` → `Planned claim checks`, labelled `Quotation and support`. A separate built `Challenger` box receives `Claim and available text` and outputs `Reading pointers, not claim verdicts`.
 
-**Points targeted:** guardrails, **6**. Each brief failure has a mechanism, visible outcome and status. Weight source: `docs/PHASE1_DECK_OUTLINE.md`.
+### Diagram and assessment coverage
 
-**Evidence caveat:** main can confirm a matching Crossref record after OpenAlex fails or returns no record. The separate integration candidate distinguishes some secondary-service failures but still does not require two agreeing records. Do not import that candidate's behavior into a main-based slide or call registry overlap independent proof.
+Student question → Planner → Gate 1 (approve searches) → Scout → Checker → Gate 2 (keep/skip) → Analyst/Study → Reader → Challenger/Quote guard → Gate 3 (decide claim) → student writing → Reviewer/Clerk → evidence report. Helpers do not replace the student gates.
 
-## Slide 5: Ethical considerations
+Workflow: 8 rubric points.
 
-**Title:** Integrity includes showing the limits
+
+### Speaker evidence and limits
+
+Demonstrate the real browser journey only after installing locked dependencies and passing npm run verify, npm run e2e and npm run demo:check. Inspect one current registry receipt, vary the reading-priority preset, capture an exact passage, test a deliberately altered claim, and open an actual exported file. Existing pages are implemented in the supplied snapshot; this session has not rerun their full browser suite.
+
+## Slide 3: Architecture: browser-first research with explicit data boundaries
 
 ### Exact slide words
 
-| Risk | Response and current status |
-|---|---|
-| Invention | **Built:** metadata comparison. **Hemanth branch:** fixed Lab, visible misses, false alarms and unresolved cases; integration pending. |
-| Plagiarism | Student authorship remains the goal; this is not a plagiarism detector. **Planned:** passage-linked claims and disclosure. |
-| Privacy | **Built:** browser storage and local PDF extraction. Lookup fields leave the device; external fonts load. **Planned:** deletion confirmation. |
-| Bias | **Built:** opposing searches and source-balance counts. Neither measures all coverage or viewpoint bias. |
-| Over-reliance | **Built:** plan/source decisions and report limitations. **Planned:** claim approval. |
-| False accusation | Not found reports a search outcome; it does not establish fabrication or misconduct. |
+- The student’s browser
 
-The Lab retains every declared case. Its SAMPLE has **12 real controls and 12 generated exercises**; **8 checks are unresolved** because replay requests are missing. This is not a live benchmark.
+- Pages / React + TypeScript. Compass, ranked Find and guided Study studio added locally
 
-**Lab source:** [recorded results](LAB_RESULTS.md), 25 November 2026, 09:30:38 Dubai.
+- Checks / Checker, Analyst, Quote guard, Draft check, Reviewer. Plain code, no AI
 
-**Sources:** `src/core/report/`, `src/core/pdf/`, `src/pages/Challenge.tsx`, `src/store/db.ts`, `index.html`, `docs/team/HEMANTH.md`.
+- Support model / DeBERTa via Transformers.js + ONNX in a worker. Optional download; scores are fallible
 
-### Diagram specification
+- Citations / CSL styles: APA 7, Harvard, MLA, Chicago, IEEE
 
-Use the six-row risk table without decorative icons. Beneath it, solid `Fixed Lab corpus` → `Visible outcomes`, with the arrow `Run the actual checker`. The outcomes box lists `Caught, missed, false alarm, could not check`. Label the Lab path **Hemanth branch; integration pending**. Show **SAMPLE** beside recorded results. Do not imply a live network measurement, deployment or a completed main-branch integration.
+- Library / Worked on here. Locked here before it is saved (AES-256, PBKDF2 600,000 rounds)
 
-**Points targeted:** ethical considerations, **5**. Invention, plagiarism, privacy, bias, over-reliance and false accusation. Weight source: `docs/PHASE1_DECK_OUTLINE.md`.
+- Evidence log / Each entry carries the hash of the one before. Tamper-evident
 
-**Composer caveat:** PDF text extraction is bounded and has no OCR. Do not promise full-document reading, complete injection protection, comprehensive literature coverage or scientific truth. The present file path does not upload PDF bytes; it does send metadata for checks.
+- Our server
 
-## Slide 6: Governance
+- Registry proxy / Four named hosts only. Cached
 
-**Title:** Responsibility stays visible
+- Locked store / SQLite. Keeps copies it cannot open, under a code, not a name
+
+- AI gateway / Three fixed tasks. Checks level, input and answer. Keys stay here
+
+- Free registries / Crossref, OpenAlex, DataCite, doi.org
+
+- Optional providers / Groq or Gemini with server-side keys. Free-tier availability and terms vary
+
+- search words, reference details
+
+- a copy locked with the passphrase
+
+- approved AI tasks send a question, claim or numbered passages at the required level
+
+- passphrase and encryption key stay in the browser; selected AI inputs do leave it
+
+- lookups
+
+- fixed tasks
+
+- Adaptation and limits. Policy configuration is shared; each change still needs tests. The new candidate has offline core checks, but dependency installation and a full browser build are blocked in this environment. A live demo is cleared only after the real API and export journey passes.
+
+
+### Diagram and assessment coverage
+
+Browser contains React pages, code checks, optional support worker, citations, library and evidence log. Requests cross to the registry proxy or fixed-task AI gateway; encrypted backup crosses to the store. The server contacts registries/providers; arrow labels identify queries, selected AI input and encrypted data.
+
+Architecture: 6 rubric points.
+
+
+### Speaker evidence and limits
+
+Existing integrations retained: React, PDF.js, Transformers.js with ONNX Runtime and a Microsoft DeBERTa model, and optional Groq/Gemini server tasks. No additional dependency was added. Free tiers, quotas and provider data terms vary. Exact prompts and selected task inputs may leave the browser; local encryption protects the saved library copy, not those provider requests.
+
+## Slide 4: Guardrails: show the check, its evidence and its limits
 
 ### Exact slide words
 
-**Student:** follows assessment permission and owns source use. **Team:** owns implementation, tests and limitations. **Faculty:** sets conditions and evaluates work. AI grants no approval.
+- Demo with a real source, then deliberately alter the claim and inspect the returned label.
 
-**AI levels:** 0 none; 1 search terms; 2 passages/summaries; 3 challenge. Declared-level checks exist; successful AI tasks remain unfinished. A selected level does not prove institutional permission.
+- Claim labels describe available evidence
 
-| SP Jain clause | Product response |
-|---|---|
-| 3(a)(ii), 3(b)(iv), 10(h)(vii) | Assessment authorization governs AI use |
-| 10(h)(vi) | Planned citation output |
-| 10(h)(viii) | Planned log-derived statement |
-| 10(h)(ix) | Built checker; Lab on Hemanth branch, integration pending |
-| 10(g)(vi) | Built HTML evidence report for inspection |
+- Verified  source support passed the implemented checks; scientific truth is not established
 
-The report checks local log consistency: **tamper-evident, not tamper-proof**. It cannot prove complete history. APA statement requirements await Hemanth's review.
+- Reported, not checked  source-linked claim without sufficient support
 
-**Sources:** [SP Jain policy v2, 24 February 2026](https://www.spjain.org/hubfs/policies-pdf/Academic-Integrity-Policy-and-Procedures.pdf), `src/policy/policy.ts`, `src/core/report/report.ts`, `src/log/log.ts`.
+- Disputed  available checks found conflicting evidence
 
-### Diagram specification
+- AI reasoning  no attached source; review explicitly
 
-Place `Student`, `Paper Trail team` and `Faculty` above the clause map. Connect Faculty → Student with `Assessment conditions`; Student → `HTML evidence report — built` with `Available recorded activity`; report → Faculty with `Material for inspection`; Team → report with `Tests and limitations`. Add dashed `AI-use statement — planned` fed from `Available log`, labelled `Disclose only recorded evidence`. Software does not decide misconduct.
+- Not found  no usable support found in this search
 
-**Points targeted:** governance, **5**. Accountable people, permission levels, disclosure and policy clauses. Weight source: `docs/PHASE1_DECK_OUTLINE.md`.
+- Current local evidence: 27 offline regression tests passed; targeted core modules typechecked; 104 TS/TSX files parsed. Full npm verify, browser journeys, live API rehearsal and comparative benchmarks are NOT yet cleared. Evidence: docs/deck/VALIDATION_CURRENT.md.
 
-**Marked APA slot, outside the submitted slide:** `[Hemanth to supply the guide's confirmed required items and date reviewed.]` Do not infer them. Missing log evidence is not proof that no AI was used. The report is available; the standalone AI-use statement and its review workflow remain planned.
 
-## Coverage and release review
+| Failure case | Control | Current proof / limit |
 
-| Required area | Main slide | Rubric weight |
-|---|---|---|
-| Workflow | 2 | 8 |
-| Architecture | 3 | 6 |
-| Guardrails | 4 | 6 |
-| Ethical considerations | 5 | 5 |
-| Governance | 6 | 5 |
-| Problem and three-key rule | 1 | Frames the above |
+| --- | --- | --- |
 
-Weights total **30**, from `docs/PHASE1_DECK_OUTLINE.md`. No score is promised.
+| Unconfirmed identity | No second record or conflicting metadata stays unresolved. | Offline regressions pass. Re-run real registry corpus after integration. |
 
-Before submission: insert the genuine screenshot; keep main and candidate evidence separate; retain planned labels until completion is verified; settle citation exceptions; check source footers and the original rubric; time each composed slide's silent reading. Preserve six slides. The latest follow-up continued the engineering work. The next required stop is Hemanth's Task 3 review with the [Lab results table](LAB_RESULTS.md). Before final composition, check the deployed revision against every Built label; an own-branch implementation is not automatically the judges' website.
+| A failed lookup | Could not check remains distinct from Not found. | Never infer misconduct from absence or outage. |
+
+| Wrong claim | Exact text, number, direction and scope checks; optional meaning model. | Existing implementation. Live demonstration and full holdout run pending. |
+
+| Study or ranking inflation | Priority never creates a verdict. Study progress never grants approval. | Offline ranking, exact-passage and text-version tests pass. |
+
+| Retraction or correction | On-demand library recheck; warnings retained. | Metadata can be incomplete or cached. No continuous monitoring claim. |
+
+| Export without approval | Student approval required; written exceptions labelled; SAMPLE cannot be cited. | Offline eligibility tests pass. Full export journey must be rerun. |
+
+| Source instructions | Source text is data; passage capture rejects detected instructions. | Offline capture guard passes. Pattern detection is not exhaustive. |
+
+| Changed evidence log | SHA-256 chain, project and sequence consistency checks. | Offline edit, omission and splice tests pass; rebuilt chains can evade detection. |
+
+
+### Diagram and assessment coverage
+
+Failure/control/evidence table beside the claim-label legend. The label, receipt and validation scope must remain visible together.
+
+Guardrails: 6 rubric points.
+
+
+### Speaker evidence and limits
+
+The regenerated Lab artifact is a SAMPLE replay of unchanged recorded registry responses: 24 cases, including 12 real controls. Real controls: 5 matched, 1 expected retraction, 4 missing-replay checks, 2 incomplete registry checks, 0 false alarms. Invented exercises: 8 caught, 4 missing-replay checks, 0 missed. Capture dates are unknown and retry timing is simulated; these are not live measurements. Do not relabel the sample or hide unresolved cases.
+
+## Slide 5: Ethics: what could hurt a student, what we do, and what is still unsolved
+
+### Exact slide words
+
+- Invented citations
+
+- Risk  A plausible but wrong reference. / Control  Independent identity checks, visible uncertainty and approval gates. / Limit  Registry coverage is incomplete; two registries can share errors.
+
+- Plagiarism and authorship
+
+- Risk  Copied words or undeclared AI use. / Control  Compare with the available library; log-based disclosure plus student notes. / Limit  We cannot inspect all external writing or AI use.
+
+- Privacy
+
+- Risk  Sensitive research leaves the device. / Control  Local PDF reading and encrypted library backups; explicit AI tasks. / Limit  Optional providers receive selected task input under their terms.
+
+- Biased sources
+
+- Risk  Popularity and recency crowd out relevant work. / Control  Visible weights, a topic-first preset, no citation-count bonus; opposing searches. / Limit  Ranking is a heuristic, not a validated quality measure.
+
+- Over-reliance on AI
+
+- Risk  Progress feels like proof. / Control  Study completion and recall are separate from verification and citation approval. / Limit  Self-assessment cannot establish mastery.
+
+- Fairness to names
+
+- Risk  Language and access barriers. / Control  Preserve names, offer exact text and keyboard-friendly controls. / Limit  English-oriented claim rules; new mobile and accessibility checks pending.
+
+
+### Diagram and assessment coverage
+
+Six risk cards pair a concrete risk with a control and a remaining limitation. These are design mitigations, not guarantees.
+
+Ethics: 5 rubric points.
+
+
+### Speaker evidence and limits
+
+The two static HTML guides were checked locally at desktop and 375px width, including navigation and interaction. That does not establish accessibility for the research app. The new app browser and accessibility test is present but has not run because exact dependencies are unavailable in this session. Learning progress is self-reflection and recall scheduling, not certified mastery.
+
+## Slide 6: Governance: who decides, who answers, and how anyone can check
+
+### Exact slide words
+
+- Accountability
+
+- AI level declared by the student; task boundary checked by the server
+
+- 0 / No AI
+
+- 1 / Suggest searches
+
+- 2 / Point at passages
+
+- 3 / Argue against me
+
+- Never above 3: no level writes the assignment. The level is the student’s declaration. It prevents accidents and does not police cheating.
+
+- SP Jain public policy: confirm the assessment’s current requirements
+
+- How we run it
+
+- Log: recorded events are hash-chained. Edited middle entries can be detected; removed tails or rebuilt chains may not be. / Change: Hemanth’s branch only; reconcile latest remote work, run full verification, then push as hbasired. / Disclosure: dates, recorded prompts and student accounts of affected sections. / Release: live availability, browser journey and actual export must pass before claiming a working demo.
+
+- Our differentiator: inspectable research decisions + learning from actual source passages.
+
+
+| Who | Answers for |
+
+| --- | --- |
+
+| Student | Every source approved, every claim accepted, everything handed in |
+
+| Plain code | Each verdict and label, by rules shown on the House rules page |
+
+| AI | Nothing. It holds no key and can only suggest |
+
+| Team 1 | Faults in the checks. Our misses are public in the Integrity Lab |
+
+| School | What is misconduct. Paper Trail never decides that |
+
+
+| Clause | In the product |
+
+| --- | --- |
+
+| s10(h)(vi) | Acknowledge sources in APA: APA 7 by default |
+
+| s10(h)(vii) | AI only as authorised: levels 0 to 3 |
+
+| s10(h)(viii) | Name tools and prompts: statement from the log |
+
+| s10(h)(ix) | Beware invented references: the three keys |
+
+| s3(a)(ii), s3(b)(iv) | No unauthorised AI work: nothing here writes it |
+
+| s10(g)(vi) | Faculty verify citations: the evidence report |
+
+
+### Diagram and assessment coverage
+
+Accountability table, declared AI levels, public policy clause map and operating rules. The final line states the proposed inspectable research-and-learning differentiator.
+
+Governance: 5 rubric points.
+
+
+### Speaker evidence and limits
+
+Public policy source opened: https://www.spjain.ae/hubfs/policies-pdf/Academic-Integrity-Policy-and-Procedures.pdf (document amendment shown as 21 February 2024; confirm assessment-specific requirements). APA guidance: https://apastyle.apa.org/instructional-aids/ai-contribution-statement.pdf. Dates and recorded prompts come from logs; affected sections and incorporation are student disclosures. Internal hash consistency is not tamper-proof history. Only hemanth/lab-governance may receive Hemanth changes, authenticated as hbasired, after reconciliation and full checks.

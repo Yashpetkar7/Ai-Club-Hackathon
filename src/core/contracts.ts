@@ -26,6 +26,8 @@ export type ReasonCode =
   | 'RETRACTED'
   | 'REGISTRY_UNREACHABLE'
   | 'SECOND_REGISTRY_UNREACHABLE'
+  | 'SECOND_REGISTRY_NO_RECORD'
+  | 'REGISTRY_METADATA_DISAGREES'
   | 'NOT_ENOUGH_TO_SEARCH'
   | 'QUOTE_NOT_IN_SOURCE'
   | 'NUMBER_MISMATCH'
@@ -258,7 +260,7 @@ export interface LabelText {
 
 export const VERDICT_TEXT: Record<Verdict, LabelText> = {
   confirmed: { label: 'Confirmed', tone: 'ok', mark: '✓', plain: 'A registry has this exact work.' },
-  'one-registry': { label: 'One registry only', tone: 'mute', mark: '1', plain: 'One registry has this exact work. The second did not answer, so a retraction could be missed. Check again before you rely on it.' },
+  'one-registry': { label: 'One registry only', tone: 'mute', mark: '1', plain: 'One registry has a matching work. A second matching record was not confirmed. Open the receipt for missing data, disagreement or an unavailable lookup.' },
   'details-differ': { label: 'Details differ', tone: 'warn', mark: '≠', plain: 'The work is real, but something you wrote does not match the registry.' },
   'wrong-paper': { label: 'Wrong paper', tone: 'bad', mark: '⇄', plain: 'The DOI is real and belongs to a different work.' },
   retracted: { label: 'Retracted', tone: 'bad', mark: '✕', plain: 'The publisher has withdrawn this work.' },
@@ -285,6 +287,8 @@ export const REASON_TEXT: Record<ReasonCode, string> = {
   RETRACTED: 'The publisher has retracted this work.',
   REGISTRY_UNREACHABLE: 'A registry did not answer.',
   SECOND_REGISTRY_UNREACHABLE: 'The second registry did not answer.',
+  SECOND_REGISTRY_NO_RECORD: 'The second registry answered but has no record for this DOI.',
+  REGISTRY_METADATA_DISAGREES: 'The registries returned different identity metadata. Review the original records.',
   NOT_ENOUGH_TO_SEARCH: 'There is not enough here to search with. Add a title or a DOI.',
   QUOTE_NOT_IN_SOURCE: 'These words are not in the source.',
   NUMBER_MISMATCH: 'A number does not match the source.',

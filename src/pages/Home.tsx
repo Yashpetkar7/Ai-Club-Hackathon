@@ -77,7 +77,7 @@ export function Home() {
                 return (
                   <li key={p.id} className={`card ${css.project}`}>
                     <div className="stack">
-                      <Link to={`/p/${p.id}/${next.key}`}>{p.question}</Link>
+                      <Link to={`/p/${p.id}/compass`}>{p.question}</Link>
                       <span className="soft">
                         {mine.length} {mine.length === 1 ? 'source' : 'sources'}, {mine.filter((x) => citable(x)).length} ready to cite
                       </span>

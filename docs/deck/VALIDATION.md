@@ -1,3 +1,5 @@
+> Historical snapshot: the current candidate and regenerated Lab evidence are described in [VALIDATION_CURRENT.md](VALIDATION_CURRENT.md) and [INTEGRATION_HANDOVER.md](INTEGRATION_HANDOVER.md). Do not quote the totals below as a new run.
+
 # Deck evidence and validation
 
 Maintained 25 November 2026, Dubai time. This record distinguishes executed checks from source inspection and pending work. Earlier runs retain their dates. It is supporting evidence, not an extra slide.
