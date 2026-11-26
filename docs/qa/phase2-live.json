@@ -37,6 +37,34 @@
     "registry": "1979",
     "score": 0.6,
     "ok": false
+   },
+   {
+    "field": "container",
+    "given": "Econometrica",
+    "registry": "Econometrica",
+    "score": 1,
+    "ok": true
+   },
+   {
+    "field": "volume",
+    "given": "47",
+    "registry": "47",
+    "score": 1,
+    "ok": true
+   },
+   {
+    "field": "issue",
+    "given": "2",
+    "registry": "2",
+    "score": 1,
+    "ok": true
+   },
+   {
+    "field": "pages",
+    "given": "263-291",
+    "registry": "263",
+    "score": 1,
+    "ok": true
    }
   ],
   "trace": [
@@ -44,7 +72,7 @@
    "openalex: match",
    "retraction-watch: not-found"
   ],
-  "checkedAt": "2026-11-26T10:15:36.419Z"
+  "checkedAt": "2026-11-26T10:35:52.011Z"
  },
  "B": {
   "expected": "VERIFIED",
@@ -83,6 +111,34 @@
     "registry": "2015",
     "score": 1,
     "ok": true
+   },
+   {
+    "field": "container",
+    "given": "Nature",
+    "registry": "Nature",
+    "score": 1,
+    "ok": true
+   },
+   {
+    "field": "volume",
+    "given": "521",
+    "registry": "521",
+    "score": 1,
+    "ok": true
+   },
+   {
+    "field": "issue",
+    "given": "7553",
+    "registry": "7553",
+    "score": 1,
+    "ok": true
+   },
+   {
+    "field": "pages",
+    "given": "436-444",
+    "registry": "436-444",
+    "score": 1,
+    "ok": true
    }
   ],
   "trace": [
@@ -90,7 +146,7 @@
    "openalex: match",
    "retraction-watch: not-found"
   ],
-  "checkedAt": "2026-11-26T10:15:36.585Z"
+  "checkedAt": "2026-11-26T10:35:52.161Z"
  },
  "C": {
   "expected": "NOT FOUND",
@@ -123,6 +179,13 @@
     "registry": "2026",
     "score": 0.4,
     "ok": false
+   },
+   {
+    "field": "container",
+    "given": "Journal of Higher Education Policy",
+    "registry": "An Introduction to AI Literacy for Business Students",
+    "score": 0,
+    "ok": false
    }
   ],
   "trace": [
@@ -132,7 +195,7 @@
    "crossref: no-match (6 candidates)",
    "openalex: no-match (0 candidates)"
   ],
-  "checkedAt": "2026-11-26T10:15:38.472Z"
+  "checkedAt": "2026-11-26T10:35:54.141Z"
  },
  "D": {
   "expected": "RETRACTED",
@@ -178,6 +241,34 @@
     "registry": "1998",
     "score": 1,
     "ok": true
+   },
+   {
+    "field": "container",
+    "given": "The Lancet",
+    "registry": "The Lancet",
+    "score": 1,
+    "ok": true
+   },
+   {
+    "field": "volume",
+    "given": "351",
+    "registry": "351",
+    "score": 1,
+    "ok": true
+   },
+   {
+    "field": "issue",
+    "given": "9103",
+    "registry": "9103",
+    "score": 1,
+    "ok": true
+   },
+   {
+    "field": "pages",
+    "given": "637-641",
+    "registry": "637-641",
+    "score": 1,
+    "ok": true
    }
   ],
   "trace": [
@@ -185,7 +276,7 @@
    "openalex: match",
    "retraction-watch: match (retraction listed)"
   ],
-  "checkedAt": "2026-11-26T10:15:38.649Z"
+  "checkedAt": "2026-11-26T10:35:54.371Z"
  },
  "E": {
   "expected": "MISMATCH",
@@ -227,6 +318,34 @@
     "registry": "2017",
     "score": 1,
     "ok": true
+   },
+   {
+    "field": "container",
+    "given": "Nature",
+    "registry": "Nature",
+    "score": 1,
+    "ok": true
+   },
+   {
+    "field": "volume",
+    "given": "550",
+    "registry": "550",
+    "score": 1,
+    "ok": true
+   },
+   {
+    "field": "issue",
+    "given": "7676",
+    "registry": "7676",
+    "score": 1,
+    "ok": true
+   },
+   {
+    "field": "pages",
+    "given": "354-359",
+    "registry": "354-359",
+    "score": 1,
+    "ok": true
    }
   ],
   "trace": [
@@ -234,7 +353,7 @@
    "openalex: match",
    "retraction-watch: not-found"
   ],
-  "checkedAt": "2026-11-26T10:15:38.864Z"
+  "checkedAt": "2026-11-26T10:35:54.509Z"
  },
  "F": {
   "expected": "VERIFIED",
@@ -273,6 +392,20 @@
     "registry": "2017",
     "score": 1,
     "ok": true
+   },
+   {
+    "field": "container",
+    "given": "Advances in Neural Information Processing Systems",
+    "registry": "neural information processing systems",
+    "score": 1,
+    "ok": true
+   },
+   {
+    "field": "volume",
+    "given": "30",
+    "registry": "30",
+    "score": 1,
+    "ok": true
    }
   ],
   "trace": [
@@ -282,7 +415,7 @@
    "datacite: match",
    "retraction-watch: not-found"
   ],
-  "checkedAt": "2026-11-26T10:15:39.537Z"
+  "checkedAt": "2026-11-26T10:35:55.497Z"
  },
  "G": {
   "expected": "VERIFIED",
@@ -321,6 +454,27 @@
     "registry": "2015",
     "score": 1,
     "ok": true
+   },
+   {
+    "field": "container",
+    "given": "Nature",
+    "registry": "Nature",
+    "score": 1,
+    "ok": true
+   },
+   {
+    "field": "volume",
+    "given": "521",
+    "registry": "521",
+    "score": 1,
+    "ok": true
+   },
+   {
+    "field": "pages",
+    "given": "436-44",
+    "registry": "436-444",
+    "score": 1,
+    "ok": true
    }
   ],
   "trace": [
@@ -329,7 +483,7 @@
    "openalex: match",
    "retraction-watch: not-found"
   ],
-  "checkedAt": "2026-11-26T10:15:40.692Z"
+  "checkedAt": "2026-11-26T10:35:56.803Z"
  },
  "H": {
   "expected": "NOT CHECKED",
@@ -345,7 +499,7 @@
    "crossref: no-match (6 candidates)",
    "openalex: no-match (6 candidates)"
   ],
-  "checkedAt": "2026-11-26T10:15:42.016Z"
+  "checkedAt": "2026-11-26T10:35:58.601Z"
  },
  "duplicates": [
   {
@@ -371,25 +525,25 @@
    {
     "registry": "Crossref",
     "query": "club hackathon 2026 jain dubai students grades",
-    "at": "2026-11-26T10:15:42.638Z",
+    "at": "2026-11-26T10:35:59.212Z",
     "outcome": "6 candidates"
    },
    {
     "registry": "OpenAlex",
     "query": "club hackathon 2026 jain dubai students grades",
-    "at": "2026-11-26T10:15:42.862Z",
+    "at": "2026-11-26T10:35:59.441Z",
     "outcome": "0 candidates"
    },
    {
     "registry": "Crossref",
     "query": "hackathon students grades",
-    "at": "2026-11-26T10:15:43.334Z",
+    "at": "2026-11-26T10:36:00.150Z",
     "outcome": "6 candidates"
    },
    {
     "registry": "OpenAlex",
     "query": "hackathon students grades",
-    "at": "2026-11-26T10:15:43.525Z",
+    "at": "2026-11-26T10:36:00.412Z",
     "outcome": "6 candidates"
    }
   ],

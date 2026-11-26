@@ -50,6 +50,10 @@ export function suggested(field: FieldDiff['field'], check: ReferenceCheck): Par
   if (field === 'authors') return r.authors.length ? { authors: r.authors.map((a) => a.family) } : null;
   if (field === 'year') return r.year ? { year: r.year } : null;
   if (field === 'doi') return r.doi ? { doi: r.doi } : null;
+  if (field === 'container') return r.container ? { container: r.container } : null;
+  if (field === 'volume') return r.volume ? { volume: r.volume } : null;
+  if (field === 'issue') return r.issue ? { issue: r.issue } : null;
+  if (field === 'pages') return r.pages ? { pages: r.pages } : null;
   return null;
 }
 

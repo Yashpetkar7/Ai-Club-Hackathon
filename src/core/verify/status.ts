@@ -21,7 +21,7 @@ const OF: Record<Verdict, Status> = {
 
 export const statusOf = (c: Pick<ReferenceCheck, 'verdict'> | undefined): Status => (c ? OF[c.verdict] : 'NOT CHECKED');
 
-const FIELD_WORD: Partial<Record<ReasonCode, string>> = { YEAR_DIFFERS: 'YEAR', AUTHOR_DIFFERS: 'AUTHOR', TITLE_DIFFERS: 'TITLE', DOI_DOES_NOT_EXIST: 'DOI', AUTHORS_NOT_LISTED: 'AUTHORS NOT LISTED' };
+const FIELD_WORD: Partial<Record<ReasonCode, string>> = { YEAR_DIFFERS: 'YEAR', AUTHOR_DIFFERS: 'AUTHOR', TITLE_DIFFERS: 'TITLE', DOI_DOES_NOT_EXIST: 'DOI', AUTHORS_NOT_LISTED: 'AUTHORS NOT LISTED', JOURNAL_DIFFERS: 'JOURNAL', VOLUME_DIFFERS: 'VOLUME', ISSUE_DIFFERS: 'ISSUE', PAGES_DIFFERS: 'PAGES' };
 
 /** The tag printed beside a reference in every export. Plain words, so it reads without the site. */
 export function statusTag(c: Pick<ReferenceCheck, 'verdict' | 'reasons'> | undefined, o: { acknowledged?: boolean } = {}): string {

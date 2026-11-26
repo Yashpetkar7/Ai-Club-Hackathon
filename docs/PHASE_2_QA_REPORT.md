@@ -4,10 +4,10 @@
 
 | Suite | Command | Result |
 |---|---|---|
-| Live test pack (8 references, duplicates, 3 assistant requests) against the real Crossref, OpenAlex, DataCite, doi.org and the shipped Retraction Watch index | `LIVE=1 npx vitest run tests/unit/phase2-live.test.ts` | **12 of 12 passed**, twice (13:59 and 14:15) |
+| Live test pack (8 references, duplicates, 3 assistant requests) against the real Crossref, OpenAlex, DataCite, doi.org and the shipped Retraction Watch index | `LIVE=1 npx vitest run tests/unit/phase2-live.test.ts` | **12 of 12 passed**, four times (13:59, 14:15, and twice after adding the journal, volume, issue and page comparison) |
 | Live browser journey in Chrome, nothing mocked | `LIVE=1 npx playwright test tests/e2e/phase2-live.spec.ts` | **1 of 1 passed** (fix, mismatch, retraction, injected note, Requests 1 and 2, export tags) |
-| Phase 2 rules, offline (stand-in registry for outages and edge cases; not evidence about real papers) | `npx vitest run tests/unit/phase2.test.ts tests/unit/phase2-import.test.ts` | **19 of 19 passed** |
-| Whole unit suite (Phase 1 + Phase 2) | `npx vitest run` | **724 passed**, 15 skipped (the skipped ones are live-only and need `LIVE=1`) |
+| Phase 2 rules, offline (stand-in registry for outages and edge cases; not evidence about real papers) | `npx vitest run tests/unit/phase2.test.ts tests/unit/phase2-import.test.ts` | **25 of 25 passed** |
+| Whole unit suite (Phase 1 + Phase 2) | `npx vitest run` | **730 passed**, 15 skipped (the skipped ones are live-only and need `LIVE=1`) |
 | Existing browser journeys (journey, library, trust, checks, evidence) | `npx playwright test …` | **21 of 21 passed** after updating the label names (Confirmed → Verified, Wrong paper → Mismatch) and the copy-export expectation (it now carries `[VERIFIED]`) |
 | Types and production build | `npx tsc --noEmit`, `npx vite build` | clean |
 
@@ -46,7 +46,8 @@ The expected status is our own reading of what the databases should say. It is n
 | Test | Expected | Actual | Pass/Fail | Evidence |
 |---|---|---|---|---|
 | B1. Real paper without a DOI (F) | Found by title and authors | VERIFIED via OpenAlex title search, confirmed independently by DataCite | Pass | live pack F; unit test "needs Crossref or DataCite to agree" |
-| B2. Web source (H) | Labelled web source; database verification not applicable | NOT CHECKED, `[NOT CHECKED – WEB SOURCE, SCHOLARLY DATABASE VERIFICATION NOT APPLICABLE]` | Pass (partial: APA web formatting uses the Phase 1 web-page form; the author is not taken from the pasted line) | live pack H |
+| B2. Web source (H) | Organisation as author, n.d., APA 7, labelled web source, database verification not applicable | NOT CHECKED, `[NOT CHECKED – WEB SOURCE, SCHOLARLY DATABASE VERIFICATION NOT APPLICABLE]`. The pasted line becomes a web source with the organisation as author, and the receipt shows APA 7. The export via the APA style file gives "Harbour Office. (n.d.). Tide tables. https://…" plus the tag | Pass | live pack H; unit tests "web source in APA 7" (parts in both orders, and an APA export through citeproc) |
+| Step 4. Journal, volume, issue and pages | Compared after normalising; abbreviations and short page ranges accepted; wrong values named | Parsed from APA, Harvard, Vancouver and IEEE. A–G all match the registry live (e.g. G's "436-44" = "436-444"). A wrong journal, volume, issue or pages gives NEEDS FIX with each field named. "J Econ Perspect" matches "Journal of Economic Perspectives". A preprint record is not held against published details | Pass | live pack; unit tests "journal, volume, issue and pages"; Phase 1 checker tests (63) still pass |
 | B3. Quote verification | Quote not found and full text unavailable kept apart | Abstract only → FULL TEXT UNAVAILABLE; PDF without the words → QUOTE NOT FOUND; words present → QUOTE FOUND | Pass | unit tests |
 | B4. Database outage | NOT CHECKED – try again; never VERIFIED or NOT FOUND | Every database down → NOT CHECKED; one search engine down and nothing found → NOT CHECKED | Pass | unit tests; Phase 1 e2e "OpenAlex down: nothing turns green" passed |
 | B5. Prompt injection in a note | Flagged, saved as text, no status or rule changes, other references untouched | Flagged 3 matches; status of that source and of an unrelated NOT FOUND source unchanged | Pass | unit test; browser journey `phase2-5-injected-note.png` |
@@ -62,7 +63,8 @@ The expected status is our own reading of what the databases should say. It is n
 | Accept or reject fix, acknowledge retraction, check again, audit history | Implemented, tested (unit + browser) |
 | Research assistant (Requests 1–3) | Implemented, tested live |
 | Exports with status | Implemented, tested |
-| Web source APA formatting with organisation as author and n.d. | **Partial:** status and label done; formatting uses the existing web-page form in the Library |
+| Web source APA formatting with organisation as author and n.d. | Implemented, tested |
+| Journal, volume, issue and pages comparison | Implemented, tested (live and unit) |
 | Merge with audit event in the new `decision.*` format | **Partial:** the Phase 1 merge already logs `source.merged` to the same hash-chained log, but not in the before/after format |
 | Server-side authentication for the registry proxy | **Not changed:** the registry proxy stays open to the site, rate-limited per address (Phase 1) |
 
@@ -70,4 +72,5 @@ The expected status is our own reading of what the databases should say. It is n
 - "Direct evidence" means a record names every specific thing in the request (event, place, year) and the outcome. This is a strict word test, not semantic understanding, so a study that uses a different name for the event would be classed as related.
 - The quote check reads only what we can legally read: the abstract or the student's own PDF. Most journal full text is unavailable, so FULL TEXT UNAVAILABLE will be common, and that is the honest answer.
 - Retraction data comes from Crossref notices, OpenAlex `is_retracted` and the shipped Retraction Watch index. A retraction none of them carry yet will be missed.
+- The new journal comparison accepts abbreviations by prefix ("J Econ Perspect"). A journal listed under a different name (for example after a rename) will show NEEDS FIX for the journal, and the student can accept or reject the fix. The live run on reference lists from published papers passed, but it prints its tally to the console, which this setup hides, so no false-alarm rate is reported here.
 - The Lab sample was regenerated because the checker changed. Its 8 could-not-check rows were already there before Phase 2 (gaps in the old recordings).

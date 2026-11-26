@@ -168,3 +168,61 @@ describe('student decisions and audit', () => {
     expect(tagOf(after)).toContain('RETRACTED');
   });
 });
+
+describe('journal, volume, issue and pages (Step 4)', () => {
+  const r = rec({ doi: '10.9999/v1', container: 'Journal of Economic Perspectives', volume: '31', issue: '2', pages: '211-236' });
+  const reg = fake({ crossrefByDoi: async () => r, openalexByDoi: async () => r });
+  const base = 'Okafor, A., & Lindqvist, B. (2019). A test title about pattern learning. ';
+  it('parses APA, Vancouver and IEEE volume, issue and pages', async () => {
+    const { parseReference } = await import('@/core/verify/parse');
+    expect(parseReference(`${base}Journal of Economic Perspectives, 31(2), 211–236. https://doi.org/10.9999/v1`)).toMatchObject({ container: 'Journal of Economic Perspectives', volume: '31', issue: '2', pages: '211-236' });
+    expect(parseReference('OKAFOR A, LINDQVIST B. A test title about pattern learning. J Econ Perspect 2019;31(2):211-36.')).toMatchObject({ container: 'J Econ Perspect', volume: '31', issue: '2', pages: '211-36' });
+  });
+  it('an abbreviated journal and a short page range still match', async () => {
+    const c = await checkReference({ raw: 'x', title: r.title, authors: ['Okafor', 'Lindqvist'], year: 2019, doi: '10.9999/v1', container: 'J Econ Perspect', volume: '31', issue: '2', pages: '211-36' }, reg);
+    expect(statusOf(c)).toBe('VERIFIED');
+  });
+  it('a wrong volume, issue, pages or journal is NEEDS FIX with the field named', async () => {
+    const c = await checkReference({ raw: 'x', title: r.title, authors: ['Okafor', 'Lindqvist'], year: 2019, doi: '10.9999/v1', container: 'Journal of Labor Economics', volume: '30', issue: '4', pages: '212-236' }, reg);
+    expect(statusOf(c)).toBe('NEEDS FIX');
+    expect(c.reasons).toEqual(expect.arrayContaining(['JOURNAL_DIFFERS', 'VOLUME_DIFFERS', 'ISSUE_DIFFERS', 'PAGES_DIFFERS']));
+    expect(statusTag(c)).toBe('[NEEDS FIX – JOURNAL, VOLUME, ISSUE, PAGES DISCREPANCY]');
+  });
+  it('a preprint record is not held against the published journal details', async () => {
+    const pre = { ...r, type: 'posted-content', container: 'arXiv' };
+    const c = await checkReference({ raw: 'x', title: r.title, authors: ['Okafor', 'Lindqvist'], year: 2019, doi: '10.9999/v1', container: 'Neural Computation', volume: '9' }, fake({ crossrefByDoi: async () => pre, openalexByDoi: async () => pre }));
+    expect(statusOf(c)).toBe('VERIFIED');
+  });
+});
+
+describe('web source in APA 7 (B2)', () => {
+  it('uses the organisation as author and n.d., in both orders', async () => {
+    const { webParts, apaWeb } = await import('@/core/verify/web');
+    const a = webParts({ raw: 'Tide tables. Harbour Office. https://example.org/tides' })!;
+    expect(a).toMatchObject({ title: 'Tide tables', author: 'Harbour Office', url: 'https://example.org/tides' });
+    expect(a.year).toBeUndefined();
+    const t = apaWeb(a);
+    expect(`${t.before}${t.title}${t.after}`).toBe('Harbour Office. (n.d.). Tide tables. https://example.org/tides');
+    const b = webParts({ raw: 'Harbour Office. (2024). Tide tables. https://example.org/tides' })!;
+    expect(b).toMatchObject({ title: 'Tide tables', author: 'Harbour Office', year: 2024 });
+  });
+  it('a pasted web line goes into the library as a web source and exports in APA 7 with its tag', async () => {
+    await Promise.all([db.sources.clear(), db.log.clear()]);
+    const { addChecked } = await import('@/core/import/import');
+    const { approveSource } = await import('@/store/actions');
+    const { toText } = await import('@/core/cite/export');
+    const { STYLE_FILE } = await import('@/core/cite/engine');
+    const { readFileSync } = await import('node:fs');
+    const line = 'Tide tables. Harbour Office. https://example.org/tides';
+    const { source } = await addChecked('p2', 'doi', { raw: line, title: line, url: 'https://example.org/tides' }, fake());
+    expect(source.origin).toBe('web');
+    expect(source.raw?.authors).toEqual(['Harbour Office']);
+    await approveSource(source.id, 'Official tide data I need for the field trip.');
+    const kept = (await db.sources.get(source.id))!;
+    const f = { style: readFileSync(`public/styles/${STYLE_FILE.apa}.csl`, 'utf8'), locales: { 'en-US': readFileSync('public/styles/locales-en-US.xml', 'utf8'), 'en-GB': readFileSync('public/styles/locales-en-GB.xml', 'utf8') } };
+    const out = toText([kept], 'apa', f);
+    expect(out).toContain('Harbour Office. (n.d.). Tide tables');
+    expect(out).toContain('https://example.org/tides');
+    expect(out).toContain('[NOT CHECKED – WEB SOURCE, SCHOLARLY DATABASE VERIFICATION NOT APPLICABLE]');
+  });
+});

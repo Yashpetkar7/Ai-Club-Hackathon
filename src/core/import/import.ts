@@ -1,3 +1,4 @@
+import { webParts, webRaw } from '@/core/verify/web';
 import { extractReferences } from '@/core/verify/parse';
 import type { RawReference, Source } from '@/core/contracts';
 import { registries } from '@/core/registries';
@@ -31,7 +32,9 @@ export function refsFromFile(text: string): { kind: 'bibtex' | 'ris'; refs: RawR
 export async function addChecked(projectId: string, origin: 'doi' | 'bibtex' | 'ris', ref: RawReference, reg: Registries = registries): Promise<Added> {
   const check = await checkReference(ref, reg);
   const started = new Date().toISOString();
-  const source = await addSource(projectId, origin, { raw: ref, check });
+  // B2: a web page keeps its parts (organisation as author, n.d.) so it is formatted in APA 7 as a web source.
+  const w = check.verdict === 'web-source' ? webParts(ref) : null;
+  const source = w ? await addSource(projectId, 'web', { raw: webRaw(ref, w), check }) : await addSource(projectId, origin, { raw: ref, check });
   return { source, isNew: source.addedAt >= started };
 }
 

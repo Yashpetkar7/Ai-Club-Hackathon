@@ -20,6 +20,19 @@ Every significant prompt used for the Phase 2 implementation, in order of use. N
   - The new recordings were moved to `tests/unit/fixtures/registry-phase2.json`, so the Lab's pinned shared fixture was not touched.
   - The Lab sample was regenerated with its own `LAB_WRITE_SAMPLE=1` switch, because the checker source changed.
 
+## 3. Honest status check
+- **When:** 26 Nov 2026, 14:28 Dubai
+- **Prompt (Nihal, verbatim):** "did you test all the phase two requirements ? are they 100% working"
+- **Purpose:** an honest list of what was tested, tested only offline, untested, and missing.
+- **Result:** reported that it was not 100%. The biggest gaps: no journal, volume, issue or page comparison (Step 4), and no APA formatting for web sources (B2).
+
+## 4. Close the two gaps and push to Nihal's branch
+- **When:** 26 Nov 2026, 14:30 Dubai
+- **Prompt (Nihal, verbatim):** "1. Journal, volume, issue and page comparison (Step 4). This is not implemented: the checker still compares only title, authors, year and DOI. It is the biggest gap. 2. Web source APA formatting with the organisation as author and "n.d." The status and label are done, the formatting isn't. complete these two and push it on my branch"
+- **Components affected:** `src/core/verify/parse.ts`, `compare.ts`, `verdict.ts`, `status.ts`, `web.ts` (new), `src/core/import/import.ts`, `src/ui/Receipt.tsx`, `src/pages/Decisions.tsx`, `src/store/decisions.ts`, `src/core/contracts.ts`, tests and docs.
+- **Result:** both implemented. Live pack 12/12, live browser journey passed, 730 unit tests passed. Pushed to `nihal/evidence-ask` (the branch CLAUDE.md names for Nihal), not to main.
+- **Follow-up inside the task:** Bloom et al.'s title has a "?", and the parser took the subtitle for the journal. The journal is now the last sentence before the volume.
+
 ### Master prompt, as supplied
 
 ````text

@@ -1,12 +1,13 @@
 import { REASON_TEXT, VERDICT_TEXT, type RawReference, type ReferenceCheck, type RegistryTrace } from '@/core/contracts';
 import { retractionRisk } from '@/core/risk/risk';
 import { cleanTitle } from '@/core/verify/normalise';
+import { apaWeb, webParts } from '@/core/verify/web';
 import css from './Receipt.module.css';
 import { VerdictStamp } from './Stamp';
 
 const REGISTRY: Record<RegistryTrace['registry'], string> = { crossref: 'Crossref', openalex: 'OpenAlex', datacite: 'DataCite', 'doi.org': 'doi.org', 'retraction-watch': 'Retraction Watch' };
 const STATUS: Record<RegistryTrace['status'], string> = { match: 'has it', 'no-match': 'no match', 'not-found': 'no record', error: 'did not answer', skipped: 'not asked' };
-const FIELD = { title: 'Title', authors: 'Authors', year: 'Year', doi: 'DOI' } as const;
+const FIELD = { title: 'Title', authors: 'Authors', year: 'Year', doi: 'DOI', container: 'Journal', volume: 'Volume', issue: 'Issue', pages: 'Pages' } as const;
 
 /** The strip at the foot of a receipt, in the style of a passport's machine-readable line. */
 export function strip(c: ReferenceCheck): string {
@@ -117,6 +118,18 @@ export function Receipt({ check, raw, children, live }: { check: ReferenceCheck;
         )}
       </p>
       {raw && !check.fields.length && raw.raw.length < 160 && <p className={css.asked}>Checked: {raw.raw}</p>}
+      {check.verdict === 'web-source' && raw && (() => {
+        const w = webParts(raw);
+        if (!w) return null;
+        const a = apaWeb(w);
+        return (
+          <p className={css.plain} data-apa-web>
+            Web source, APA 7: {a.before}<i>{a.title}</i>{a.after}
+            <br />
+            <span className="soft">{w.author ? 'The organisation stands as author.' : 'No author is given, so the title comes first.'} {w.year ? '' : 'No date is given, so it is n.d.'} Scholarly databases were searched and hold no record; database verification does not apply to web pages.</span>
+          </p>
+        );
+      })()}
       <p className={css.strip} aria-hidden="true">
         {strip(check)}
       </p>

@@ -1,4 +1,4 @@
-import type { RawReference, ReasonCode, ReferenceCheck, RegistryRecord, RegistryTrace, Verdict } from '@/core/contracts';
+import type { FieldDiff, RawReference, ReasonCode, ReferenceCheck, RegistryRecord, RegistryTrace, Verdict } from '@/core/contracts';
 import { rwNotice, type RwEntry } from '@/core/registries/retractionWatch';
 import { POLICY } from '@/policy/policy';
 import { compare, rank, type Comparison } from './compare';
@@ -51,7 +51,8 @@ async function timed<T>(trace: RegistryTrace[], registry: RegistryTrace['registr
 
 const reasonsFrom = (c: Comparison): ReasonCode[] => {
   const r: ReasonCode[] = [];
-  for (const f of c.fields) if (!f.ok) r.push(f.field === 'title' ? 'TITLE_DIFFERS' : f.field === 'year' ? 'YEAR_DIFFERS' : c.authorsUnknown ? 'AUTHORS_NOT_LISTED' : 'AUTHOR_DIFFERS');
+  const BY: Partial<Record<FieldDiff['field'], ReasonCode>> = { title: 'TITLE_DIFFERS', year: 'YEAR_DIFFERS', container: 'JOURNAL_DIFFERS', volume: 'VOLUME_DIFFERS', issue: 'ISSUE_DIFFERS', pages: 'PAGES_DIFFERS' };
+  for (const f of c.fields) if (!f.ok) r.push(BY[f.field] ?? (c.authorsUnknown ? 'AUTHORS_NOT_LISTED' : 'AUTHOR_DIFFERS'));
   if (!r.includes('AUTHOR_DIFFERS') && !c.authorsUnknown && !c.firstAuthor) r.push('AUTHOR_DIFFERS');
   return r;
 };

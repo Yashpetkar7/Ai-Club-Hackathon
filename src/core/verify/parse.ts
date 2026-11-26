@@ -117,7 +117,39 @@ export function parseReference(line: string): RawReference {
       if (authors.length) ref.authors = authors;
     }
   }
+  biblio(body, ref);
   return ref;
+}
+
+/**
+ * Phase 2: volume, issue and pages, in the common styles. The original line is never changed.
+ *   APA/Harvard  Journal, 47(2), 263–291.     Vancouver  Nature 2015;521(7553):436-44.     IEEE  vol. 47, no. 2, pp. 263–291
+ */
+export function biblio(body: string, ref: RawReference): void {
+  const t = body.replace(/[–—−]/g, '-');
+  const ieee = t.match(/\bvol\.?\s*(\d+)(?:\s*,\s*no\.?\s*([\w-]+))?(?:[^]*?\bpp?\.?\s*(e?\d+(?:\s*-\s*e?\d+)?))?/i);
+  const vanc = t.match(/;\s*(\d+)\s*(?:\(([\w-]+)\))?\s*:\s*(e?\d+(?:\s*-\s*e?\d+)?)/);
+  const apa = t.match(/,\s*(\d{1,4})\s*(?:\(([\w-]+)\))?\s*,\s*(?:pp?\.\s*)?(e?\d+(?:\s*-\s*e?\d+)?)\s*(?:\.|$)/);
+  const apaVolOnly = t.match(/,\s*(\d{1,4})\s*(?:\(([\w-]+)\))?\s*\.?\s*$/);
+  const m = ieee ?? vanc ?? apa;
+  if (m) {
+    if (m[1] && !ref.volume) ref.volume = m[1];
+    if (m[2] && !ref.issue) ref.issue = m[2];
+    if (m[3] && !ref.pages) ref.pages = m[3].replace(/\s+/g, '');
+  } else if (apaVolOnly && ref.container && !ref.volume) {
+    ref.volume = apaVolOnly[1]!;
+    if (apaVolOnly[2]) ref.issue = apaVolOnly[2];
+  }
+  if (vanc && !ref.container) {
+    const c = t.match(/\.\s+(\p{Lu}[^.;]{1,120}?)\.?\s+(?:(?:19|20)\d{2}[^;]*)?;\s*\d+/u);
+    if (c) ref.container = c[1]!.trim();
+  }
+  const at = apa ?? (ref.volume ? apaVolOnly : null);
+  if (at && at.index !== undefined) {
+    // The journal is the last sentence before the volume, so a subtitle after a "?" is never taken for it.
+    const seg = t.slice(0, at.index).split(/[.?!]\s+/).pop()!.replace(/^\(?(19|20)\d{2}[a-z]?\)?\.?\s*/, '').trim();
+    if (seg.length >= 2 && seg.length <= 160 && !/^\(?(19|20)\d{2}/.test(seg)) ref.container = seg;
+  }
 }
 
 export function parseBibtex(text: string): RawReference[] {

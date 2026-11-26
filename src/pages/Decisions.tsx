@@ -7,7 +7,7 @@ import { acceptFix, acknowledgeRetraction, decisionsFor, rejectFix, suggested } 
 import { db } from '@/store/db';
 import css from './Decisions.module.css';
 
-const FIELD = { title: 'Title', authors: 'Authors', year: 'Year', doi: 'DOI' } as const;
+const FIELD = { title: 'Title', authors: 'Authors', year: 'Year', doi: 'DOI', container: 'Journal', volume: 'Volume', issue: 'Issue', pages: 'Pages' } as const;
 const REG: Record<string, string> = { crossref: 'Crossref', openalex: 'OpenAlex', datacite: 'DataCite', 'doi.org': 'doi.org', 'retraction-watch': 'Retraction Watch' };
 
 /** Status line with last checked time and every database asked. */

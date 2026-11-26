@@ -36,7 +36,11 @@ export type ReasonCode =
   | 'MODEL_UNSURE'
   | 'CONTRADICTED_BY_SOURCE'
   | 'INSTRUCTION_IN_SOURCE'
-  | 'WEB_SOURCE';
+  | 'WEB_SOURCE'
+  | 'JOURNAL_DIFFERS'
+  | 'VOLUME_DIFFERS'
+  | 'ISSUE_DIFFERS'
+  | 'PAGES_DIFFERS';
 
 /** A reference as the student (or an AI tool) wrote it. Nothing here is trusted. */
 export interface RawReference {
@@ -48,6 +52,9 @@ export interface RawReference {
   container?: string;
   url?: string;
   isbn?: string;
+  volume?: string;
+  issue?: string;
+  pages?: string;
 }
 
 export interface Author {
@@ -97,7 +104,7 @@ export interface RegistryRecord {
 }
 
 export interface FieldDiff {
-  field: 'title' | 'authors' | 'year' | 'doi';
+  field: 'title' | 'authors' | 'year' | 'doi' | 'container' | 'volume' | 'issue' | 'pages';
   given: string;
   registry: string;
   score: number;
@@ -308,6 +315,10 @@ export const REASON_TEXT: Record<ReasonCode, string> = {
   CONTRADICTED_BY_SOURCE: 'The source contradicts this.',
   INSTRUCTION_IN_SOURCE: 'The source text contains instructions aimed at an AI. They were ignored.',
   WEB_SOURCE: 'This is a web page, not a scholarly record. Database verification does not apply.',
+  JOURNAL_DIFFERS: 'The journal or conference does not match the registry.',
+  VOLUME_DIFFERS: 'The volume does not match the registry.',
+  ISSUE_DIFFERS: 'The issue does not match the registry.',
+  PAGES_DIFFERS: 'The page range does not match the registry.',
 };
 
 /** The only place that decides whether a source may be cited. */
