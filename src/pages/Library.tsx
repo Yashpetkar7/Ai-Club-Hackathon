@@ -6,13 +6,14 @@ import { citeKey } from '@/core/cite/csl';
 import { titleOf } from '@/core/cite/preflight';
 import { sentenceCase } from '@/core/cite/sentenceCase';
 import { VERDICT_TEXT, type RawReference, type Source, type Verdict } from '@/core/contracts';
-import { addChecked, addWebPage, refFromLine, refsFromFile, webProblems, type WebPage } from '@/core/import/import';
+import { addList, addWebPage, checkWithRegistryDetails, itemsFromList, refFromLine, refsFromFile, webProblems, type ListItem, type ListResult, type WebPage } from '@/core/import/import';
 import { checkAgain } from '@/core/library/watch';
+import { record } from '@/log/log';
 import { cleanTitle } from '@/core/verify/normalise';
 import { sourceIssues } from '@/policy/apply';
 import { POLICY } from '@/policy/policy';
 import { Duplicates, RetractionCheck } from '@/pages/LibraryChecks';
-import { approveSource, citable, editSource, removeSource } from '@/store/actions';
+import { approveSource, citable, editSource, recheckSource, removeSource } from '@/store/actions';
 import { db } from '@/store/db';
 import { PdfDrop } from '@/ui/PdfDrop';
 import { Receipt } from '@/ui/Receipt';
@@ -212,7 +213,11 @@ function Detail({ s, folders, onClose }: { s: Source; folders: string[]; onClose
   const [folder, setFolder] = useState(s.folder ?? '');
   const [notes, setNotes] = useState(s.notes);
   const [title, setTitle] = useState(s.citeTitle ?? sentenceCase(titleOf(s)).text);
+  const [fixSaid, setFixSaid] = useState('');
   const clean = isClean(s);
+  // A suggested fix is offered only for a small error: a wrong year, or a title or author list that is close. Anything bigger is not the same paper.
+  const wrong = s.check?.verdict === 'details-differ' && !s.keys.approved ? s.check.fields.filter((f) => !f.ok) : [];
+  const small = wrong.length > 0 && wrong.every((f) => f.field === 'year' || (f.field !== 'doi' && f.score >= 0.5));
   const issues = sourceIssues(s);
   const cased = sentenceCase(titleOf(s));
 
@@ -287,6 +292,58 @@ function Detail({ s, folders, onClose }: { s: Source; folders: string[]; onClose
             ))}
           </ul>
         </div>
+      )}
+
+      {wrong.length > 0 && (
+        <div className={css.fix} aria-label="Suggested fix">
+          <p>
+            <strong>{small ? 'Suggested fix.' : 'Too different to fix.'}</strong> {small ? 'The registry has different details. Nothing changes unless you accept.' : 'This does not look like a small error. Check that this DOI is the paper you meant.'}
+          </p>
+          <ul>
+            {wrong.map((f) => (
+              <li key={f.field}>
+                {FIELD_NAME[f.field]}: you have “{f.given || 'nothing'}”, the registry has “{f.registry || 'nothing'}”.
+              </li>
+            ))}
+          </ul>
+          {small && (
+            <div className="row">
+              <button
+                className="btn main"
+                type="button"
+                disabled={busy}
+                onClick={() =>
+                  void attempt(async () => {
+                    const c = await checkWithRegistryDetails(s);
+                    await recheckSource(s.id, c);
+                    await record(s.projectId, 'student', 'source.fix-accepted', `${titleOf(s)} | ${wrong.map((f) => `${f.field}: ${f.given} → ${f.registry}`).join('; ')} | checked again: ${VERDICT_TEXT[c.verdict].label}`);
+                    setFixSaid(c.verdict === 'confirmed' ? 'Fix accepted. The checker ran again and confirmed it. Approve it to cite it.' : `Fix accepted. The checker ran again and says: ${VERDICT_TEXT[c.verdict].label}.`);
+                  })
+                }
+              >
+                Accept the fix
+              </button>
+              <button
+                className="btn"
+                type="button"
+                disabled={busy}
+                onClick={() =>
+                  void attempt(async () => {
+                    await record(s.projectId, 'student', 'source.fix-rejected', `${titleOf(s)} | ${wrong.map((f) => `${f.field}: kept ${f.given}`).join('; ')}`);
+                    setFixSaid('Fix rejected. Your details stay and so does the label. To cite it anyway, write your reason below.');
+                  })
+                }
+              >
+                Reject the fix
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+      {fixSaid && (
+        <p role="status" className={css.fixSaid}>
+          {fixSaid}
+        </p>
       )}
 
       <div className={css.decide}>
@@ -398,8 +455,11 @@ function Detail({ s, folders, onClose }: { s: Source; folders: string[]; onClose
   );
 }
 
+const FIELD_NAME = { title: 'Title', authors: 'Authors', year: 'Year', doi: 'DOI' } as const;
+
 const TABS = [
   ['doi', 'DOI or title'],
+  ['list', 'Paste a list'],
   ['file', 'BibTeX or RIS'],
   ['web', 'Web page'],
   ['pdf', 'PDF'],
@@ -410,6 +470,8 @@ function AddSource({ projectId, onAdded, onBusy }: { projectId: string; onAdded:
   const [line, setLine] = useState('');
   const [file, setFile] = useState('');
   const [web, setWeb] = useState<WebPage>({ url: '', title: '', author: '', year: '', site: '' });
+  const [list, setList] = useState('');
+  const [rows, setRows] = useState<(ListResult & { settled?: string })[]>([]);
   const [busy, setBusy] = useState('');
   const [said, setSaid] = useState('');
   const [error, setError] = useState('');
@@ -419,27 +481,43 @@ function AddSource({ projectId, onAdded, onBusy }: { projectId: string; onAdded:
   }, [tab]);
 
   async function addAll(kind: 'doi' | 'bibtex' | 'ris', refs: RawReference[]) {
+    await addItems(
+      kind,
+      refs.map((ref) => ({ kind: 'ref', line: ref.raw, ref })),
+    );
+  }
+
+  async function addItems(kind: 'doi' | 'bibtex' | 'ris', items: ListItem[]) {
     setError('');
     setSaid('');
-    let added = 0;
-    let dup = 0;
-    let last = '';
+    setRows([]);
     try {
-      for (const [i, r] of refs.slice(0, 60).entries()) {
-        setBusy(`Checking ${i + 1} of ${Math.min(refs.length, 60)}`);
-        const a = await addChecked(projectId, kind, r);
-        if (a.isNew) added++;
-        else dup++;
-        last = a.source.id;
-      }
-      setSaid([`${added} added.`, dup ? `${dup} already in your library.` : '', refs.length > 60 ? 'Only the first 60 were read.' : ''].filter(Boolean).join(' '));
-      if (last) onAdded(last);
+      const out = await addList(projectId, kind, items.slice(0, 60), (n, of) => setBusy(`Checking ${n} of ${of}`));
+      setBusy('Saving');
+      const added = out.filter((r) => r.isNew).length;
+      const dup = out.filter((r) => r.source && !r.isNew).length;
+      setRows(out);
+      setSaid([`${added} added${dup ? `, ${dup} duplicate${dup > 1 ? 's' : ''} not saved twice` : ''}. Each one shows its label below. Nothing is approved until you approve it.`, items.length > 60 ? 'Only the first 60 were read.' : ''].filter(Boolean).join(' '));
       setLine('');
       setFile('');
+      setList('');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'That did not work.');
     }
     setBusy('');
+  }
+
+  async function settle(i: number, merge: boolean) {
+    const r = rows[i];
+    if (!r?.source) return;
+    try {
+      const keep = await db.sources.get(r.source.id);
+      if (merge && keep) await editSource(keep.id, { notes: [keep.notes.trim(), `Also pasted as: ${r.line}`].filter(Boolean).join('\n') });
+      await record(projectId, 'student', merge ? 'source.merged' : 'source.duplicate-discarded', `${titleOf(r.source)} | ${r.line.slice(0, 160)}`);
+      setRows(rows.map((x, k) => (k === i ? { ...x, settled: merge ? 'Merged. One entry kept; the second version is saved in its notes.' : 'Discarded. One entry kept.' } : x)));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'That did not work.');
+    }
   }
 
   return (
@@ -467,6 +545,25 @@ function AddSource({ projectId, onAdded, onBusy }: { projectId: string; onAdded:
           </label>
           <button className="btn main" type="submit" disabled={!!busy || !line.trim()}>
             Check and add
+          </button>
+        </form>
+      )}
+      {tab === 'list' && (
+        <form
+          className="stack"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const items = itemsFromList(list);
+            if (items.length) void addItems('doi', items);
+            else setError('Paste at least one reference.');
+          }}
+        >
+          <label className="stack">
+            <span>Paste a reference list, one reference per line, in any style. Each one is checked and gets its own label. A web address with no DOI is saved as a web page, not checked.</span>
+            <textarea className="field" rows={6} value={list} onChange={(e) => setList(e.target.value)} />
+          </label>
+          <button className="btn main" type="submit" disabled={!!busy || !list.trim()}>
+            Check and add all
           </button>
         </form>
       )}
@@ -533,6 +630,46 @@ function AddSource({ projectId, onAdded, onBusy }: { projectId: string; onAdded:
       <p role="status" className="soft">
         {busy || said}
       </p>
+      {rows.length > 0 && (
+        <ol className={css.results} aria-label="What happened to each reference">
+          {rows.map((r, i) => (
+            <li key={`${i}-${r.line.slice(0, 20)}`}>
+              {r.source ? (
+                <>
+                  <div className={css.resultHead}>
+                    <SourceStamp s={r.source} />
+                    <button className={css.linkish} type="button" onClick={() => onAdded(r.source!.id)}>
+                      {titleOf(r.source)}
+                    </button>
+                  </div>
+                  {!r.isNew &&
+                    (r.settled ? (
+                      <p className="soft">{r.settled}</p>
+                    ) : (
+                      <div className={css.dup}>
+                        <p>
+                          <strong>Duplicate.</strong> The same work as “{titleOf(r.source)}”, already in your library{r.source.record?.doi ? ', with the same DOI' : ''}. It was not saved twice.
+                        </p>
+                        <div className="row">
+                          <button className="btn main" type="button" onClick={() => void settle(i, true)}>
+                            Merge into one entry
+                          </button>
+                          <button className="btn quiet" type="button" onClick={() => void settle(i, false)}>
+                            Discard this copy
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                </>
+              ) : (
+                <p className={css.error}>
+                  {r.line.slice(0, 120)}: {r.error}
+                </p>
+              )}
+            </li>
+          ))}
+        </ol>
+      )}
       {error && (
         <p role="alert" className={css.error}>
           {error}
