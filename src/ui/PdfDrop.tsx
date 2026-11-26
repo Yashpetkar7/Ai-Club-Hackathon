@@ -69,7 +69,7 @@ export function PdfDrop({ projectId, onBusy, onAdded }: { projectId: string; onB
             <>
               <div className="row">
                 <VerdictStamp verdict={o.check!.verdict} />
-                <span className="soft">Text extracted from {o.extractedPages} of {o.pages} pages{o.extractedPages! < o.pages! ? ' (extraction stops after 80 pages)' : ''}. Added to your library, waiting for your approval.</span>
+                <span className="soft">{o.extractedPages! < o.pages! ? `Text read from ${o.extractedPages} of ${o.pages} pages (reading stops after 80).` : `${o.pages} ${o.pages === 1 ? 'page' : 'pages'} read.`} Added to your library, waiting for your approval.</span>
               </div>
               <p className="soft">A DOI found inside a PDF may cite a different work. Review the returned title before approving; a metadata match does not authenticate this file.</p>
               {o.instructions!.length > 0 && <p className={css.warn}>This file contains text aimed at an AI, such as “{o.instructions![0]}”. It was ignored.</p>}

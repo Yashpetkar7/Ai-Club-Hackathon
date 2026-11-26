@@ -260,7 +260,7 @@ export interface LabelText {
 
 export const VERDICT_TEXT: Record<Verdict, LabelText> = {
   confirmed: { label: 'Confirmed', tone: 'ok', mark: '✓', plain: 'A registry has this exact work.' },
-  'one-registry': { label: 'One registry only', tone: 'mute', mark: '1', plain: 'One registry has a matching work. A second matching record was not confirmed. Open the receipt for missing data, disagreement or an unavailable lookup.' },
+  'one-registry': { label: 'One registry only', tone: 'mute', mark: '1', plain: 'One registry has a matching work. A second matching record was not confirmed, so a retraction could be missed. Open the receipt for missing data, disagreement or an unavailable lookup, and check again before you rely on it.' },
   'details-differ': { label: 'Details differ', tone: 'warn', mark: '≠', plain: 'The work is real, but something you wrote does not match the registry.' },
   'wrong-paper': { label: 'Wrong paper', tone: 'bad', mark: '⇄', plain: 'The DOI is real and belongs to a different work.' },
   retracted: { label: 'Retracted', tone: 'bad', mark: '✕', plain: 'The publisher has withdrawn this work.' },
