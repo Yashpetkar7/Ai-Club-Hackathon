@@ -9,19 +9,22 @@ import { loadStyle } from '@/core/cite/load';
 import { preflight, reasonNotes, titleOf } from '@/core/cite/preflight';
 import type { CitationStyle } from '@/core/contracts';
 import { statementLines } from '@/core/report/statement';
+import { claimTrail, trailLines } from '@/core/report/trail';
 import { record as log } from '@/log/log';
 import { AiStatement } from '@/pages/AiStatement';
 import { setStyle } from '@/store/actions';
 import { db } from '@/store/db';
-import { SourceStamp } from '@/ui/Stamp';
+import { ClaimStamp, SourceStamp } from '@/ui/Stamp';
 import css from './Export.module.css';
 
 export function Export({ project }: StepProps) {
   const sources = useLiveQuery(() => db.sources.where('projectId').equals(project.id).toArray(), [project.id]);
   const draft = useLiveQuery(async () => (await db.drafts.get(project.id))?.html ?? '', [project.id]) ?? '';
   const events = useLiveQuery(() => db.log.where('projectId').equals(project.id).sortBy('seq'), [project.id]) ?? [];
+  const claims = useLiveQuery(() => db.claims.where('projectId').equals(project.id).toArray(), [project.id]) ?? [];
   const [onlyCited, setOnlyCited] = useState(false);
   const [withDraft, setWithDraft] = useState(true);
+  const [withTrail, setWithTrail] = useState(true);
   const [files, setFiles] = useState<{ style: CitationStyle; f: StyleFiles } | null>(null);
   const [failed, setFailed] = useState(false);
   const [said, setSaid] = useState('');
@@ -43,6 +46,7 @@ export function Export({ project }: StepProps) {
   const drafted = useMemo(() => checkDraft(draft, all, sources ?? []), [draft, all, sources]);
   const list = useMemo(() => (onlyCited ? drafted.cited.map((c) => c.source) : all), [onlyCited, drafted, all]);
   const out: Formatted | null = useMemo(() => (files && files.style === style && list.length ? formatSources(list, style, files.f) : null), [files, style, list]);
+  const trail = useMemo(() => claimTrail(claims, sources ?? []), [claims, sources]);
 
   if (!sources) return <p className="soft">Opening your library…</p>;
 
@@ -128,6 +132,10 @@ export function Export({ project }: StepProps) {
             <input type="checkbox" checked={withDraft} disabled={!draft.trim()} onChange={(e) => setWithDraft(e.target.checked)} />
             <span>Put my draft in the Word file</span>
           </label>
+          <label>
+            <input type="checkbox" checked={withTrail} disabled={trail.length === 0} onChange={(e) => setWithTrail(e.target.checked)} />
+            <span>Add my claims and their sources ({trail.length})</span>
+          </label>
         </div>
         {failed && (
           <p role="alert" className={css.warn}>
@@ -175,7 +183,7 @@ export function Export({ project }: StepProps) {
             <div className="row">
               <button className="btn main" type="button" disabled={!out} onClick={() => void leave('Word file', async () => {
                 const { Packer } = await import('docx');
-                const doc = await toDocx({ sources: list, style, files: files!.f, question: project.question, statement: statementLines(events, project), ...(withDraft && draft.trim() ? { draft } : {}) });
+                const doc = await toDocx({ sources: list, style, files: files!.f, question: project.question, statement: statementLines(events, project), ...(withDraft && draft.trim() ? { draft } : {}), ...(withTrail && trail.length ? { trail: trail.map(trailLines) } : {}) });
                 saveFile('paper-trail.docx', await Packer.toBlob(doc));
               })}>
                 Word
@@ -192,11 +200,46 @@ export function Export({ project }: StepProps) {
               <button className="btn" type="button" onClick={() => void leave('RIS file', () => saveFile('references.ris', toRis(list)))}>
                 RIS
               </button>
+              <button className="btn" type="button" onClick={() => void leave('Evidence report', async () => {
+                const m = await import('@/core/report/report');
+                m.download('evidence-report.html', await m.projectReport(project));
+              })}>
+                Evidence report
+              </button>
               <span role="status" className="soft">
                 {said}
               </span>
             </div>
           </>
+        )}
+      </section>
+
+      <section className="stack" aria-labelledby="trail">
+        <h2 id="trail">Claims and their sources ({trail.length})</h2>
+        {trail.length === 0 ? (
+          <p className="soft">
+            Claims you accept in <Link to={`/p/${project.id}/evidence`}>Evidence</Link> appear here with the exact words of their source, and go into the Word file.
+          </p>
+        ) : (
+          <ul className={css.trail}>
+            {trail.map((r) => (
+              <li key={r.id}>
+                <p>
+                  <strong>{r.claim}</strong> <ClaimStamp label={r.label} />
+                  {r.decision === 'rewritten' && <small className="soft"> rewritten by you</small>}
+                </p>
+                {r.quote ? (
+                  <blockquote>
+                    “{r.quote}”
+                    <small>{[r.source, r.where].filter(Boolean).join(' · ')}</small>
+                  </blockquote>
+                ) : (
+                  <p className="soft">No sentence in a source was found for this claim.</p>
+                )}
+                {r.reason && <p className="soft">Your reason for keeping it: {r.reason}</p>}
+              </li>
+            ))}
+          </ul>
         )}
       </section>
 
