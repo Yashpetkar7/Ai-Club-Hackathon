@@ -5,6 +5,8 @@ const DATA = { 'content-type': 'application/json; charset=utf-8', 'x-content-typ
 const cache = new Map();
 const TTL = 6 * 60 * 60 * 1000;
 const MAX = 800;
+/** An OpenAlex key that OpenAlex refused. Not sent again until the server restarts with a different one. */
+let badKey = null;
 
 export async function registry(req) {
   const asked = new URL(req.url).searchParams;
@@ -23,9 +25,17 @@ export async function registry(req) {
   // A retraction may be newer than our copy. Even then, one copy a minute is enough.
   if (hit && Date.now() - hit.at < (asked.get('fresh') === '1' ? 60_000 : TTL)) return new Response(hit.body, { status: hit.status, headers: { ...DATA, 'x-cache': 'hit' } });
   const out = new URL(u);
-  if (u.hostname === 'api.openalex.org' && process.env.OPENALEX_API_KEY) out.searchParams.set('api_key', process.env.OPENALEX_API_KEY);
+  const withKey = u.hostname === 'api.openalex.org' && !!process.env.OPENALEX_API_KEY && badKey !== process.env.OPENALEX_API_KEY;
+  if (withKey) out.searchParams.set('api_key', process.env.OPENALEX_API_KEY);
+  const get = (to) => fetch(to, { headers: { 'user-agent': 'paper-trail-student-project/0.1', accept: 'application/json, application/xml;q=0.8, */*;q=0.5' }, signal: AbortSignal.timeout(12000), redirect: 'follow' });
   try {
-    const r = await fetch(out, { headers: { 'user-agent': 'paper-trail-student-project/0.1', accept: 'application/json, application/xml;q=0.8, */*;q=0.5' }, signal: AbortSignal.timeout(12000), redirect: 'follow' });
+    let r = await get(out);
+    // A wrong or expired key must cost no more than having no key: ask again without it, and stop sending it.
+    if (withKey && (r.status === 401 || r.status === 403)) {
+      badKey = process.env.OPENALEX_API_KEY;
+      console.warn('OpenAlex refused OPENALEX_API_KEY; asking without it until the server restarts.');
+      r = await get(u);
+    }
     // A registry may redirect within itself. It may not send us, or the browser, anywhere else.
     if (r.redirected && !ALLOW.has(new URL(r.url).hostname)) return Response.json({ error: 'not allowed' }, { status: 403 });
     const body = await r.text();
