@@ -20,61 +20,58 @@ Automation should handle searches, metadata comparisons, reading assistance, cit
 
 The proposed differentiator is the connection between these steps: an inspectable research trail that also helps the student learn. It needs a successful real-data demonstration and independent evaluation before we claim that it outperforms established products.
 
-## What exists locally now
+## What exists on the branch now
 
-The implementation lives in `paper-trail-hemanth/`, based on the supplied Yash download. The original download has been preserved; the latest GitHub files have not yet been fetched and merged into this candidate.
+Everything below is on `hemanth/lab-governance`, pushed as hbasired and checked on 26 November 2026 (see [current validation](deck/VALIDATION_CURRENT.md)). The live site follows `main`, which has none of it until Yash merges and deploys.
 
-| Area | Existing foundation | Added or corrected in this session |
-|---|---|---|
-| Research flow | Plan, Find, Library, Read, Evidence, Challenge, Write, Export and Team | Research Compass and clearer next steps |
-| Reading priority | Registry retrieval and verification | Three transparent presets, score breakdown, stable order, visible check groups and no citation-popularity bonus |
-| Learning | Extractive reader with source sentences | Four-stage Study studio, exact-passage capture, reflections, recall, review due date and saved notes |
-| Reference integrity | Deterministic metadata checker and receipts | Missing or conflicting second-registry identities stay incomplete; another work's abstract is not attached |
-| Citation control | Student approval and written exceptions | SAMPLE receipts blocked from approval/citation, including exception attempts |
-| Governance | Rules, log and AI statement | Recorded prompts, student disclosure supplements, accurate event counts, stale-result invalidation and clearer hash-chain limits |
-| PDF and AI boundaries | Local PDF extraction and fixed server tasks | Visible page-extraction limits and strict AI-level validation |
-| Hemanth deliverables | Integrity Lab, corpus, deck and documentation | Regenerated actual SAMPLE replay, corrected policy wording, fifteen-question Q&A and current validation |
-| Presentation | Supplied PowerPoint and HTML materials | Exactly six slides, corrected speaker notes, updated presenter guide and private twelve-chapter architecture guide |
+| Area | Built on the existing foundation |
+|---|---|
+| Research flow | Research Compass, reading priority with visible weights, Study studio, and a Discover tab for papers by meaning and related works (OpenAlex) |
+| Claims | Find by meaning with Snowflake arctic-embed-xs in the browser, which only orders sentences. A claim scorecard shows support, neutral and contradiction against the 90% lines and the numbers side by side. Check against every source. A measured rule for which sentence a page starts on |
+| Polished answers | Audit a paragraph (`#/audit`): every reference checked with a receipt, and every claim linked to what it cites and labelled by `judge()` |
+| Proof | The Integrity Lab works out claim and reference accuracy from labelled data, with ranges and every miss. Guardrails (`#/guardrails`) runs 10 checks live on the real code |
+| Governance | A named Explainer agent at level 2, with code-checked answers. The AI-use statement counts every recorded AI task. House rules says what leaves the device. Our own mapping to NIST AI RMF 1.0, OWASP LLM Top 10 2025 and UNESCO 2023 |
+| Navigation | Helpers under their step, a "where you are" line, a palette that reaches every page, and no dead ends |
 
-No additional npm dependency was introduced. Existing tools already include React, PDF.js, Transformers.js/ONNX, DeBERTa and optional Gemini/Groq tasks; these should be measured and integrated well before adding more providers or models.
+No new npm dependency was added. The one new model, arctic-embed-xs (about 23 MB, pinned revision), loads through the existing Transformers.js stack. Its model card says Apache-2.0.
 
 ## What was actually tested
 
-- **27 offline tests passed**, including ranking, source-bound study progress, exact quotes, sample citation exclusion, registry disagreements, disclosure and log consistency.
-- The real checker executed **24 recorded Lab cases**: 12 real controls and 12 generated exercises. Ten outcomes remain unresolved; this is disclosed SAMPLE evidence, not a fresh live run or a benchmark victory.
-- **104 source TS/TSX files parsed** without syntax errors using an available cached compiler; seven core entry points passed a targeted strict typecheck.
-- The static HTML guides passed local Chrome checks at desktop and 375px width, including navigation, quiz feedback and saved reading progress.
-- The PowerPoint contains **exactly six slides**; native PowerPoint rendering could not run in this session.
+| Check | Result |
+|---|---|
+| Typecheck | Clean |
+| Unit tests | 1,049 passed, 2 skipped |
+| Offline tests | 27 of 27 |
+| Build | Built |
+| Browser tests in Chrome | 59 passed, 5 opt-in skipped |
 
-See [the detailed validation record](deck/VALIDATION_CURRENT.md) for commands, artifact hashes, measured outcomes and limits. These checks do not replace the full application build or browser journey.
+The real models were also recorded on every candidate sentence of 104 labelled claims (449 support runs). On that data, starting on the closest sentence gave 0 of 80 false claims Verified, 72 Disputed, and no true claim Disputed.
 
-## What was not completed
+These are development-set numbers: the claims were written by the team, and the hold-out set was turned into rules after its first run. They are not an independent benchmark and not a comparison with another product.
 
-| Outstanding item | Why it remains open | Completion evidence needed |
+## What is still open
+
+| Item | Why | Evidence needed |
 |---|---|---|
-| Read and reconcile the actual main, Yash and Hemanth branch files | Remote heads were listed, but object fetch was blocked by the active local execution policy | Fetched commits, branch comparison and reviewed merge on Hemanth's branch |
-| Install all locked dependencies | Required cache entries are missing; a registry request with a workspace-local cache fails with `EACCES` | Successful `npm ci` using the unchanged lockfile |
-| Complete production build and whole-project verification | `npm run verify` stops because the pinned TypeScript executable is unavailable | Successful typecheck, all unit tests, offline tests and production build |
-| Run the new app browser/accessibility test | Browser test dependencies and built app are unavailable | Passing Playwright journey, keyboard/375px checks and reviewed accessibility results |
-| Confirm the current Vercel site and its backend | Site and health endpoint could not be accessed from the available tools | Observed real-data flow against `https://paper-trail-team1.vercel.app/` and backend readiness |
-| Rehearse a working live demo | Network and build prerequisites remain open | A timestamped run from question through downloaded export, with real registry responses |
-| Validate six-slide visual layout in PowerPoint | Office automation failed in the sandbox session | Open every slide and check text fit, diagrams, tables and notes |
-| Commit and push as hbasired | No fetched checkout, verified authentication or passing full gate yet | Successful normal push to `hemanth/lab-governance` and matching remote head |
-| Demonstrate benchmark superiority or educational benefit | No independent comparative evaluation was performed | Frozen evaluation protocol, independent labels/assessment, baselines and reported failures |
-
-No deployment or teammate-branch modification was performed. No commit was made under the other configured GitHub identity.
+| Merge and deploy | Only Yash merges into `main` and deploys | The live site shows Audit, Guardrails and the Lab accuracy section |
+| A live AI call | Tests use stubbed answers; no real key was tried | One Groq answer through `/api/ai`, logged with its model name |
+| Live readiness | `npm run demo:check` and `LIVE=1` were not run this session | A timestamped run against the real registries |
+| Retrieval quality | Meaning search was judged by the support model's agreement | People mark the right sentence for each claim, and Recall@1 and @3 are reported |
+| Full text | Claims are compared with abstracts unless a PDF is added | Open-access full text, such as Europe PMC, after a CSP and proxy review |
+| An independent benchmark | All 104 claims are development data | A frozen set written by people outside the team, with baselines and every failure reported |
 
 ## What should happen next
 
-### P0 — finish the integration and make the demo dependable
+### P0: make the merged build dependable
 
-Reopen this task after its local permissions have refreshed; the running task continued to report `sandbox_approval=false` after settings were changed. Fetch the actual repository, read any updated instructions, preserve each teammate's work and reconcile main/Yash into Hemanth's branch without force-pushing or rewriting their history. Use `hbasired` for authenticated GitHub actions and repository-local author configuration.
+Yash reviews the shared-code requests in the [handover](deck/INTEGRATION_HANDOVER.md), merges and deploys. Then rehearse the [demo guide](deck/DEMO_GUIDE.html) on the live site:
+- an invented DOI comes back Not found;
+- the 13% claim against an altered 31% one;
+- Audit on a polished paragraph;
+- Guardrails, Run every check;
+- the Lab's accuracy numbers with their caveats.
 
-Apply only the reviewed candidate changes, install the exact lockfile, then run `npm run verify` and `npm run e2e`. Fix failures in the integrated implementation before treating the candidate as complete; passing isolated core tests is insufficient.
-
-Rehearse [the demo guide](deck/DEMO_GUIDE.html) with the working-from-home paper identified by DOI `10.1093/qje/qju032`: inspect real metadata and its receipt, explain priority, capture source text, compare the reported 13% result with a deliberately altered 31% claim, inspect the returned labels, and download/open an actual citation export. Search ordering and verdicts must follow the returned data, not a scripted expectation.
-
-Run `npm run demo:check` against the actual local server and inspect the deployed site separately. Prepare a saved project and recorded Lab replay as explicitly announced backups; an outage must remain visible. Keep the six-slide deck, presenter guide and private architecture guide aligned with the verified final commit, then push only Hemanth's branch.
+Keep a saved project and the recorded Lab replay as clearly announced backups.
 
 ### P1 — test whether the differentiator helps students
 
