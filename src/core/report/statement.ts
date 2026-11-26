@@ -5,7 +5,7 @@ import { AI_LEVELS } from '@/policy/policy';
  * The AI-use statement. Every sentence is built from log entries and nothing else.
  * No entry, no sentence. It reports only what happened inside Paper Trail.
  */
-const TASK: Record<string, string> = { 'ai.plan': 'suggest search terms', 'ai.read': 'point at passages in sources already kept', 'ai.challenge': 'suggest a search for the opposite view' };
+const TASK: Record<string, string> = { 'ai.plan': 'suggest search terms', 'ai.read': 'point at passages in sources already kept', 'ai.challenge': 'suggest a search for the opposite view', 'ai.explain': 'explain a claim label in plain words' };
 const day = (iso: string): string => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 const times = (n: number): string => (n === 1 ? 'once' : n === 2 ? 'twice' : `${n} times`);
 

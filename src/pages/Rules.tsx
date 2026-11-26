@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { policyLines } from '@/policy/apply';
 import { AGENTS, AI_LEVELS, POLICY } from '@/policy/policy';
+import { SUPPORT_MB } from '@/core/claims/support';
+import { clearOwnerKey } from '@/core/ownerKey';
+import { MEANING_MB } from '@/core/semantic/models';
 import { deleteEverything } from '@/store/actions';
 import css from './Rules.module.css';
 
@@ -18,9 +21,9 @@ const CLAUSES: [string, string, string][] = [
 const CAN = ['Whether a reference matches a work in Crossref, OpenAlex, DataCite or doi.org', 'Whether your draft repeats eight or more words in a row from a source in your library', 'Whether a quotation in your draft is in the source you cite', 'Whether a journal has retracted, corrected or warned about a work', 'Which of title, authors, year or DOI differs', 'Whether a registry marks the work as retracted', 'Whether the exact words you quote are in the text we could read', 'Whether a number, direction or scope word in your claim differs from that sentence'];
 const CANNOT = ['Whether a source is right', 'Books, reports and regional journals that no registry lists', 'Text behind a paywall, unless you add the PDF yourself', 'Text copied from the web, from books or from other students, and whether the writing is yours', 'Sources in languages other than English, when a claim is compared with a sentence'];
 const LEAVES: [string, string][] = [
-  ['Search words and reference details', 'Go to Crossref, OpenAlex, DataCite and doi.org when you press Find, Check or Challenge.'],
-  ['A question, a claim or numbered passages from sources you kept', 'Go to an AI service only at level 1 or higher, only when you press that button, and only if the site has a key.'],
-  ['The support model', 'Downloads to your device once, when you ask for it. Your claim is not sent.'],
+  ['Search words and reference details', 'Go to Crossref, OpenAlex, DataCite and doi.org when you press Find, Discover, Check, Audit or Challenge. On Discover your question also goes to OpenAlex’s search by meaning.'],
+  ['A question, a claim or numbered passages from sources you kept; for Explain, a claim with its source sentence, label and scores', 'Go to an AI service only at the level that allows that task, only when you press that button, and only if a key is set for this site.'],
+  [`The support model (about ${SUPPORT_MB} MB) and the meaning model (about ${MEANING_MB} MB)`, 'Download from Hugging Face to your device once, when you ask for them. Your claims and sources are not sent.'],
   ['Your passphrase and the key made from it', 'Never leave this browser and are never stored in readable form.'],
   ['Your library, notes, draft and log', 'As a guest, never leave this browser. With an account, where this site has a server that saves, a copy locked with your passphrase is kept there, under a code instead of your name. We cannot open it.'],
   ['Your PDF files', 'Are read on this device and not uploaded. With an account, the text read from them is inside the locked copy.'],
@@ -133,7 +136,7 @@ export function Rules() {
       </section>
       <section className={css.danger}>
         <h2>Delete everything</h2>
-        <p>Removes projects, sources, claims, drafts, study progress and log entries from the library open in this browser. Downloads, browser caches and copies on other devices are not erased by this action. An account may also have an encrypted server copy; use Account to remove that account. Deletion cannot be undone here.</p>
+        <p>Removes projects, sources, claims, drafts, study progress and log entries from the library open in this browser. It also forgets any AI key saved in this browser. Downloads, browser caches and copies on other devices are not erased by this action. An account may also have an encrypted server copy; use Account to remove that account. Deletion cannot be undone here.</p>
         {asking ? (
           <div className="row" role="alert">
             <button
@@ -142,6 +145,7 @@ export function Rules() {
               onClick={() =>
                 void deleteEverything().then(
                   () => {
+                    clearOwnerKey();
                     setAsking(false);
                     setSaid('Everything in this library was deleted.');
                   },

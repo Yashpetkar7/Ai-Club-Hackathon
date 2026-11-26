@@ -608,7 +608,7 @@ function ClaimCard(p: { n: number; c: AuditClaim; link: ClaimLink; bucket: Bucke
         <span className={css.claimNo}>{p.n}.</span> {c.text}
       </p>
       {c.part && <p className="soft">One part of: “{c.sentence.trim()}”</p>}
-      {link.how === 'all' && <p className="soft">This sentence cites nothing we could match, so it was checked against every reference.</p>}
+      {link.how === 'all' && <p className="soft">This sentence cites nothing we could match, so it was checked against every reference. A reference that backs it is not one it cites, so the summary counts it as Reported, not checked.</p>}
       {link.missing.length > 0 && <p className={css.warnLine}>Cited with no entry in the reference list: {link.missing.join('; ')}.</p>}
       {link.refs.length > 1 && (
         <fieldset className={css.pick}>

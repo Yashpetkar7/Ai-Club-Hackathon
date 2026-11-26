@@ -17,7 +17,7 @@ export const POLICY: Policy = {
   styles: ['apa', 'harvard', 'mla', 'chicago', 'ieee'],
 };
 
-export type AgentId = 'planner' | 'scout' | 'checker' | 'analyst' | 'reader' | 'quote-guard' | 'challenger' | 'reviewer' | 'clerk';
+export type AgentId = 'planner' | 'scout' | 'checker' | 'analyst' | 'reader' | 'explainer' | 'quote-guard' | 'challenger' | 'reviewer' | 'clerk';
 
 export interface AgentSpec {
   id: AgentId;
@@ -35,6 +35,7 @@ export const AGENTS: AgentSpec[] = [
   { id: 'checker', name: 'Checker', kind: 'code', minLevel: 0, does: 'Compares every field and issues the verdict.', cannot: 'Be overruled by AI.' },
   { id: 'analyst', name: 'Analyst', kind: 'code', minLevel: 0, does: 'Sorts a paper\u2019s own sentences into aim, method, findings and limits.', cannot: 'Write a sentence of its own.' },
   { id: 'reader', name: 'Reader', kind: 'ai', minLevel: 2, does: 'Points at passages in sources you kept.', cannot: 'Return words that are not in the source.' },
+  { id: 'explainer', name: 'Explainer', kind: 'ai', minLevel: 2, does: 'Explains in plain words why the checks gave a claim its label, from the checks’ own values.', cannot: 'Change a label, name a source, or use a number the checks did not give it. Code rejects any answer that does.' },
   { id: 'quote-guard', name: 'Quote guard', kind: 'code', minLevel: 0, does: 'Rejects any quote that is not an exact match.', cannot: 'Let a paraphrase through as a quote.' },
   { id: 'challenger', name: 'Challenger', kind: 'ai', minLevel: 3, does: 'Looks for evidence against you and flags overclaims.', cannot: 'Edit or delete your claims.' },
   { id: 'reviewer', name: 'Reviewer', kind: 'code', minLevel: 0, does: 'Reads the whole project, compares your draft with your sources, and lists what a marker could question.', cannot: 'Approve your work.' },
@@ -44,7 +45,7 @@ export const AGENTS: AgentSpec[] = [
 export const AI_LEVELS: { level: AiLevel; name: string; means: string }[] = [
   { level: 0, name: 'No AI', means: 'Library, search and checking only. Every AI agent is locked.' },
   { level: 1, name: 'Find and check', means: 'AI may suggest search terms.' },
-  { level: 2, name: 'Read and summarise', means: 'AI may also point at passages in sources you kept.' },
+  { level: 2, name: 'Read and summarise', means: 'AI may also point at passages in sources you kept, and explain a claim’s label in plain words. The label stays the one the checks gave.' },
   { level: 3, name: 'Challenge my draft', means: 'AI may also argue against your claims. It still never writes your assignment.' },
 ];
 

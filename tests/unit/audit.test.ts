@@ -222,8 +222,11 @@ describe('one line per claim in the summary', () => {
   it('with its own citations, a source that disagrees outweighs one that agrees', () => {
     expect(overall([{ label: 'verified', hasText: true }, { label: 'disputed', hasText: true }], 'cited')).toEqual({ bucket: 'disputed', pick: 1 });
   });
-  it('tried against every reference, the one that backs it counts', () => {
-    expect(overall([{ label: 'disputed', hasText: true }, { label: 'verified', hasText: true }], 'all')).toEqual({ bucket: 'verified', pick: 1 });
+  // Changed after review on 26 November: a claim that cites nothing we can match is not "verified against its
+  // cited sources", and a listed paper that disagrees is shown rather than hidden behind one that agrees.
+  it('tried against every reference: one that disagrees shows, and one that backs it is not counted as traced', () => {
+    expect(overall([{ label: 'disputed', hasText: true }, { label: 'verified', hasText: true }], 'all')).toEqual({ bucket: 'disputed', pick: 0 });
+    expect(overall([{ label: 'reported', hasText: true }, { label: 'verified', hasText: true }], 'all')).toEqual({ bucket: 'reported', pick: 1 });
   });
   it('Reported when a source had text, untraceable when none had', () => {
     expect(overall([{ label: 'reported', hasText: false }, { label: 'reported', hasText: true }], 'cited')).toEqual({ bucket: 'reported', pick: 1 });
@@ -233,5 +236,29 @@ describe('one line per claim in the summary', () => {
     expect(overall([null], 'cited')).toEqual({ bucket: 'unchecked', pick: -1 });
     expect(overall([{ label: 'reported', hasText: false }, null], 'cited')).toEqual({ bucket: 'unchecked', pick: 0 });
     expect(overall([], 'none')).toEqual({ bucket: 'untraceable', pick: -1 });
+  });
+});
+
+describe('found in review: inline DOIs, short sentences, overlapping parts, nothing green too early', () => {
+  it('a DOI inside a sentence is a citation: its claims stay, and the DOI is looked up on its own', () => {
+    const t = 'Home working led to a 13% performance increase in a large field experiment 10.1093/qje/qju032. Quitting fell by half in the same study 10.1093/qje/qju032.';
+    const x = auditReferences(t);
+    expect(x.references).toEqual([{ raw: '10.1093/qje/qju032', doi: '10.1093/qje/qju032' }]);
+    expect(findClaims(t, x.references).map((c) => c.text)).toEqual(['Home working led to a 13% performance increase in a large field experiment.', 'Quitting fell by half in the same study.']);
+    const two = 'Home working led to a 13% performance increase in a large field experiment.\nQuitting fell by half in the same study (doi:10.1093/qje/qju032).';
+    expect(findClaims(two, auditReferences(two).references)).toHaveLength(2);
+  });
+  it('short cited sentences are claims too', () => {
+    const t = 'Sales rose by 12%; output fell by 9% (Bloom et al., 2015). Pay rose 5% [1]. Costs fell 9% [1].\n\nReferences\n[1] Bloom, N., Liang, J., Roberts, J., & Ying, Z. J. (2015). Does working from home work? Evidence from a Chinese experiment. The Quarterly Journal of Economics, 130(1), 165-218. https://doi.org/10.1093/qje/qju032';
+    expect(findClaims(t, auditReferences(t).references).map((c) => c.text)).toEqual(['Sales rose by 12%', 'Output fell by 9%.', 'Pay rose 5%.', 'Costs fell 9%.']);
+  });
+  it('a joined sentence never repeats words across its parts', () => {
+    expect(splitClaim('Costs fell by 5%; staff and managers but output rose by 9%')).toEqual(['Costs fell by 5%; staff and managers', 'Output rose by 9%']);
+  });
+  it('nothing is green while a cited source is unchecked, and a claim tried against every reference is not traced', () => {
+    expect(overall([{ label: 'verified', hasText: true }, null], 'cited').bucket).toBe('unchecked');
+    expect(overall([{ label: 'verified', hasText: true }, null, { label: 'disputed', hasText: true }], 'cited').bucket).toBe('disputed');
+    expect(overall([{ label: 'verified', hasText: true }, { label: 'reported', hasText: true }], 'all').bucket).toBe('reported');
+    expect(overall([{ label: 'verified', hasText: true }, { label: 'disputed', hasText: true }], 'all').bucket).toBe('disputed');
   });
 });

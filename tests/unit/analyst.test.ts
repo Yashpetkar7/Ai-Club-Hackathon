@@ -103,6 +103,7 @@ it('the board reads the log, so it is right after a reload', () => {
   const l = lastActions([e('scout.searched', 1), e('source.added', 2), e('analyst.read', 3), e('challenger.searched', 4), e('reviewer.ran', 5), e('scout.searched', 6)]);
   expect(l.scout!.seq).toBe(6);
   expect(Object.keys(l).sort()).toEqual(['analyst', 'challenger', 'checker', 'reviewer', 'scout']);
-  expect(AGENTS.filter((a) => a.kind === 'ai')).toHaveLength(3);
-  expect(AGENTS).toHaveLength(9);
+  // Four AI agents since the Explainer was added on 26 November: it writes words about a label, so it is named in the house rules.
+  expect(AGENTS.filter((a) => a.kind === 'ai')).toHaveLength(4);
+  expect(AGENTS).toHaveLength(10);
 });

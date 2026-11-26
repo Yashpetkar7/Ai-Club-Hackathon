@@ -463,7 +463,7 @@ export function Evidence({ project }: StepProps) {
             {passage && <Checks claim={claim} passage={passage.text} judged={judged} />}
             {passage && <ModelScores support={support} scoring={scoring} wordForWord={judged.wordForWord} />}
             {passage && <Aids words={passage.words} meaning={passage.meaning} />}
-            {passage && <ExplainLabel project={project} claim={claim} sentence={passage.text} judged={judged} support={support} />}
+            {passage && <ExplainLabel project={project} claim={claim} sentence={passage.text} judged={judged} support={support} busy={scoring} />}
             {judged.wordForWord && words >= 8 && <p className={css.own}>These are the source’s own words. Put them in quotation marks, or say it in your own words.</p>}
             {!judged.wordForWord && passage && <ModelBox state={model} />}
             <div className={css.decide}>

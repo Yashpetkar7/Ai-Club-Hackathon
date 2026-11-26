@@ -78,7 +78,7 @@ test('owner key: a hidden panel at #/lab?owner saves, tests and forgets a key, b
   // Remember on this device keeps it in local storage only; Forget takes it out of both.
   await panel.getByLabel('Remember on this device').check();
   await field.fill(KEY);
-  await panel.getByRole('button', { name: 'Save for this tab' }).click();
+  await panel.getByRole('button', { name: 'Save on this device' }).click();
   await expect(panel.getByText(`A key ending in ${KEY.slice(-4)} is saved on this device.`)).toBeVisible();
   expect(await stored(page)).toEqual([null, KEY]);
   await panel.getByRole('button', { name: 'Forget the key' }).click();

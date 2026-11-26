@@ -12,18 +12,20 @@ interface Props {
   sentence: string;
   judged: Judged;
   support: Support | null;
+  /** True while the support scores are still arriving: an answer now would be thrown away when they land. */
+  busy?: boolean;
 }
 
 /**
  * "Explain this label in plain words (AI)" on the Evidence claim scorecard. The label comes from judge() and never
  * changes here: the AI only puts the checks into words, and the answer is shown only if it passes our checks.
- * Shown only when the project's AI level allows the Reader (level 2).
+ * Shown only when the project's AI level allows the Explainer (level 2).
  */
-export function ExplainLabel({ project, claim, sentence, judged, support }: Props) {
+export function ExplainLabel({ project, claim, sentence, judged, support, busy = false }: Props) {
   const input = useMemo(() => explainInput(claim, sentence, judged, support), [claim, sentence, judged, support]);
-  if (!agentAllowed('reader', project.aiLevel)) return null;
+  if (!agentAllowed('explainer', project.aiLevel)) return null;
   // A new claim, sentence, label or score starts again with nothing shown.
-  return <Explainer key={JSON.stringify(input)} project={project} input={input} />;
+  return <Explainer key={JSON.stringify(input)} project={project} input={input} busy={busy} />;
 }
 
 type State = { kind: 'idle' } | { kind: 'loading' } | { kind: 'done'; text: string; model: string } | { kind: 'failed'; text: string };
@@ -35,7 +37,7 @@ const WHY: Record<'locked' | 'cap' | 'unavailable' | 'bad-answer', string> = {
   'bad-answer': 'The AI answer did not pass our checks, so it is not shown. The label above stands.',
 };
 
-function Explainer({ project, input }: { project: Project; input: ExplainInput }) {
+function Explainer({ project, input, busy }: { project: Project; input: ExplainInput; busy: boolean }) {
   const [state, setState] = useState<State>({ kind: 'idle' });
   const [online, setOnline] = useState(() => navigator.onLine !== false);
   const mounted = useRef(true);
@@ -60,7 +62,7 @@ function Explainer({ project, input }: { project: Project; input: ExplainInput }
   }, [state.kind]);
 
   async function explain() {
-    if (state.kind === 'loading') return;
+    if (state.kind === 'loading' || busy) return;
     setState({ kind: 'loading' });
     const r = await askAi(project, 'explain', input, explanationShape(input));
     if (!mounted.current) return;
@@ -71,10 +73,11 @@ function Explainer({ project, input }: { project: Project; input: ExplainInput }
     <div className={css.explain}>
       {state.kind !== 'done' && (
         // Not disabled while asking, so keyboard focus stays on it; a second click is ignored.
-        <button className="btn" type="button" disabled={!online} aria-disabled={state.kind === 'loading' || undefined} onClick={() => void explain()}>
+        <button className="btn" type="button" disabled={!online || busy} aria-disabled={state.kind === 'loading' || undefined} onClick={() => void explain()}>
           {state.kind === 'loading' ? 'Asking the AI…' : 'Explain this label in plain words (AI)'}
         </button>
       )}
+      {busy && online && state.kind === 'idle' && <p className={css.note}>Waiting for the support scores, so the explanation uses them.</p>}
       {!online && state.kind !== 'done' && <p className={css.note}>Your browser reports that it is offline. The AI explanation needs a connection; the label and the checks work without one.</p>}
       <div role="status" aria-live="polite" className="stack">
         {state.kind === 'loading' && <p className="soft">Asking the AI to put these checks into words…</p>}

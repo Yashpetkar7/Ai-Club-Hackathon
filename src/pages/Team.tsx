@@ -8,7 +8,7 @@ import { approvePlan, recordAiDecision } from '@/store/actions';
 import { db } from '@/store/db';
 import css from './Team.module.css';
 
-const PAGE: Record<AgentId, string> = { planner: 'plan', scout: 'find', checker: 'library', analyst: 'read', reader: 'ask', challenger: 'challenge', 'quote-guard': 'evidence', reviewer: 'review', clerk: 'export' };
+const PAGE: Record<AgentId, string> = { planner: 'plan', scout: 'find', checker: 'library', analyst: 'read', reader: 'ask', explainer: 'evidence', challenger: 'challenge', 'quote-guard': 'evidence', reviewer: 'review', clerk: 'export' };
 /** The order the work goes round, with the three places it stops for the student. */
 const ORDER: (AgentId | 'gate1' | 'gate2' | 'gate3')[] = ['planner', 'gate1', 'scout', 'checker', 'gate2', 'analyst', 'reader', 'challenger', 'quote-guard', 'gate3', 'reviewer', 'clerk'];
 const GATES = { gate1: 'You approve the searches', gate2: 'You keep or skip each paper', gate3: 'You accept each claim' } as const;

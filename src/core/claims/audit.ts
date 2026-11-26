@@ -1,4 +1,4 @@
-import { sentences } from '@/core/challenge/challenge';
+import { sentences, type SentenceAt } from '@/core/challenge/challenge';
 import { findCitations } from '@/core/cite/draft';
 import type { ClaimLabel, RawReference, ReferenceCheck, RegistryRecord, Source } from '@/core/contracts';
 import { listStart } from '@/core/draftcheck/text';
@@ -64,17 +64,34 @@ export function auditReferences(text: string): Extracted {
   const flat = (s: string) => s.replace(/\s+/g, ' ').trim();
   const only = x.references.length === 1 ? x.references[0]! : undefined;
   if (only && flat(only.raw) === flat(text) && !only.doi && !only.authors?.length) return { ...x, references: [] };
-  return x;
+  // A DOI written inside a sentence of the paragraph is a citation. Look up the DOI on its own: the sentence
+  // around it is not a title, and comparing it as one would call the DOI another paper.
+  const above = flat(text.slice(0, listStart(text)));
+  const seen = new Set<string>();
+  const references = x.references.flatMap((r): RawReference[] => {
+    const inBody = !!r.doi && !looksListed(flat(r.raw)) && above.includes(flat(r.raw));
+    const ref: RawReference = inBody ? { raw: r.doi!, doi: r.doi! } : r;
+    const key = ref.doi?.toLowerCase();
+    if (inBody && key && seen.has(key)) return [];
+    if (key) seen.add(key);
+    return [ref];
+  });
+  return { ...x, references };
 }
 
-/** Where the reference list begins: a heading, or else the first line that belongs to a parsed reference. */
+/** The start of a reference-list entry: [1], 1. or 1), or a surname, a comma, then an initial, a first name or "&". */
+const LISTED = /^\s*(?:\[\d{1,3}\]|\d{1,3}[.)]\s|[\p{Lu}][\p{L}'’-]+(?:\s[\p{Lu}][\p{L}'’-]+)?,\s*(?:\p{Lu}\.|\p{Lu}\p{Ll}+|&))/u;
+export const looksListed = (line: string): boolean => LISTED.test(line);
+
+/** Where the reference list begins: a heading, or else the first line that is shaped like a list entry and belongs to a parsed reference. */
 export function bodyEnd(text: string, refs: RawReference[]): number {
   const head = listStart(text);
   if (head < text.length) return head;
   const long = refs.filter((r) => r.raw.length >= 15);
   for (const m of text.matchAll(/[^\n]+/g)) {
     const line = m[0].replace(/\s+/g, ' ').trim();
-    if (line.length >= 15 && long.some((r) => r.raw.includes(line))) return m.index;
+    // A paragraph line that merely contains a DOI is not where the list begins.
+    if (line.length >= 15 && looksListed(line) && long.some((r) => r.raw.replace(/\s+/g, ' ').includes(line))) return m.index;
   }
   return text.length;
 }
@@ -169,8 +186,11 @@ export function splitClaim(bare: string): string[] {
       groups.push({ from: pending ?? i, to: i });
       pending = null;
     } else if (p.and && i < pieces.length - 1 && pieces.slice(i + 1).some((q) => statesFact(q.text))) pending ??= i;
-    else if (groups.length) groups[groups.length - 1]!.to = i;
-    else pending ??= i;
+    else if (groups.length) {
+      // Joins the fact before it, together with any piece that was waiting for the next fact.
+      groups[groups.length - 1]!.to = i;
+      pending = null;
+    } else pending ??= i;
   });
   if (pending !== null) {
     if (groups.length) groups[groups.length - 1]!.to = pieces.length - 1;
@@ -182,13 +202,36 @@ export function splitClaim(bare: string): string[] {
   return parts.length > 1 ? parts.map((p) => p[0]!.toUpperCase() + p.slice(1)) : [bare];
 }
 
+/**
+ * Every sentence, short ones included. The shared splitter skips sentences of 20 characters or fewer
+ * ("Pay rose 5% [1]."), so the gaps it leaves are split here and kept. Positions stay exact.
+ */
+export function everySentence(text: string): SentenceAt[] {
+  const out: SentenceAt[] = [];
+  const gap = (a: number, b: number) => {
+    for (const m of text.slice(a, b).matchAll(/[^.!?\n]+[.!?]*["”’)\]]*/g)) {
+      const lead = m[0].length - m[0].trimStart().length;
+      const t = m[0].trim();
+      if (/[\p{L}\p{N}]/u.test(t)) out.push({ text: t, start: a + m.index + lead, end: a + m.index + lead + t.length });
+    }
+  };
+  let from = 0;
+  for (const s of sentences(text)) {
+    gap(from, s.start);
+    out.push(s);
+    from = s.end;
+  }
+  gap(from, text.length);
+  return out;
+}
+
 /** The claims in the paragraph above the reference list, one per sentence or per fact in a joined sentence. */
 export function findClaims(text: string, refs: RawReference[]): AuditClaim[] {
   const body = text.slice(0, bodyEnd(text, refs));
   // "et al." must not end a sentence. The mask keeps every position the same.
   const masked = body.replace(ABBREV, (m) => m.replace(/\./g, '_'));
   const out: AuditClaim[] = [];
-  for (const s of sentences(masked)) {
+  for (const s of everySentence(masked)) {
     const sentence = body.slice(s.start, s.end);
     if (/\?\s*["”’)]*$/.test(sentence)) continue;
     const { cites, bare } = citationsIn(sentence);
@@ -311,10 +354,18 @@ export function overall(cells: (Cell | null)[], how: Link['how']): { bucket: Buc
   if (!done.length) return { bucket: how === 'none' ? 'untraceable' : 'unchecked', pick: -1 };
   const readable = done.filter((x) => x.c.hasText);
   const first = (label: ClaimLabel) => readable.find((x) => x.c.label === label);
-  const order: ClaimLabel[] = how === 'cited' ? ['disputed', 'verified'] : ['verified', 'disputed'];
-  for (const l of order) {
-    const hit = first(l);
-    if (hit) return { bucket: l === 'verified' ? 'verified' : 'disputed', pick: hit.i };
+  const disputed = first('disputed');
+  const verified = first('verified');
+  // A source that disagrees always shows.
+  if (disputed) return { bucket: 'disputed', pick: disputed.i };
+  if (how === 'cited') {
+    // Nothing turns green while a cited source is still unchecked: it could yet disagree.
+    if (done.length < cells.length) return { bucket: 'unchecked', pick: done[0]!.i };
+    if (verified) return { bucket: 'verified', pick: verified.i };
+  } else if (verified) {
+    // It cites nothing we can match, so it was tried against every reference. A listed paper may back it,
+    // but the claim is not traced to a source it cites: it stays Reported, and the card shows which paper backs it.
+    return { bucket: 'reported', pick: verified.i };
   }
   if (readable.length) return { bucket: 'reported', pick: readable[0]!.i };
   // Some references are still being checked: there may yet be text to compare with.

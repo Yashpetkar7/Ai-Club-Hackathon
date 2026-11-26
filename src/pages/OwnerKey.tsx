@@ -137,7 +137,7 @@ function OwnerPanel() {
         </label>
         <div className="row">
           <button className="btn main" type="submit" disabled={!draft.trim()}>
-            Save for this tab
+            {remember ? 'Save on this device' : 'Save for this tab'}
           </button>
           <button ref={testButton} className="btn" type="button" disabled={!saved || !online} aria-disabled={testing || undefined} onClick={() => void test()}>
             {testing ? 'Testing…' : 'Test the key'}

@@ -9,8 +9,8 @@ import { db } from '@/store/db';
 /** The page side of the AI gateway. Checks the level and the cap before asking, and logs every call. */
 export type AiResult<T> = { ok: true; data: T; model: string } | { ok: false; reason: 'locked' | 'cap' | 'unavailable' | 'bad-answer' };
 
-// explain puts a label's checks into words, which is the Reader's level (2), so policy.ts needs no new agent.
-const AGENT = { plan: 'planner', read: 'reader', challenge: 'challenger', explain: 'reader' } as const satisfies Record<string, AgentId>;
+// explain writes AI words about a label, so it is its own agent in the house rules (Explainer, level 2), with what it cannot do.
+const AGENT = { plan: 'planner', read: 'reader', challenge: 'challenger', explain: 'explainer' } as const satisfies Record<string, AgentId>;
 export type AiTask = keyof typeof AGENT;
 
 export const aiCallsUsed = (projectId: string): Promise<number> => db.log.where('projectId').equals(projectId).filter((e) => e.actor === 'ai').count();
