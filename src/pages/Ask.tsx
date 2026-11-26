@@ -5,6 +5,7 @@ import { Link } from '@/app/router';
 import type { StepProps } from '@/app/ProjectShell';
 import { citeKey } from '@/core/cite/csl';
 import { titleOf } from '@/core/cite/preflight';
+import { checkQuote, type QuoteCheck } from '@/core/claims/quoteCheck';
 import { askLibrary, type Asked } from '@/core/claims/rank';
 import type { Source } from '@/core/contracts';
 import { pageAt, pageText } from '@/core/pdf/pages';
@@ -17,7 +18,7 @@ import css from './Ask.module.css';
 import { FixFirst } from './Signposts';
 
 interface Line { text: string; source: Source }
-interface Answer { question: string; asked: Asked; ai?: { model: string; lines: Line[] }; aiNote?: string }
+interface Answer { question: string; asked: Asked; quote?: QuoteCheck; ai?: { model: string; lines: Line[] }; aiNote?: string }
 
 const who = (s: Source): string => {
   const a = s.record?.authors.map((x) => x.family) ?? s.raw?.authors ?? [];
@@ -38,8 +39,16 @@ export function Ask({ project }: StepProps) {
   async function ask(e: React.FormEvent) {
     e.preventDefault();
     const question = q.trim();
-    const asked = askLibrary(question, kept);
     setDecided({});
+    // A quotation is checked word for word against every source's text, approved or not. Closest sentences are
+    // not shown for it: a sentence on the same topic is not the quotation and must not look like support.
+    const quote = checkQuote(question, sources ?? []);
+    if (quote) {
+      setAnswer({ question, asked: { hits: [], searched: [] } as unknown as Asked, quote });
+      void log(project.id, 'code', 'library.quote-checked', `${quote.kind} | ${quote.quote.slice(0, 160)}`);
+      return;
+    }
+    const asked = askLibrary(question, kept);
     setAnswer({ question, asked });
     void log(project.id, 'student', 'library.asked', `${question.slice(0, 200)} | ${asked.hits.length} sentences from ${new Set(asked.hits.map((h) => h.source.id)).size} sources`);
     if (!aiOn) return;
@@ -74,22 +83,34 @@ export function Ask({ project }: StepProps) {
         </label>
         <div className={css.bar}>
           <input id="ask-q" className="field" value={q} onChange={(e) => setQ(e.target.value)} placeholder="How did home working affect performance?" />
-          <button className="btn main" type="submit" disabled={q.trim().split(/\s+/).length < 2 || kept.length === 0}>
+          <button className="btn main" type="submit" disabled={q.trim().split(/\s+/).length < 2}>
             Ask
           </button>
         </div>
         <FixFirst project={project} needs={['approved', 'text']} say />
       </form>
 
-      {a && (
+      {answer?.quote && <QuoteAnswer check={answer.quote} projectId={project.id} />}
+      {a && !answer?.quote && (
         <section className="stack" aria-label="Answer" aria-live="polite">
           {a.hits.length === 0 ? (
             <div className={css.notfound}>
-              <h2>Not found in your library</h2>
-              <p>None of the {a.searched.length} {a.searched.length === 1 ? 'source' : 'sources'} we could read has a sentence that answers this. That does not mean nobody has studied it.</p>
-              <Link to={`/p/${project.id}/plan`} className="btn">
-                Search for more sources
-              </Link>
+              <h2>Not found</h2>
+              <p>
+                {kept.length === 0
+                  ? 'Your library has no approved sources yet, so nothing in it answers this. '
+                  : `None of the ${a.searched.length} ${a.searched.length === 1 ? 'source' : 'sources'} we could read has a sentence that answers this. `}
+                We do not make up a study to fill the gap. That does not mean nobody has studied it.
+              </p>
+              <div className="row">
+                <Link to={`/p/${project.id}/discover`} className="btn">
+                  Search the registries for related real sources
+                </Link>
+                <Link to={`/p/${project.id}/plan`} className="btn">
+                  Plan a search
+                </Link>
+              </div>
+              <p className="soft">Every source found there is checked against the registries and labelled before you can save it.</p>
             </div>
           ) : (
             <>
@@ -174,5 +195,48 @@ export function Ask({ project }: StepProps) {
         </section>
       )}
     </>
+  );
+}
+
+/** The answer to a quotation: found word for word, or what could not be checked and why. Never a confirmation without the words. */
+function QuoteAnswer({ check, projectId }: { check: QuoteCheck; projectId: string }) {
+  return (
+    <section className={`stack ${css.notfound}`} aria-label="Quotation check" aria-live="polite">
+      {check.kind === 'found' ? (
+        <>
+          <h2>Found word for word</h2>
+          <p>
+            “{check.quote}” is in the {check.source.textOrigin === 'abstract' ? 'abstract' : 'text'} of <strong>{titleOf(check.source)}</strong> ({who(check.source)}). Check the page before you quote it.
+          </p>
+        </>
+      ) : (
+        <>
+          <h2>Could not confirm this quotation</h2>
+          <p>
+            “{check.quote}”{' '}
+            {check.kind === 'not-in-text'
+              ? 'is not in the text we have for the cited source.'
+              : check.kind === 'abstract-only'
+                ? 'is not in the abstract of the cited source. Only the abstract is available, so the full paper could not be checked.'
+                : `could not be checked: ${check.cited} is not in your library with readable text.`}{' '}
+            Do not use it until you find these exact words in the paper.
+          </p>
+          {(check.kind === 'not-in-text' || check.kind === 'abstract-only') && (
+            <ul className="soft">
+              {check.checked.map((s) => (
+                <li key={s.id}>
+                  Looked in: {titleOf(s)} ({who(s)}), {s.textOrigin === 'abstract' ? 'abstract only' : 'full text'}
+                </li>
+              ))}
+            </ul>
+          )}
+          {check.kind === 'no-source' && (
+            <Link to={`/p/${projectId}/find`} className="btn">
+              Add the cited source first
+            </Link>
+          )}
+        </>
+      )}
+    </section>
   );
 }

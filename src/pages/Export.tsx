@@ -162,7 +162,7 @@ export function Export({ project }: StepProps) {
                   </div>
                 );
               })}
-              <p className={css.trust}>The labels are for you. They are not in the list you copy or download.</p>
+              <p className={css.trust}>Each entry carries its status in the list you copy or download too, such as [Verified] or [Retracted, kept by the student with a reason].</p>
               {notes.length > 0 && (
                 <div className={css.notes}>
                   <h3>Notes on sources</h3>

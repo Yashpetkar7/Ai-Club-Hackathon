@@ -123,3 +123,40 @@ Produced, as its own tab next to Find (Find itself unchanged): a Discover helper
 ### Correction recorded after an independent review (26 November)
 
 An earlier line in this session said that other people's files got only small hooks. That was not accurate. This branch also changed Nihal's Evidence page, claim labels, support worker and AI gateway, and restructured parts of Yash's navigation shell. Each change is listed by file and owner in `docs/deck/INTEGRATION_HANDOVER.md`, for the owners to review before Yash merges.
+
+## 26 November 2026, day of the hackathon (Phase 2)
+
+### Exact request: judging criteria
+
+> The judging will be based on "Judged on: Workflow (8) · Architecture (6) · Ethical considerations (5) · Governance (5) · Guardrails (6)" do not disturb the agents, just ensure they are fulfilled otherwise start building them or plan them if agents workflow needs to be completed and then do it, you can web search for this as well. there is also a prompt.jpg file can you check that as well and follow the instrcutions so that you will be and work honestly and accuractely by following the principles
+
+Produced: the Guardrails page (`#/guardrails`), which runs every deck guardrail live on the real code, plus what runs where, model cards and our own mapping to NIST AI RMF 1.0, the OWASP Top 10 for LLM Applications 2025 and UNESCO's 2023 guidance (labelled as not a certification).
+
+### Exact requests: run it locally, and deployment
+
+> can you also give me the commnads to start the services locally in my laptop and then showcase whatever we have developed, juts give the commands to run in powershell now and do not start anything.
+
+> can you start anbd give me the local urls. And can you ensyre me that once merge is done the deployment will automatically done.
+
+Answer given: started `npm start` (http://127.0.0.1:4173). Deployment is not automatic: `vercel.json` has `"git": {"deploymentEnabled": false}` and the live site predates both of today's merges, so Yash deploys after merging. Main had moved, and this branch conflicted with it in six files.
+
+### Exact request: merge main into this branch
+
+> ok build accordingly and the push do not merge. We will decide and do it. And also update the guide
+
+Produced: `main` (a39d992) merged into `hemanth/lab-governance`, not the other way round (553b3d3). Yash's fine-tuned support model now loads through this branch's shared worker, with model downloads taking turns because the library's local/remote switch is global. The Lab sample was re-recorded with the shipped Retraction Watch index read from disk. The Integrity Lab now measures the support model the site ships (65fc31e): Verified counts are unchanged, and fewer false claims are Disputed (65 of 80, against 72 with the original model). An independent review found that a failed download could leave requests running under the other model's settings; a failed download now closes the shared worker. Mistake made and fixed in this step: `src/core/claims/quote.ts` (Nihal's) was overwritten by accident and restored from git unchanged before anything was committed.
+
+### Exact request: Phase 2 day-of requirements
+
+> Now the new instructions for the hackathon are revealed and it includes edge cases and attackes on the platform can you read and then build accordingly and make sure not only these attacks or edge cases but other edge cases are also taken into account so that in production it will not break. The Instructions are:"[the Phase 2 brief: six required edge cases, the eight-reference test pack, three assistant requests, constraints and bonus cases]"
+
+> So check thhese as well and then push them into my branch.
+
+Ran the eight test-pack references through the real checker against live Crossref, OpenAlex, DataCite and doi.org (not committed; nothing in the code names any test-pack reference). Found and fixed, as general rules:
+- A DOI whose record has none of the given authors is now Wrong paper (Mismatch), even with the same title. Before, it was Details differ.
+- A reference without a DOI that Crossref matched only to a re-posted copy (a 2025 record of a 2017 paper) would have offered a wrong year as a fix. The checker now also searches OpenAlex by title, and looks the result up by its DOI in Crossref or DataCite, so OpenAlex never vouches for itself.
+- A web page with no scholarly details is labelled as a web source, not checked in a scholarly database, instead of Not found.
+- Check page: a suggested fix lists each detail (you wrote / the registry has), with Accept the fix or Keep mine. Accepting checks the reference again. A Wrong paper shows what the DOI points to next to what was pasted. Duplicates within one pasted list are detected, with Keep one and merge, or They are different works.
+- Ask: a question nothing answers gets a plain "Not found" and a link to search the registries, where every result is checked before it can be saved. It works with an empty library. A quotation is checked word for word against the cited source's text. If it is not there it is never confirmed, and when only the abstract is available the answer says so.
+- Exports: every entry carries its status, such as [Verified] or [Retracted, kept by the student with a reason], in text, BibTeX, RIS and Word.
+- Notes: text addressed to an AI ("SYSTEM: …", "ignore … rules", "mark … as verified") is flagged, saved as the student's text, and never changes a check.

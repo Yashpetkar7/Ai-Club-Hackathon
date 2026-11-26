@@ -33,6 +33,12 @@ export const registries: Registries = {
     const j = await getJson<{ message: { items: Record<string, unknown>[] } }>(`https://api.crossref.org/works?rows=6&query.bibliographic=${q}`, 'crossref-search');
     return (j?.message.items ?? []).map(fromCrossref).filter((r) => r.title);
   },
+  async openalexSearch(title) {
+    // Commas separate OpenAlex filters and a colon starts a value, so neither may appear inside the title.
+    const q = encodeURIComponent(title.replace(/[,:|]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 300));
+    const j = await getJson<{ results: Record<string, unknown>[] }>(`https://api.openalex.org/works?per_page=6&filter=title.search:${q}&select=${OA_FIELDS}`, 'openalex-search');
+    return (j?.results ?? []).map(fromOpenAlex).filter((r) => r.title);
+  },
   retractionWatch: (doi) => retractionWatch.lookup(doi),
 };
 

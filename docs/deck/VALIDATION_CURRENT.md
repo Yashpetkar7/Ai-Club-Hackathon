@@ -2,6 +2,24 @@
 
 **Updated 26 November 2026, 10:30 Dubai. Code checked at `13e8fbc`, pushed as hbasired; this document is committed after it.** Earlier validation files in this folder describe earlier snapshots. Do not present their totals as new measurements.
 
+## Update, 26 November afternoon: merge of main and Phase 2
+
+- `main` (`a39d992`) was merged into this branch (`553b3d3`). Merging back into `main` has no conflicts.
+- The site now ships Yash's support model, fine-tuned on SciFact, and the Integrity Lab measures that model. On our claim sets:
+  - False claims Verified: 0 of 80 (unchanged).
+  - True claims Verified: 21 of 24 (unchanged).
+  - False claims Disputed: 65 of 80, against 72 with the original model.
+  - AUC: 0.969, against 0.987.
+  - Contradiction alone: 36 of 80 false claims, against 64.
+
+  The fine-tuned model is as safe on these claims, but disputes fewer false ones. Which model ships is Yash's decision (`SUPPORT.key` in `src/core/claims/support.ts`). The Lab follows that key, and a test fails if they drift apart.
+- Real-model run in Chrome: both models in one worker, with the fine-tune (`tests/unit/fixtures/nli-candidates-scifact.json`, 449 runs, load 18.6 s). The start-at rule still gives no false Verified and no true Disputed.
+- The Phase 2 test pack was run live against the registries, and the results are in [PHASE2_CASES.md](PHASE2_CASES.md). The new rules are covered by `tests/unit/phase2-cases.test.ts`, with 16 cases.
+- After the Phase 2 changes:
+  - tsc: clean.
+  - vitest (full run): 1,078 passed, 3 skipped; the only failure was the Lab sample's hash, which was then re-recorded with no verdict change. The final run is in the commit message.
+  - Browser tests in Chrome for the pages touched: see the commit message.
+
 ## Where the work is
 
 | Place | State |

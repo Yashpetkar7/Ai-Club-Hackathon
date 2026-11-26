@@ -1,8 +1,40 @@
 # Handover for Yash: `hemanth/lab-governance`
 
-**Branch:** `hemanth/lab-governance`, pushed as hbasired with normal fast-forward pushes (no force). The code was checked at `13e8fbc` on 26 November 2026, and the docs commit follows it. `main` is still `5e97ed1`, so none of this is on the live site until you merge and deploy.
+**Branch:** `hemanth/lab-governance`, pushed as hbasired with normal fast-forward pushes (no force). On 26 November it was brought up to date with `main` (`a39d992`, merge commit `553b3d3`), so merging it back into `main` has no conflicts (checked with `git merge-tree`). **Deploying is not automatic:** `vercel.json` has `"git": {"deploymentEnabled": false}`, so after merging, deploy by hand as before.
 
-Product direction and what is still open: [vision and roadmap](../VISION_AND_ROADMAP.md). Test output and measured numbers: [current validation](VALIDATION_CURRENT.md).
+Product direction and what is still open: [vision and roadmap](../VISION_AND_ROADMAP.md). Test output and measured numbers: [current validation](VALIDATION_CURRENT.md). Phase 2 case by case: [PHASE2_CASES.md](PHASE2_CASES.md).
+
+## Phase 2 day-of changes (26 November, after 13:15)
+
+General rules, none written for a test-pack reference. Each needs its owner's look before merging.
+
+**Yash**
+- `src/core/verify/verdict.ts`:
+  - A DOI whose record has none of the given authors is Wrong paper.
+  - A web page with no scholarly details gets `could-not-check` with `WEB_SOURCE`.
+  - A reference with no DOI and no clean Crossref match is also searched in OpenAlex by title. The result is looked up by its DOI in Crossref or DataCite, so OpenAlex never vouches for itself; a work found only there with no DOI is One registry only (`NO_DOI_ONE_REGISTRY`).
+  - The Lab sample was re-recorded, and no verdict changed.
+- `src/core/verify/fix.ts` (new): `registryFix()` builds a suggested fix from the record only. `duplicateGroups()` finds the same work twice in one list.
+- `src/core/contracts.ts`: two reason codes, `NO_DOI_ONE_REGISTRY` and `WEB_SOURCE`, with their text.
+- `src/core/registries/index.ts`: `openalexSearch()` (OpenAlex `title.search`).
+- `src/pages/Check.tsx`:
+  - Accept the fix or Keep mine; an accepted fix is checked again.
+  - "You pasted" against "This DOI points to" for Wrong paper.
+  - Duplicate groups with Keep one and merge, or They are different works.
+- `src/core/pdf/injection.ts`: three patterns for orders aimed at the checker ("SYSTEM:", "ignore … rules", "mark … as verified").
+
+**Siddal**
+- `src/core/cite/export.ts`: every exported entry carries its status (`exportStatus()`), in text, BibTeX (note), RIS (N1) and Word. The words are Verified, Needs fix, Mismatch, Retracted, Not found, Not checked, plus SAMPLE and "kept by the student with a reason".
+- `src/pages/Export.tsx`: one sentence changed to say the status travels with each entry.
+- `src/pages/Library.tsx`: a calm notice under Notes when a note reads like an instruction to an AI. Notes save as typed.
+
+**Nihal**
+- `src/pages/Ask.tsx`:
+  - "Not found" plus a link to registry search; asking works with an empty library.
+  - A quotation is checked word for word against the cited source's text (`src/core/claims/quoteCheck.ts`, new, using your `quotesExactly()`), and closest sentences are not shown for a quotation.
+  - `src/core/claims/quote.ts` was overwritten by mistake during this work and restored from git, unchanged, before any commit.
+
+Tests: `tests/unit/phase2-cases.test.ts` (16 cases on the real checker with SAMPLE stand-in registries).
 
 ## What works
 

@@ -4,6 +4,7 @@ import { go, Link } from '@/app/router';
 import { VERDICT_TEXT, type RawReference, type ReferenceCheck, type Verdict } from '@/core/contracts';
 import { registries } from '@/core/registries';
 import { extractReferences } from '@/core/verify/parse';
+import { duplicateGroups, registryFix } from '@/core/verify/fix';
 import { checkReference } from '@/core/verify/verdict';
 import { SAMPLE_NOTE, SAMPLE_TEXT } from '@/fixtures/sample';
 import { addSource } from '@/store/actions';
@@ -19,7 +20,11 @@ interface Item {
   ref: RawReference;
   check?: ReferenceCheck;
   saved?: boolean;
+  /** The student's answer to a suggested fix. Nothing changes without it. */
+  fix?: 'accepted' | 'rejected';
 }
+
+const FIELD_WORD = { title: 'Title', authors: 'Authors', year: 'Year', doi: 'DOI' } as const;
 
 const ORDER: Verdict[] = ['confirmed', 'one-registry', 'details-differ', 'wrong-paper', 'retracted', 'not-found', 'could-not-check'];
 export const HANDOFF = 'pt-check-text';
@@ -88,6 +93,23 @@ export function Check() {
     if (run.current === mine) setItems((cur) => cur?.map((c) => (c.id === it.id ? { ...c, check } : c)) ?? cur);
   }
 
+  /** The student accepts the registry's details. The reference is checked again, so the label still comes from the checker. */
+  async function acceptFix(it: Item) {
+    const f = registryFix(it.ref, it.check);
+    if (!f) return;
+    const mine = run.current;
+    setItems((cur) => cur?.map((c) => (c.id === it.id ? { id: c.id, ref: f.ref, fix: 'accepted' as const } : c)) ?? cur);
+    const check = await checkReference(f.ref, registries);
+    if (run.current === mine) setItems((cur) => cur?.map((c) => (c.id === it.id ? { ...c, check } : c)) ?? cur);
+  }
+  const rejectFix = (it: Item) => setItems((cur) => cur?.map((c) => (c.id === it.id ? { ...c, fix: 'rejected' as const } : c)) ?? cur);
+  /** Merging duplicates: the student picks the entry to keep and the others leave this list. */
+  const keepOnly = (keep: number, drop: number[]) => {
+    setItems((cur) => cur?.filter((c) => !drop.includes(c.id)) ?? cur);
+    setOpen(keep);
+  };
+  const [different, setDifferent] = useState<string[]>([]);
+
   async function save(it: Item) {
     const pid = projectId || projects[0]?.id;
     if (!pid || !it.check) return;
@@ -98,6 +120,13 @@ export function Check() {
   const done = items?.filter((i) => i.check) ?? [];
   const counts = ORDER.map((v) => [v, done.filter((i) => i.check!.verdict === v).length] as const).filter(([, n]) => n > 0);
   const current = items?.find((i) => i.id === open);
+  const fix = current ? registryFix(current.ref, current.check) : null;
+  const groups = items && !running ? duplicateGroups(done).filter((g) => !different.includes(g.ids.join())) : [];
+  const pos = (id: number) => (items?.findIndex((i) => i.id === id) ?? -1) + 1;
+  const short = (id: number) => {
+    const it = items?.find((i) => i.id === id);
+    return (it?.ref.title ?? it?.ref.raw ?? '').slice(0, 60);
+  };
 
   return (
     <main className="wrap page" id="main" tabIndex={-1}>
@@ -191,6 +220,23 @@ export function Check() {
               <NotVerified /> Cited in the text with no entry in the list: <strong>{orphans.join('; ')}</strong>
             </p>
           )}
+          {groups.map((g) => (
+            <div key={g.ids.join()} className={css.fix} role="group" aria-label="The same work, listed more than once">
+              <p>
+                <strong>Duplicate.</strong> {g.ids.map((id) => `#${pos(id)} “${short(id)}”`).join(' and ')} are the same work. {g.why} Keep one entry?
+              </p>
+              <div className="row">
+                {g.ids.map((id) => (
+                  <button key={id} className="btn" type="button" onClick={() => keepOnly(id, g.ids.filter((x) => x !== id))}>
+                    Keep #{pos(id)} and merge
+                  </button>
+                ))}
+                <button className="btn" type="button" onClick={() => setDifferent((d) => [...d, g.ids.join()])}>
+                  They are different works
+                </button>
+              </div>
+            </div>
+          ))}
           <div className={css.split}>
             <ol className={css.list}>
               {items.map((it) => (
@@ -206,6 +252,42 @@ export function Check() {
             <div className={css.side}>
               {current?.check ? (
                 <Receipt key={current.id} check={current.check} raw={current.ref} live>
+                  {current.check.verdict === 'wrong-paper' && current.check.record && (
+                    <div className={css.fix} role="group" aria-label="What this DOI points to">
+                      <p>
+                        <strong>You pasted:</strong> {current.ref.raw}
+                      </p>
+                      <p>
+                        <strong>This DOI points to:</strong>{' '}
+                        {[current.check.record.authors.slice(0, 3).map((a) => a.family).join(', ') + (current.check.record.authors.length > 3 ? ` and ${current.check.record.authors.length - 3} more` : ''), current.check.record.year && `(${current.check.record.year})`, current.check.record.title, current.check.record.doi].filter(Boolean).join(' · ')}
+                      </p>
+                      <p className="soft">Nothing was swapped. Find the right DOI for the paper you meant, or leave this reference out.</p>
+                    </div>
+                  )}
+                  {fix && current.fix !== 'rejected' && (
+                    <div className={css.fix} role="group" aria-label="Suggested fix">
+                      <p>
+                        <strong>Suggested fix, from the registry.</strong> Nothing changes unless you accept it.
+                      </p>
+                      <ul className={css.changes}>
+                        {fix.changes.map((c) => (
+                          <li key={c.field}>
+                            {FIELD_WORD[c.field]}: you wrote <strong>{c.from || 'nothing'}</strong>, the registry has <strong>{c.to}</strong>
+                          </li>
+                        ))}
+                      </ul>
+                      <div className="row">
+                        <button className="btn main" type="button" onClick={() => void acceptFix(current)}>
+                          Accept the fix
+                        </button>
+                        <button className="btn" type="button" onClick={() => rejectFix(current)}>
+                          Keep mine
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  {current.fix === 'rejected' && <p className="soft">You kept your details. The label stays “{VERDICT_TEXT['details-differ'].label}” until they match the registry.</p>}
+                  {current.fix === 'accepted' && <p className="soft">You accepted the registry’s details, and the reference was checked again.</p>}
                   {(current.check.verdict === 'one-registry' || current.check.verdict === 'could-not-check') && (
                     <button className="btn main" type="button" onClick={() => void again(current)}>
                       Check again

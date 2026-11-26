@@ -18,6 +18,7 @@ import { PdfDrop } from '@/ui/PdfDrop';
 import { Receipt } from '@/ui/Receipt';
 import { SourceStamp } from '@/ui/Stamp';
 import css from './Library.module.css';
+import { findInstructions } from '@/core/pdf/injection';
 
 type Status = 'all' | 'citable' | 'waiting';
 type Sort = 'newest' | 'author' | 'year' | 'title';
@@ -362,6 +363,11 @@ function Detail({ s, folders, onClose }: { s: Source; folders: string[]; onClose
           <span>Notes</span>
           <textarea className="field" rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} />
         </label>
+        {findInstructions(notes).length > 0 && (
+          <p className="soft" role="note">
+            This note reads like an instruction to an AI. It is saved as your text only: a note never changes a check or a status. Only a check does.
+          </p>
+        )}
         <button className="btn" type="submit" disabled={busy || (folder === (s.folder ?? '') && tags === s.tags.join(', ') && notes === s.notes)}>
           Save notes
         </button>

@@ -1,4 +1,4 @@
-import type { CitationStyle, Source } from '@/core/contracts';
+import type { CitationStyle, Source, Verdict } from '@/core/contracts';
 import { cleanTitle, stripTags } from '@/core/verify/normalise';
 import { citeKey, sourceToCsl } from './csl';
 import { checkDraft, numberCitations } from './draft';
@@ -9,10 +9,30 @@ import { mustBeExportable, reasonNotes } from './preflight';
 
 const NOTES = 'Notes on sources';
 
+/** The status every exported entry carries, so a warning travels with the reference out of the site. */
+const STATUS_WORD: Record<Verdict, string> = {
+  confirmed: 'Verified',
+  'one-registry': 'Needs checking: one registry only',
+  'details-differ': 'Needs fix',
+  'wrong-paper': 'Mismatch',
+  retracted: 'Retracted',
+  'not-found': 'Not found',
+  'could-not-check': 'Not checked',
+};
+export function exportStatus(s: Source): string {
+  const word = s.check ? STATUS_WORD[s.check.verdict] : 'Not checked';
+  return [s.check?.sample ? 'SAMPLE' : '', word, s.keptWithReason ? 'kept by the student with a reason' : ''].filter(Boolean).join(', ');
+}
+const statusOf = (sources: Source[]) => {
+  const by = new Map(sources.map((s) => [s.id, exportStatus(s)]));
+  return (id: string) => by.get(id) ?? 'Not checked';
+};
+
 export function toText(sources: Source[], style: CitationStyle, files: StyleFiles): string {
   mustBeExportable(sources);
   const notes = reasonNotes(sources);
-  return [LIST_HEADING[style], '', ...formatSources(sources, style, files).entries.map((e) => e.text), ...(notes.length ? ['', NOTES, '', ...notes] : [])].join('\n');
+  const status = statusOf(sources);
+  return [LIST_HEADING[style], '', ...formatSources(sources, style, files).entries.map((e) => `${e.text} [${status(e.id)}]`), ...(notes.length ? ['', NOTES, '', ...notes] : [])].join('\n');
 }
 
 const BIB: Record<string, string> = { 'article-journal': 'article', 'paper-conference': 'inproceedings', book: 'book', chapter: 'incollection', report: 'techreport', thesis: 'phdthesis', webpage: 'misc', article: 'misc', dataset: 'misc', document: 'misc' };
@@ -41,7 +61,7 @@ export function toBibtex(sources: Source[]): string {
         ['publisher', c.publisher && tex(c.publisher)],
         ['doi', c.DOI],
         ['url', c.DOI ? undefined : c.URL],
-        ['note', s.keptWithReason ? tex(line(`Kept by the student with a reason: ${s.keptWithReason}`)) : undefined],
+        ['note', tex(line([`Status: ${exportStatus(s)}`, s.keptWithReason ? `Kept by the student with a reason: ${s.keptWithReason}` : ''].filter(Boolean).join('. ')))],
       ];
       return `@${BIB[c.type] ?? 'misc'}{${base}${n ? String.fromCharCode(96 + n + 1) : ''},\n${f.filter(([, v]) => v).map(([k, v]) => `  ${k} = {${v}}`).join(',\n')}\n}`;
     })
@@ -67,7 +87,7 @@ export function toRis(sources: Source[]): string {
         ['PB', c.publisher],
         ['DO', c.DOI],
         ['UR', c.DOI ? `https://doi.org/${c.DOI}` : c.URL],
-        ['N1', s.keptWithReason ? line(`Kept by the student with a reason: ${s.keptWithReason}`) : undefined],
+        ['N1', line([`Status: ${exportStatus(s)}`, s.keptWithReason ? `Kept by the student with a reason: ${s.keptWithReason}` : ''].filter(Boolean).join('. '))],
       ];
       return `${rows.filter(([, v]) => v).map(([k, v]) => `${k}  - ${v}`).join('\r\n')}\r\nER  - \r\n`;
     })
@@ -92,12 +112,13 @@ export async function toDocx(o: { sources: Source[]; style: CitationStyle; files
     const text = o.style === 'ieee' ? numberCitations(o.draft, o.sources) : o.draft;
     body.push(head(o.question), ...text.split(/\n+/).filter((x) => x.trim()).map(para));
   }
+  const status = statusOf(list);
   const entry = (e: Entry) =>
     new Paragraph({
       spacing: { line: 480 },
       indent: { left: 720, hanging: 720 },
       tabStops: [{ type: TabStopType.LEFT, position: 720 }],
-      children: [...(e.label ? [run(`${e.label}\t`)] : []), ...e.runs.map((r) => run(r.text, { ...(r.italic ? { italics: true } : {}), ...(r.bold ? { bold: true } : {}) }))],
+      children: [...(e.label ? [run(`${e.label}\t`)] : []), ...e.runs.map((r) => run(r.text, { ...(r.italic ? { italics: true } : {}), ...(r.bold ? { bold: true } : {}) })), run(` [${status(e.id)}]`, { bold: true })],
     });
   const formatted = formatSources(list, o.style, o.files);
   body.push(head(LIST_HEADING[o.style], !!o.draft?.trim()), ...formatted.entries.map(entry));

@@ -195,7 +195,10 @@ function unwrap(text: string): string[] {
         out.push(cur);
         cur = '';
       }
-      const starts = looksLikeReference(l) || NUMBERED.test(l) || /^[\p{Lu}][\p{L}’'\-]+,\s+\p{Lu}\./u.test(l);
+      // A web page line (words, then an address) starts a new entry when the one above is already complete:
+      // it ends in page numbers, a DOI or an address. An address alone on a line still belongs to the entry above.
+      const webStart = !!cur && /\bhttps?:\/\//i.test(l) && tokens(l.replace(/https?:\/\/\S+/gi, ' ')).length >= 2 && /(\d[\d–-]*\.?|https?:\/\/\S+|\b10\.\d{4,9}\/\S+)\s*$/.test(cur) && looksLikeReference(cur);
+      const starts = looksLikeReference(l) || NUMBERED.test(l) || /^[\p{Lu}][\p{L}’'\-]+,\s+\p{Lu}\./u.test(l) || webStart;
       if (starts && cur) {
         out.push(cur);
         cur = l;
@@ -224,6 +227,8 @@ export function extractReferences(text: string): Extracted {
   for (const p of parts) {
     if (BARE_DOI.test(p)) refs.push({ raw: p, doi: findDoi(p)! });
     else if (looksLikeReference(p)) refs.push(parseReference(p));
+    // A short line with a web address is a reference to a web page, even with no author, year or DOI.
+    else if (/\bhttps?:\/\/\S+/i.test(p) && tokens(p).length <= 40) refs.push(parseReference(p));
     else prose.push(p);
   }
   if (!refs.length && parts.length === 1 && tokens(t).length >= 4 && tokens(t).length <= 40 && !/\(\p{L}[^)]*,\s*\d{4}[a-z]?\)/u.test(t)) {

@@ -15,6 +15,8 @@ export interface Registries {
   dataciteByDoi(doi: string): Promise<RegistryRecord | null>;
   doiExists(doi: string): Promise<boolean>;
   crossrefSearch(query: string): Promise<RegistryRecord[]>;
+  /** OpenAlex by title, for a reference with no DOI that Crossref holds no clean match for. Optional. */
+  openalexSearch?(title: string): Promise<RegistryRecord[]>;
   /** The shipped Retraction Watch index. null means it has no notice for this DOI. Optional: it can only add a warning. */
   retractionWatch?(doi: string): Promise<RwEntry | null>;
 }
@@ -66,6 +68,9 @@ export async function checkReference(ref: RawReference, reg: Registries, now: ()
     ...(record ? { record } : {}),
   });
 
+  // A web page is not a scholarly work. Searching scholarly registries for it would only end in a misleading "Not found".
+  if (!ref.doi && ref.url && !/doi\.org/i.test(ref.url) && !(ref.title && ref.authors?.length && ref.year)) return done('could-not-check', ['WEB_SOURCE']);
+
   // The DOI OpenAlex answered with on the last lookup. It can differ when OpenAlex merged versions of a work.
   let secondDoi: string | undefined;
   const judge = async (rec: RegistryRecord, viaDoi: boolean): Promise<ReferenceCheck> => {
@@ -114,6 +119,8 @@ export async function checkReference(ref: RawReference, reg: Registries, now: ()
     }
     const bareDoi = viaDoi && !ref.title && !ref.authors?.length && tokens(ref.raw).length <= 8;
     if (viaDoi && !bareDoi && ref.title && c.title < 0.6) return done('wrong-paper', ['DOI_IS_ANOTHER_PAPER'], record, c);
+    // None of the student's authors is on the DOI's record: the DOI belongs to other people's work, even with the same title.
+    if (viaDoi && !bareDoi && (ref.authors?.length ?? 0) > 0 && !c.authorsUnknown && !c.firstAuthor && c.authors === 0) return done('wrong-paper', ['DOI_IS_ANOTHER_PAPER', 'AUTHOR_DIFFERS'], record, c);
     if (record.retracted) return done('retracted', ['RETRACTED', ...(bareDoi ? [] : reasonsFrom(c))], record, c);
     // A clean match that only one registry could vouch for is never shown as Confirmed.
     const clean = (): ReferenceCheck => (second === 'matched' ? done('confirmed', [], record, c) : done('one-registry', [second === 'disagrees' ? 'REGISTRY_METADATA_DISAGREES' : second === 'missing' ? 'SECOND_REGISTRY_NO_RECORD' : 'SECOND_REGISTRY_UNREACHABLE'], record, c));
@@ -121,6 +128,30 @@ export async function checkReference(ref: RawReference, reg: Registries, now: ()
     const reasons = reasonsFrom(c);
     if (c.title >= th.titleMatch && !reasons.length) return clean();
     return done('details-differ', reasons.length ? reasons : ['TITLE_DIFFERS'], record, c);
+  };
+
+  /**
+   * No DOI, and Crossref has no clean match: it may hold only a copy or another version, or nothing. Ask OpenAlex by
+   * title too. A work found there is then looked up by its DOI in Crossref or DataCite, so OpenAlex never vouches for
+   * itself as the second registry. Returns null when OpenAlex has nothing that fits better than \`beat\`.
+   */
+  const fromOpenAlexSearch = async (beat: number): Promise<ReferenceCheck | null> => {
+    if (ref.doi || !ref.title || !reg.openalexSearch) return null;
+    const o = await timed(trace, 'openalex', () => reg.openalexSearch!(ref.title!), (v) => (v.length ? 'match' : 'no-match'), (v) => `${v.length} candidates by title`);
+    if (!o.ok) return null;
+    const top = o.value.map((r) => ({ r, c: compare(ref, r) })).sort((a, b) => rank(b.c) - rank(a.c))[0];
+    if (!top || top.c.title < th.titleMatch || (!top.c.firstAuthor && top.c.authors === 0) || rank(top.c) <= beat) {
+      trace[trace.length - 1]!.status = 'no-match';
+      return null;
+    }
+    if (top.r.doi) {
+      const cr = await timed(trace, 'crossref', () => reg.crossrefByDoi(top.r.doi!), (v) => (v ? 'match' : 'not-found'));
+      if (cr.ok && cr.value) return judge(cr.value, false);
+      const dc = await timed(trace, 'datacite', () => reg.dataciteByDoi(top.r.doi!), (v) => (v ? 'match' : 'not-found'));
+      if (dc.ok && dc.value) return judge(dc.value, false);
+    }
+    const reasons = reasonsFrom(top.c);
+    return reasons.length ? done('details-differ', reasons, top.r, top.c) : done('one-registry', [top.r.doi ? 'SECOND_REGISTRY_NO_RECORD' : 'NO_DOI_ONE_REGISTRY'], top.r, top.c);
   };
 
   let doiMissing = false;
@@ -153,10 +184,14 @@ export async function checkReference(ref: RawReference, reg: Registries, now: ()
   if (!best || best.c.title < th.titlePossible) {
     last.status = 'no-match';
     if (doiUnknown) return done('could-not-check', ['REGISTRY_UNREACHABLE']);
+    const other = await fromOpenAlexSearch(-Infinity);
+    if (other) return other;
     return done('not-found', doiMissing ? ['DOI_DOES_NOT_EXIST', 'NO_MATCH_IN_REGISTRIES'] : ['NO_MATCH_IN_REGISTRIES']);
   }
   if (!best.c.firstAuthor && best.c.authors === 0 && best.c.title < 0.97) {
     last.status = 'no-match';
+    const other = await fromOpenAlexSearch(-Infinity);
+    if (other) return other;
     return done('not-found', doiMissing ? ['DOI_DOES_NOT_EXIST', 'NO_MATCH_IN_REGISTRIES'] : ['NO_MATCH_IN_REGISTRIES'], undefined, best.c);
   }
   let res = await judge(best.r, false);
@@ -170,6 +205,11 @@ export async function checkReference(ref: RawReference, reg: Registries, now: ()
       const again = await judge(alt.r, false);
       if (!again.reasons.includes('REGISTRY_METADATA_DISAGREES')) res = again;
     }
+  }
+  // Not a clean match by search alone: OpenAlex may hold the work itself where Crossref held a copy (a re-posted PDF, say).
+  if (res.verdict !== 'confirmed' && res.verdict !== 'retracted') {
+    const other = await fromOpenAlexSearch(rank(best.c));
+    if (other) res = other;
   }
   // The DOI could not be looked up and the search led to a work with another DOI: we cannot tell which is right.
   if (doiUnknown && res.record?.doi !== ref.doi) return { ...res, verdict: 'could-not-check', reasons: ['REGISTRY_UNREACHABLE'] };

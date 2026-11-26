@@ -1,16 +1,16 @@
 {
-  "sha256": "1ce1d0c13106379ae8a967eea38dc6442aff900e22db80c94a4a0eeadd8c4a00",
+  "sha256": "8ed94f25cb872f6a7497181cdec88c9015547bb6cdd3fc512da9de318fbfe594",
   "payload": {
     "kind": "recorded-replay",
-    "recordedAt": "2026-11-26T09:10:16.105Z",
+    "recordedAt": "2026-11-26T09:49:31.912Z",
     "registryCapturedAt": null,
     "timing": "simulated-retry-clock",
     "corpusHash": "a042f915a68edc7be4c6280396c4bc88cf4788bf744387796531f6eba77e4693",
     "sourceHashes": {
-      "src/core/verify/verdict.ts": "170ffd350882220fc2da890e702a887e91e6e1599d982517128eabf625e1d845",
+      "src/core/verify/verdict.ts": "92452ba45385ffaaee29cc255714f3c6b0385c68c3d470db90ef42d538363e67",
       "src/core/verify/compare.ts": "7df4b0e8ce8d34cf0a68d57edc2f309bd49255bb312149e4fc25142e38d4d2c2",
       "src/core/verify/normalise.ts": "97a68e8c9b3c557c37477d4bac4c1d62a94808026d5c5c92363ccf0860070745",
-      "src/core/registries/index.ts": "06add815e462f24d235e64692a91bf0421f17179ee0e7ac49b93cbadc4ad4c23",
+      "src/core/registries/index.ts": "a1ca0b940bbf075628e97a2ec29695835c9a1472206deabf353e7461e205b8d5",
       "src/core/registries/http.ts": "64e179f4954cb88ac2b53834d50f7b8d5501212d369398c62d4243eee66b886c",
       "src/core/registries/map.ts": "15ec2f6c8389f4555e748596d45ea01f93811ddae1d6ce157b858b932901ecd1",
       "src/core/registries/retractionWatch.ts": "bbc68d93a4a411366d71fbe8c601c1c4f8285582342ca31b9bf8aa80dd29eab2",
@@ -22,12 +22,12 @@
       "tests/unit/fixtures/registry.json": "31230615fc87ac024c8e8336b95c661d33ad573eb640a48f2dc4a4daf9f21c7a"
     },
     "run": {
-      "id": "recorded-replay-2026-11-26T09:10:14.769Z",
+      "id": "recorded-replay-2026-11-26T09:49:30.799Z",
       "mode": "sample",
       "corpusVersion": "1",
       "status": "completed",
-      "startedAt": "2026-11-26T09:10:14.769Z",
-      "finishedAt": "2026-11-26T09:10:16.105Z",
+      "startedAt": "2026-11-26T09:49:30.799Z",
+      "finishedAt": "2026-11-26T09:49:31.912Z",
       "rows": [
         {
           "case": {
@@ -60,8 +60,8 @@
             ]
           },
           "state": "completed",
-          "startedAt": "2026-11-26T09:10:14.770Z",
-          "finishedAt": "2026-11-26T09:10:14.859Z",
+          "startedAt": "2026-11-26T09:49:30.799Z",
+          "finishedAt": "2026-11-26T09:49:30.884Z",
           "check": {
             "verdict": "confirmed",
             "reasons": [],
@@ -105,7 +105,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-26T09:10:14.859Z",
+            "checkedAt": "2026-11-26T09:49:30.884Z",
             "record": {
               "registry": "crossref",
               "id": "10.1016/j.ijinfomgt.2023.102642",
@@ -451,8 +451,8 @@
             ]
           },
           "state": "completed",
-          "startedAt": "2026-11-26T09:10:14.860Z",
-          "finishedAt": "2026-11-26T09:10:14.865Z",
+          "startedAt": "2026-11-26T09:49:30.884Z",
+          "finishedAt": "2026-11-26T09:49:30.888Z",
           "check": {
             "verdict": "confirmed",
             "reasons": [],
@@ -496,7 +496,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-26T09:10:14.865Z",
+            "checkedAt": "2026-11-26T09:49:30.888Z",
             "record": {
               "registry": "crossref",
               "id": "10.1037/0033-2909.117.3.497",
@@ -557,8 +557,8 @@
             ]
           },
           "state": "completed",
-          "startedAt": "2026-11-26T09:10:14.865Z",
-          "finishedAt": "2026-11-26T09:10:14.868Z",
+          "startedAt": "2026-11-26T09:49:30.888Z",
+          "finishedAt": "2026-11-26T09:49:30.893Z",
           "check": {
             "verdict": "confirmed",
             "reasons": [],
@@ -602,7 +602,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-26T09:10:14.868Z",
+            "checkedAt": "2026-11-26T09:49:30.893Z",
             "record": {
               "registry": "crossref",
               "id": "10.1038/s41598-023-41032-5",
@@ -663,8 +663,8 @@
             ]
           },
           "state": "completed",
-          "startedAt": "2026-11-26T09:10:14.868Z",
-          "finishedAt": "2026-11-26T09:10:14.884Z",
+          "startedAt": "2026-11-26T09:49:30.893Z",
+          "finishedAt": "2026-11-26T09:49:30.910Z",
           "check": {
             "verdict": "one-registry",
             "reasons": [
@@ -711,7 +711,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-26T09:10:14.884Z",
+            "checkedAt": "2026-11-26T09:49:30.910Z",
             "record": {
               "registry": "crossref",
               "id": "10.1086/261763",
@@ -769,8 +769,8 @@
             ]
           },
           "state": "completed",
-          "startedAt": "2026-11-26T09:10:14.884Z",
-          "finishedAt": "2026-11-26T09:10:14.902Z",
+          "startedAt": "2026-11-26T09:49:30.910Z",
+          "finishedAt": "2026-11-26T09:49:30.925Z",
           "check": {
             "verdict": "confirmed",
             "reasons": [],
@@ -814,7 +814,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-26T09:10:14.902Z",
+            "checkedAt": "2026-11-26T09:49:30.925Z",
             "record": {
               "registry": "crossref",
               "id": "10.1093/qje/qju032",
@@ -884,8 +884,8 @@
             ]
           },
           "state": "completed",
-          "startedAt": "2026-11-26T09:10:14.902Z",
-          "finishedAt": "2026-11-26T09:10:14.918Z",
+          "startedAt": "2026-11-26T09:49:30.925Z",
+          "finishedAt": "2026-11-26T09:49:30.942Z",
           "check": {
             "verdict": "retracted",
             "reasons": [
@@ -931,7 +931,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-26T09:10:14.918Z",
+            "checkedAt": "2026-11-26T09:49:30.942Z",
             "record": {
               "registry": "crossref",
               "id": "10.1108/jrit-01-2024-0017",
@@ -1004,8 +1004,8 @@
             ]
           },
           "state": "completed",
-          "startedAt": "2026-11-26T09:10:14.918Z",
-          "finishedAt": "2026-11-26T09:10:14.933Z",
+          "startedAt": "2026-11-26T09:49:30.942Z",
+          "finishedAt": "2026-11-26T09:49:30.959Z",
           "check": {
             "verdict": "confirmed",
             "reasons": [],
@@ -1049,7 +1049,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-26T09:10:14.933Z",
+            "checkedAt": "2026-11-26T09:49:30.959Z",
             "record": {
               "registry": "crossref",
               "id": "10.1126/science.adh2586",
@@ -1112,8 +1112,8 @@
             ]
           },
           "state": "completed",
-          "startedAt": "2026-11-26T09:10:14.933Z",
-          "finishedAt": "2026-11-26T09:10:14.949Z",
+          "startedAt": "2026-11-26T09:49:30.959Z",
+          "finishedAt": "2026-11-26T09:49:30.975Z",
           "check": {
             "verdict": "confirmed",
             "reasons": [],
@@ -1157,7 +1157,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-26T09:10:14.949Z",
+            "checkedAt": "2026-11-26T09:49:30.975Z",
             "record": {
               "registry": "crossref",
               "id": "10.1257/aer.20160696",
@@ -1221,8 +1221,8 @@
             ]
           },
           "state": "completed",
-          "startedAt": "2026-11-26T09:10:14.949Z",
-          "finishedAt": "2026-11-26T09:10:15.104Z",
+          "startedAt": "2026-11-26T09:49:30.975Z",
+          "finishedAt": "2026-11-26T09:49:31.131Z",
           "check": {
             "verdict": "could-not-check",
             "reasons": [
@@ -1249,7 +1249,7 @@
                 "note": "network error"
               }
             ],
-            "checkedAt": "2026-11-26T09:10:15.104Z"
+            "checkedAt": "2026-11-26T09:49:31.131Z"
           },
           "missingReplay": [
             "https://api.crossref.org/works/10.1039/9781839167782-00159",
@@ -1286,8 +1286,8 @@
             ]
           },
           "state": "completed",
-          "startedAt": "2026-11-26T09:10:15.104Z",
-          "finishedAt": "2026-11-26T09:10:15.231Z",
+          "startedAt": "2026-11-26T09:49:31.131Z",
+          "finishedAt": "2026-11-26T09:49:31.272Z",
           "check": {
             "verdict": "could-not-check",
             "reasons": [
@@ -1314,7 +1314,7 @@
                 "note": "network error"
               }
             ],
-            "checkedAt": "2026-11-26T09:10:15.231Z"
+            "checkedAt": "2026-11-26T09:49:31.272Z"
           },
           "missingReplay": [
             "https://api.crossref.org/works/10.1080/13546783.2024.2402129",
@@ -1352,8 +1352,8 @@
             ]
           },
           "state": "completed",
-          "startedAt": "2026-11-26T09:10:15.231Z",
-          "finishedAt": "2026-11-26T09:10:15.374Z",
+          "startedAt": "2026-11-26T09:49:31.272Z",
+          "finishedAt": "2026-11-26T09:49:31.404Z",
           "check": {
             "verdict": "could-not-check",
             "reasons": [
@@ -1380,7 +1380,7 @@
                 "note": "network error"
               }
             ],
-            "checkedAt": "2026-11-26T09:10:15.374Z"
+            "checkedAt": "2026-11-26T09:49:31.404Z"
           },
           "missingReplay": [
             "https://api.crossref.org/works/10.15581/003.39.1.030",
@@ -1417,8 +1417,8 @@
             ]
           },
           "state": "completed",
-          "startedAt": "2026-11-26T09:10:15.375Z",
-          "finishedAt": "2026-11-26T09:10:15.518Z",
+          "startedAt": "2026-11-26T09:49:31.404Z",
+          "finishedAt": "2026-11-26T09:49:31.511Z",
           "check": {
             "verdict": "could-not-check",
             "reasons": [
@@ -1445,7 +1445,7 @@
                 "note": "network error"
               }
             ],
-            "checkedAt": "2026-11-26T09:10:15.517Z"
+            "checkedAt": "2026-11-26T09:49:31.511Z"
           },
           "missingReplay": [
             "https://api.crossref.org/works/10.21125/inted.2022.1033",
@@ -1492,8 +1492,8 @@
             }
           },
           "state": "completed",
-          "startedAt": "2026-11-26T09:10:15.518Z",
-          "finishedAt": "2026-11-26T09:10:15.600Z",
+          "startedAt": "2026-11-26T09:49:31.511Z",
+          "finishedAt": "2026-11-26T09:49:31.588Z",
           "check": {
             "verdict": "could-not-check",
             "reasons": [
@@ -1508,7 +1508,7 @@
                 "note": "network error"
               }
             ],
-            "checkedAt": "2026-11-26T09:10:15.600Z"
+            "checkedAt": "2026-11-26T09:49:31.588Z"
           },
           "missingReplay": [
             "https://api.crossref.org/works?rows=6&query.bibliographic=Counterfactual%20evidence%20ledgers%20for%20collaborative%20annotation%20in%20learning%20communities%20LabInventedAuthor1%202023"
@@ -1562,8 +1562,8 @@
             }
           },
           "state": "completed",
-          "startedAt": "2026-11-26T09:10:15.600Z",
-          "finishedAt": "2026-11-26T09:10:15.716Z",
+          "startedAt": "2026-11-26T09:49:31.588Z",
+          "finishedAt": "2026-11-26T09:49:31.652Z",
           "check": {
             "verdict": "details-differ",
             "reasons": [
@@ -1609,7 +1609,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-26T09:10:15.716Z",
+            "checkedAt": "2026-11-26T09:49:31.652Z",
             "record": {
               "registry": "crossref",
               "id": "10.1016/j.ijinfomgt.2023.102642",
@@ -1965,8 +1965,8 @@
             }
           },
           "state": "completed",
-          "startedAt": "2026-11-26T09:10:15.716Z",
-          "finishedAt": "2026-11-26T09:10:15.774Z",
+          "startedAt": "2026-11-26T09:49:31.652Z",
+          "finishedAt": "2026-11-26T09:49:31.710Z",
           "check": {
             "verdict": "details-differ",
             "reasons": [
@@ -2012,7 +2012,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-26T09:10:15.774Z",
+            "checkedAt": "2026-11-26T09:49:31.710Z",
             "record": {
               "registry": "crossref",
               "id": "10.1016/j.ijinfomgt.2023.102642",
@@ -2376,8 +2376,8 @@
             }
           },
           "state": "completed",
-          "startedAt": "2026-11-26T09:10:15.774Z",
-          "finishedAt": "2026-11-26T09:10:15.776Z",
+          "startedAt": "2026-11-26T09:49:31.710Z",
+          "finishedAt": "2026-11-26T09:49:31.712Z",
           "check": {
             "verdict": "wrong-paper",
             "reasons": [
@@ -2423,7 +2423,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-26T09:10:15.776Z",
+            "checkedAt": "2026-11-26T09:49:31.712Z",
             "record": {
               "registry": "crossref",
               "id": "10.1037/0033-2909.117.3.497",
@@ -2476,8 +2476,8 @@
             }
           },
           "state": "completed",
-          "startedAt": "2026-11-26T09:10:15.776Z",
-          "finishedAt": "2026-11-26T09:10:15.776Z",
+          "startedAt": "2026-11-26T09:49:31.712Z",
+          "finishedAt": "2026-11-26T09:49:31.712Z",
           "check": {
             "verdict": "not-found",
             "reasons": [
@@ -2485,7 +2485,7 @@
             ],
             "fields": [],
             "trace": [],
-            "checkedAt": "2026-11-26T09:10:15.776Z"
+            "checkedAt": "2026-11-26T09:49:31.712Z"
           },
           "missingReplay": []
         },
@@ -2529,8 +2529,8 @@
             }
           },
           "state": "completed",
-          "startedAt": "2026-11-26T09:10:15.776Z",
-          "finishedAt": "2026-11-26T09:10:15.851Z",
+          "startedAt": "2026-11-26T09:49:31.712Z",
+          "finishedAt": "2026-11-26T09:49:31.775Z",
           "check": {
             "verdict": "could-not-check",
             "reasons": [
@@ -2545,7 +2545,7 @@
                 "note": "network error"
               }
             ],
-            "checkedAt": "2026-11-26T09:10:15.851Z"
+            "checkedAt": "2026-11-26T09:49:31.774Z"
           },
           "missingReplay": [
             "https://api.crossref.org/works?rows=6&query.bibliographic=Opinion%20Paper%3A%20%E2%80%9CSo%20what%20if%20ChatGPT%20wrote%20it%3F%E2%80%9D%20Multidisciplinary%20perspectives%20on%20opportunities%2C%20challenges%20and%20implications%20of%20generative%20conversational%20AI%20for%20research%2C%20practice%20and%20policy%3A%20a%20replication%20across%20learning%20communities%20Dwivedi%20Kshetri%20Hughes%202023"
@@ -2590,8 +2590,8 @@
             }
           },
           "state": "completed",
-          "startedAt": "2026-11-26T09:10:15.851Z",
-          "finishedAt": "2026-11-26T09:10:15.931Z",
+          "startedAt": "2026-11-26T09:49:31.775Z",
+          "finishedAt": "2026-11-26T09:49:31.795Z",
           "check": {
             "verdict": "could-not-check",
             "reasons": [
@@ -2606,7 +2606,7 @@
                 "note": "network error"
               }
             ],
-            "checkedAt": "2026-11-26T09:10:15.931Z"
+            "checkedAt": "2026-11-26T09:49:31.795Z"
           },
           "missingReplay": [
             "https://api.crossref.org/works?rows=6&query.bibliographic=Imagined%20evidence%20ledgers%20for%20reflective%20notebooks%20in%20learning%20communities%20LabInventedAuthor2%201995"
@@ -2659,8 +2659,8 @@
             }
           },
           "state": "completed",
-          "startedAt": "2026-11-26T09:10:15.931Z",
-          "finishedAt": "2026-11-26T09:10:15.933Z",
+          "startedAt": "2026-11-26T09:49:31.795Z",
+          "finishedAt": "2026-11-26T09:49:31.796Z",
           "check": {
             "verdict": "details-differ",
             "reasons": [
@@ -2706,7 +2706,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-26T09:10:15.933Z",
+            "checkedAt": "2026-11-26T09:49:31.796Z",
             "record": {
               "registry": "crossref",
               "id": "10.1037/0033-2909.117.3.497",
@@ -2776,8 +2776,8 @@
             }
           },
           "state": "completed",
-          "startedAt": "2026-11-26T09:10:15.933Z",
-          "finishedAt": "2026-11-26T09:10:15.934Z",
+          "startedAt": "2026-11-26T09:49:31.797Z",
+          "finishedAt": "2026-11-26T09:49:31.797Z",
           "check": {
             "verdict": "details-differ",
             "reasons": [
@@ -2823,7 +2823,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-26T09:10:15.934Z",
+            "checkedAt": "2026-11-26T09:49:31.797Z",
             "record": {
               "registry": "crossref",
               "id": "10.1037/0033-2909.117.3.497",
@@ -2901,8 +2901,8 @@
             }
           },
           "state": "completed",
-          "startedAt": "2026-11-26T09:10:15.934Z",
-          "finishedAt": "2026-11-26T09:10:16.032Z",
+          "startedAt": "2026-11-26T09:49:31.797Z",
+          "finishedAt": "2026-11-26T09:49:31.862Z",
           "check": {
             "verdict": "wrong-paper",
             "reasons": [
@@ -2948,7 +2948,7 @@
                 "ms": 0
               }
             ],
-            "checkedAt": "2026-11-26T09:10:16.032Z",
+            "checkedAt": "2026-11-26T09:49:31.862Z",
             "record": {
               "registry": "crossref",
               "id": "10.1016/j.ijinfomgt.2023.102642",
@@ -3286,8 +3286,8 @@
             }
           },
           "state": "completed",
-          "startedAt": "2026-11-26T09:10:16.032Z",
-          "finishedAt": "2026-11-26T09:10:16.032Z",
+          "startedAt": "2026-11-26T09:49:31.862Z",
+          "finishedAt": "2026-11-26T09:49:31.862Z",
           "check": {
             "verdict": "not-found",
             "reasons": [
@@ -3295,7 +3295,7 @@
             ],
             "fields": [],
             "trace": [],
-            "checkedAt": "2026-11-26T09:10:16.032Z"
+            "checkedAt": "2026-11-26T09:49:31.862Z"
           },
           "missingReplay": []
         },
@@ -3338,8 +3338,8 @@
             }
           },
           "state": "completed",
-          "startedAt": "2026-11-26T09:10:16.032Z",
-          "finishedAt": "2026-11-26T09:10:16.105Z",
+          "startedAt": "2026-11-26T09:49:31.862Z",
+          "finishedAt": "2026-11-26T09:49:31.912Z",
           "check": {
             "verdict": "could-not-check",
             "reasons": [
@@ -3354,7 +3354,7 @@
                 "note": "network error"
               }
             ],
-            "checkedAt": "2026-11-26T09:10:16.105Z"
+            "checkedAt": "2026-11-26T09:49:31.912Z"
           },
           "missingReplay": [
             "https://api.crossref.org/works?rows=6&query.bibliographic=The%20need%20to%20belong%3A%20Desire%20for%20interpersonal%20attachments%20as%20a%20fundamental%20human%20motivation.%3A%20a%20comparison%20of%20classroom%20settings%20Baumeister%20Leary%201995"

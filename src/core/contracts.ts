@@ -27,6 +27,8 @@ export type ReasonCode =
   | 'REGISTRY_UNREACHABLE'
   | 'SECOND_REGISTRY_UNREACHABLE'
   | 'SECOND_REGISTRY_NO_RECORD'
+  | 'NO_DOI_ONE_REGISTRY'
+  | 'WEB_SOURCE'
   | 'REGISTRY_METADATA_DISAGREES'
   | 'NOT_ENOUGH_TO_SEARCH'
   | 'QUOTE_NOT_IN_SOURCE'
@@ -297,6 +299,8 @@ export const REASON_TEXT: Record<ReasonCode, string> = {
   REGISTRY_UNREACHABLE: 'A registry did not answer.',
   SECOND_REGISTRY_UNREACHABLE: 'The second registry did not answer.',
   SECOND_REGISTRY_NO_RECORD: 'The second registry answered but has no record for this DOI.',
+  NO_DOI_ONE_REGISTRY: 'Found by title and authors in one registry, with no DOI. Many real papers have none. Check the publisher’s page before you rely on it.',
+  WEB_SOURCE: 'A web page, not a scholarly work, so it was not checked in a scholarly database. Open the page and check who published it and when.',
   REGISTRY_METADATA_DISAGREES: 'The registries returned different identity metadata. Review the original records.',
   NOT_ENOUGH_TO_SEARCH: 'There is not enough here to search with. Add a title or a DOI.',
   QUOTE_NOT_IN_SOURCE: 'These words are not in the source.',
