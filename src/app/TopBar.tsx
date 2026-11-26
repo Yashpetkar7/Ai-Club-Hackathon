@@ -8,6 +8,7 @@ const NAV = [
   { to: '/home', key: 'home', label: 'Home' },
   { to: '/projects', key: 'projects', label: 'Projects' },
   { to: '/check', key: 'check', label: 'Check' },
+  { to: '/audit', key: 'audit', label: 'Audit' },
 ];
 const MORE = [
   { to: '/guide', key: 'guide', label: 'How it works' },

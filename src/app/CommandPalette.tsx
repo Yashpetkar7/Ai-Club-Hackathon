@@ -14,6 +14,7 @@ interface Item {
 const PAGES: Item[] = [
   { key: 'p-desk', label: 'Home', kind: 'Page', to: '/home' },
   { key: 'p-check', label: 'Check references', kind: 'Page', to: '/check' },
+  { key: 'p-audit', label: 'Audit a paragraph', kind: 'Page', to: '/audit' },
   { key: 'p-projects', label: 'Projects', kind: 'Page', to: '/projects' },
   { key: 'p-guide', label: 'How it works', kind: 'Page', to: '/guide' },
   { key: 'p-lab', label: 'Integrity Lab', kind: 'Page', to: '/lab' },
