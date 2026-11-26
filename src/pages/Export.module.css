@@ -27,3 +27,8 @@
   .flight div:first-child { border-top: 0; }
   .sheet { padding: 20px 18px; }
 }
+.trail { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; max-width: 80ch; }
+.trail li { border-top: 1px solid var(--line); padding-top: 10px; display: grid; gap: 6px; }
+.trail p { margin: 0; }
+.trail blockquote { margin: 0; padding: 8px 12px; border-left: 3px solid var(--accent); background: var(--sheet); overflow-wrap: anywhere; }
+.trail blockquote small { display: block; color: var(--soft); margin-top: 4px; }
