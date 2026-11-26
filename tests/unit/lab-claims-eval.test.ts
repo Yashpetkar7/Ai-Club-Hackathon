@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { rankSentences } from '@/core/claims/rank';
+import { SUPPORT } from '@/core/claims/support';
 import { CLAIM_SETS, loadClaimsEval, validateClaimsEval, type ClaimsEvalPayload } from '@/core/lab/claims-data';
 import { ABSTRACT, FALSE_CLAIMS, TRUE_CLAIMS } from '../claims-set';
 import { HOLD_FALSE, HOLD_TRUE } from '../claims-holdout-set';
@@ -13,7 +14,8 @@ import { HOLD_FALSE, HOLD_TRUE } from '../claims-holdout-set';
  * Refresh after a reviewed change to a source:  LAB_WRITE_CLAIMS=1 npx vitest run tests/unit/lab-claims-eval.test.ts
  */
 const target = 'src/core/lab/claims-eval.json';
-const NLI = 'tests/unit/fixtures/nli.json';
+// The Lab measures the support model the site ships. If SUPPORT.key changes, this copy must be rebuilt (see above).
+const NLI = SUPPORT.key === 'scifact' ? 'tests/unit/fixtures/nli-scifact.json' : 'tests/unit/fixtures/nli.json';
 const sources = ['tests/claims-set.ts', 'tests/claims-holdout-set.ts', 'tests/unit/fixtures/abstracts.json', NLI] as const;
 const sha = (text: string) => createHash('sha256').update(text).digest('hex');
 // Line endings are normalised so a Windows checkout gives the same hash.

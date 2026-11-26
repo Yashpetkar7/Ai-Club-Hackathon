@@ -9,6 +9,9 @@ const ID2LABEL = { 0: 'contradiction', 1: 'entailment', 2: 'neutral' };
 
 class FakeWorker {
   static made: FakeWorker[] = [];
+  /** Model ids whose download fails, and whether the meaning model's download fails. */
+  static failLoad = new Set<string>();
+  static failEmbed = false;
   posted: any[] = [];
   terminated = false;
   failScoreFor = new Set<string>();
@@ -24,11 +27,11 @@ class FakeWorker {
     this.posted.push(m);
     if (m.type === 'load') {
       this.reply({ type: 'progress', loaded: 50, total: 100 });
-      this.reply({ type: 'ready' });
+      this.reply(FakeWorker.failLoad.has(m.model) ? { type: 'error', message: 'not found' } : { type: 'ready' });
     } else if (m.type === 'score') {
       if (this.failScoreFor.has(m.premise)) this.reply({ type: 'error', id: m.id, message: 'boom' });
       else this.reply({ type: 'score', id: m.id, ...threeWay(m.premise.includes('13%') ? [-2, 3, 0] : [2, -1, 0.5], ID2LABEL) });
-    } else if (m.type === 'load-embed') this.reply({ type: 'embed-ready' });
+    } else if (m.type === 'load-embed') this.reply(FakeWorker.failEmbed ? { type: 'embed-error', message: '429' } : { type: 'embed-ready' });
     else if (m.type === 'embed') {
       const data = new Float32Array(m.texts.length * 2);
       m.texts.forEach((t: string, i: number) => data.set([t.length, 1], i * 2));
@@ -44,6 +47,8 @@ const settle = () => new Promise((r) => setTimeout(r, 0));
 
 beforeEach(() => {
   FakeWorker.made = [];
+  FakeWorker.failLoad = new Set();
+  FakeWorker.failEmbed = false;
   vi.resetModules();
   vi.stubGlobal('Worker', FakeWorker);
 });
@@ -138,6 +143,54 @@ describe('one worker for both models', () => {
     await settle();
     expect(FakeWorker.made).toHaveLength(2);
     expect(m.meaningState().status).toBe('ready');
+  });
+  it('asks for our fine-tuned model from this site first', async () => {
+    const s = await import('@/core/claims/support');
+    s.loadSupport();
+    await settle();
+    expect(FakeWorker.made[0]!.posted[0]).toMatchObject({ type: 'load', model: s.SUPPORT_MODELS[s.SUPPORT.key].id, local: true });
+    expect(s.supportModelLabel()).toBe(s.SUPPORT_MODELS[s.SUPPORT.key].label);
+  });
+  it('if ours does not load, the worker is closed, the original loads in a fresh one, and the meaning model comes back', async () => {
+    const s = await import('@/core/claims/support');
+    const m = await import('@/core/semantic/meaning');
+    FakeWorker.failLoad.add(s.SUPPORT_MODELS.scifact.id);
+    m.loadMeaning();
+    await settle();
+    s.loadSupport();
+    await settle();
+    await settle();
+    // Closed, so requests left over from the failed download die with it.
+    expect(FakeWorker.made[0]!.terminated).toBe(true);
+    const fresh = FakeWorker.made.at(-1)!;
+    expect(fresh.posted).toContainEqual(expect.objectContaining({ type: 'load', model: s.SUPPORT_MODELS.original.id, local: false }));
+    expect(s.supportState().status).toBe('ready');
+    expect(s.supportModelLabel()).toBe(s.SUPPORT_MODELS.original.label);
+    expect(m.meaningState().status).toBe('ready');
+  });
+  it('if the original does not load either, it says so instead of trying again', async () => {
+    const s = await import('@/core/claims/support');
+    FakeWorker.failLoad.add(s.SUPPORT_MODELS.scifact.id);
+    FakeWorker.failLoad.add(s.SUPPORT_MODELS.original.id);
+    s.loadSupport();
+    await settle();
+    await settle();
+    expect(s.supportState().status).toBe('failed');
+    expect(FakeWorker.made).toHaveLength(2);
+  });
+  it('if the meaning model does not load, the worker is closed and the support model comes back by itself', async () => {
+    const s = await import('@/core/claims/support');
+    const m = await import('@/core/semantic/meaning');
+    s.loadSupport();
+    await settle();
+    FakeWorker.failEmbed = true;
+    m.loadMeaning();
+    await settle();
+    expect(FakeWorker.made[0]!.terminated).toBe(true);
+    expect(m.meaningState().status).toBe('failed');
+    await settle();
+    expect(FakeWorker.made).toHaveLength(2);
+    expect(s.supportState().status).toBe('ready');
   });
   it('a crash fails both, and says so', async () => {
     const s = await import('@/core/claims/support');

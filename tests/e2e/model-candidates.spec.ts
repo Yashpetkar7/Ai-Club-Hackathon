@@ -8,15 +8,18 @@ import { HOLD_FALSE, HOLD_TRUE } from '../claims-holdout-set';
  * the pages can start on: the top 4 by shared words, and the top 4 by meaning and words together.
  * The labels are worked out from this recording in tests/unit/best-candidate.test.ts.
  * Downloads about 120 MB. Run with:  MODEL=1 npx playwright test tests/e2e/model-candidates.spec.ts
+ * SUPPORT_MODEL=scifact records our fine-tuned support model (served from public/models) into nli-candidates-scifact.json.
  */
 test.skip(process.env.MODEL !== '1', 'needs the network and about 120 MB');
 test.setTimeout(1_800_000);
+const KEY = process.env.SUPPORT_MODEL === 'scifact' ? 'scifact' : 'original';
+const OUT = KEY === 'scifact' ? 'tests/unit/fixtures/nli-candidates-scifact.json' : 'tests/unit/fixtures/nli-candidates.json';
 
 test('support scores for every candidate sentence, both rankings, real models', async ({ page }) => {
   await page.goto('/#/rules');
   const sets = { false: FALSE_CLAIMS, true: TRUE_CLAIMS, 'hold-false': HOLD_FALSE, 'hold-true': HOLD_TRUE };
   const pairs = Object.entries(sets).flatMap(([set, list]) => list.map(([claim, text]) => ({ set, claim, text })));
-  const out = await page.evaluate(async (list) => {
+  const out = await page.evaluate(async ({ list, key }) => {
     const sup = await import(/* @vite-ignore */ '/src/core/claims/support.ts');
     const mean = await import(/* @vite-ignore */ '/src/core/semantic/meaning.ts');
     const rank = await import(/* @vite-ignore */ '/src/core/semantic/rank.ts');
@@ -28,7 +31,10 @@ test('support scores for every candidate sentence, both rankings, real models', 
         check();
       });
     const t0 = performance.now();
-    await ready(sup.loadSupport, sup.onSupport, sup.supportState);
+    await ready(() => sup.loadSupport(key), sup.onSupport, sup.supportState);
+    const loaded = sup.SUPPORT_MODELS[key].id;
+    // The page falls back to the original model if ours does not load. A recording must name what really ran.
+    if (sup.supportModelLabel() !== sup.SUPPORT_MODELS[key].label) throw new Error(`asked for ${key}, got ${sup.supportModelLabel()}`);
     await ready(mean.loadMeaning, mean.onMeaning, mean.meaningState);
     const loadMs = performance.now() - t0;
     const scored = new Map<string, { entails: number; neutral: number; contradicts: number }>();
@@ -52,13 +58,13 @@ test('support scores for every candidate sentence, both rankings, real models', 
       };
       rows.push({ set: p.set, claim: p.claim, words: await pack(words), meaning: await pack(meaning) });
     }
-    return { loadMs, perScoreMs: (performance.now() - t1) / Math.max(1, scored.size), runs: scored.size, rows };
-  }, pairs);
+    return { loaded, loadMs, perScoreMs: (performance.now() - t1) / Math.max(1, scored.size), runs: scored.size, rows };
+  }, { list: pairs, key: KEY });
   writeFileSync(
-    'tests/unit/fixtures/nli-candidates.json',
+    OUT,
     `${JSON.stringify(
       {
-        models: ['Xenova/nli-deberta-v3-xsmall, q8, wasm, in Chrome', 'Snowflake/snowflake-arctic-embed-xs, q8, wasm, in Chrome'],
+        models: [`${out.loaded}, q8, wasm, in Chrome`, 'Snowflake/snowflake-arctic-embed-xs, q8, wasm, in Chrome'],
         recordedAt: new Date().toISOString(),
         loadMs: Math.round(out.loadMs),
         perScoreMs: Math.round(out.perScoreMs),

@@ -9,12 +9,13 @@ import { HOLD_FALSE, HOLD_TRUE } from '../claims-holdout-set';
 
 /**
  * Where a page starts when it has scored several candidate sentences. The scores come from the real models,
- * recorded by tests/e2e/model-candidates.spec.ts (MODEL=1). Without that recording these tests are skipped.
+ * recorded by tests/e2e/model-candidates.spec.ts (MODEL=1), once per support model. A missing recording is skipped.
  */
-const FILE = 'tests/unit/fixtures/nli-candidates.json';
+const FILES = ['tests/unit/fixtures/nli-candidates.json', 'tests/unit/fixtures/nli-candidates-scifact.json'];
 type Cand = Support & { text: string; meaning: number | null };
 type Row = { set: string; claim: string; words: Cand[]; meaning: Cand[] };
-const rec: { rows: Row[]; recordedAt: string } | null = existsSync(FILE) ? JSON.parse(readFileSync(FILE, 'utf8')) : null;
+type Rec = { rows: Row[]; recordedAt: string; models: string[] };
+const recordings: [string, Rec | null][] = FILES.map((f) => [f, existsSync(f) ? (JSON.parse(readFileSync(f, 'utf8')) as Rec) : null]);
 const confirmed = { verdict: 'confirmed', reasons: [], fields: [], trace: [], checkedAt: '' } as ReferenceCheck;
 const text = new Map([...FALSE_CLAIMS, ...TRUE_CLAIMS, ...HOLD_FALSE, ...HOLD_TRUE].map(([c, t]) => [c, t]));
 const isFalse = (r: Row) => r.set === 'false' || r.set === 'hold-false';
@@ -28,18 +29,22 @@ function labelFor(r: Row, ranking: 'words' | 'meaning', n: number, rule: Rule) {
   const i = rule === 'first' ? 0 : rule === 'most-supported' ? Math.max(0, mostSupported(cands)) : startAt(judged);
   return judged[i]!.label;
 }
-function tally(ranking: 'words' | 'meaning', n: number, rule: Rule) {
-  const rows = rec!.rows;
+function tally(rec: Rec, ranking: 'words' | 'meaning', n: number, rule: Rule) {
+  const rows = rec.rows;
   const f = rows.filter(isFalse);
   const t = rows.filter((r) => !isFalse(r));
   const v = (list: Row[], l = 'verified') => list.filter((r) => labelFor(r, ranking, n, rule) === l);
   return { falseVerified: v(f).map((r) => r.claim), falseDisputed: v(f, 'disputed').length, falseTotal: f.length, trueVerified: v(t).length, trueDisputed: v(t, 'disputed').map((r) => r.claim), trueTotal: t.length };
 }
 
-describe.skipIf(!rec)('starting on a candidate sentence, with the real models', () => {
+describe.each(recordings)('starting on a candidate sentence, with the real models (%s)', (_file, rec) => {
+  if (!rec) {
+    it.skip('not recorded yet');
+    return;
+  }
   it('the recording covers every labelled claim and each candidate is an exact slice of its abstract', () => {
-    expect(rec!.rows.length).toBe(FALSE_CLAIMS.length + TRUE_CLAIMS.length + HOLD_FALSE.length + HOLD_TRUE.length);
-    for (const r of rec!.rows) for (const c of [...r.words, ...r.meaning]) expect(text.get(r.claim)).toContain(c.text);
+    expect(rec.rows.length).toBe(FALSE_CLAIMS.length + TRUE_CLAIMS.length + HOLD_FALSE.length + HOLD_TRUE.length);
+    for (const r of rec.rows) for (const c of [...r.words, ...r.meaning]) expect(text.get(r.claim)).toContain(c.text);
   });
 
   it('prints every rule side by side', () => {
@@ -48,21 +53,21 @@ describe.skipIf(!rec)('starting on a candidate sentence, with the real models', 
       for (const n of [1, 3, 4])
         for (const rule of ['first', 'most-supported', 'start-at'] as const) {
           if (n === 1 && rule !== 'first') continue;
-          const x = tally(ranking, n, rule);
+          const x = tally(rec, ranking, n, rule);
           lines.push(`${ranking.padEnd(7)} top ${n} ${rule.padEnd(14)} false Verified ${x.falseVerified.length}/${x.falseTotal}, Disputed ${x.falseDisputed}  true Verified ${x.trueVerified}/${x.trueTotal}, Disputed ${x.trueDisputed.length}`);
         }
-    console.log(`Recorded ${rec!.recordedAt}\n${lines.join('\n')}`);
+    console.log(`${rec.models[0]}, recorded ${rec.recordedAt}\n${lines.join('\n')}`);
     expect(lines.length).toBe(14);
   });
 
   it('the rule the pages use: no false claim Verified, no true claim Disputed, and as many disputes as the closest sentence', () => {
     for (const ranking of ['words', 'meaning'] as const)
       for (const n of [3, 4]) {
-        const x = tally(ranking, n, 'start-at');
+        const x = tally(rec, ranking, n, 'start-at');
         expect(x.falseVerified).toEqual([]);
         expect(x.trueDisputed).toEqual([]);
-        expect(x.trueVerified).toBeGreaterThanOrEqual(tally(ranking, n, 'most-supported').trueVerified);
-        expect(x.falseDisputed).toBeGreaterThanOrEqual(tally(ranking, n, 'first').falseDisputed);
+        expect(x.trueVerified).toBeGreaterThanOrEqual(tally(rec, ranking, n, 'most-supported').trueVerified);
+        expect(x.falseDisputed).toBeGreaterThanOrEqual(tally(rec, ranking, n, 'first').falseDisputed);
       }
   });
 });

@@ -62,7 +62,9 @@ function heard(m: HostMessage): void {
     waiting.delete(m.id);
   } else if (m.type === 'embed-error' && state.status === 'loading') {
     fail('not loaded');
-    release('embed');
+    // Close the worker, not just our part of it: a failed download can leave requests running, and they must not
+    // carry on under the other model's download settings (support.worker.ts). The support model reloads from cache.
+    stop('embed');
     set({ status: 'failed', why: navigator.onLine === false ? 'You are offline, and the meaning model is not saved in this browser yet. Finding by words still works.' : 'The meaning model did not load. Finding by words still works.' });
   } else if (m.type === 'crashed') {
     fail('stopped');

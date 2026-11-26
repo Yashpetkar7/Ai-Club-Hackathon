@@ -249,7 +249,7 @@ describe('Integrity Lab interface', () => {
     const refs = within(within(bench).getByRole('list', { name: 'Reference checker numbers' })).getAllByRole('listitem');
     expect(refs[0]!.textContent).toMatch(/8 of 8.*without one as misses: 8 of 12/);
     expect(within(bench).getByRole('img', { name: /support score alone decided Verified/ })).toBeTruthy();
-    expect(within(bench).getByRole('list', { name: 'Claim checker misses' }).children).toHaveLength(11);
+    expect(within(bench).getByRole('list', { name: 'Claim checker misses' }).children).toHaveLength(18);
     expect(within(bench).getByRole('list', { name: /Reference checker misses/ }).children).toHaveLength(9);
     await user.click(within(bench).getByText('Show the chart as a table'));
     await user.click(within(bench).getByText('By claim set'));

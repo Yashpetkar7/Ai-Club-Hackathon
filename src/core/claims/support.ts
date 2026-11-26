@@ -51,7 +51,9 @@ function heard(m: HostMessage): void {
       waiting.delete(m.id);
     } else if (state.status === 'loading') {
       fail('not loaded');
-      release('nli');
+      // Close the worker, not just our part of it: a failed download can leave requests running, and they must not
+      // carry on under the next download's settings (support.worker.ts). The meaning model reloads from cache.
+      stop('nli');
       // Our own model is served by this site. If the host does not have it, use the original instead of failing.
       if (loading !== 'original') {
         set({ status: 'off' });

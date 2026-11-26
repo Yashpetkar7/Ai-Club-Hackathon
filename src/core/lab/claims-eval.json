@@ -1,5 +1,5 @@
 {
- "sha256": "4cdbc175b0a02268564f1fe1820a5362df16d1d579a7fdede366e4135548e692",
+ "sha256": "696fea60e4e7d53ebd68eb070bf971daa76f8a76fb3560efad3ac3e8c09a9d94",
  "payload": {
   "kind": "claims-eval",
   "version": "1",
@@ -8,14 +8,14 @@
     "tests/claims-set.ts": "88e6950d73cbbf5d26deaaf50792863f31bb1c5c42c160709e34d71fef56ca93",
     "tests/claims-holdout-set.ts": "5f8ab90558acc00c3ab2d36b87a23668f25637b7e12cbbc011dbb4eb9508895a",
     "tests/unit/fixtures/abstracts.json": "9499bafa886b6658ea45a4c0c4ba0b099025b8dfb85c50a87738e158359e2ccf",
-    "tests/unit/fixtures/nli.json": "0aa4b11eb247bfb9bb200e43edbc20895f166075742352d9680dea1a0c7b0e28"
+    "tests/unit/fixtures/nli-scifact.json": "86b33b1a8b5f33c0ef9756fa3453432e524aa48edcbb6f154f08794d7d0c242d"
    },
    "abstractsNote": "Real abstracts as OpenAlex served them on 25 November 2026 (open metadata).",
    "holdoutNote": "Claims about papers the guards were not written against. Written before the first run. First run, 25 November 2026: 0 of 38 false claims were Verified without AI; 7 of 38 got past the guards when the support model was forced to say yes to everything. Those 7 became rules, so this set is now a regression test, not a measurement.",
-   "model": "Xenova/nli-deberta-v3-xsmall, q8, wasm, in Chrome",
-   "recordedAt": "2026-11-25T07:22:33.069Z",
-   "loadMs": 45945,
-   "perClaimMs": 281,
+   "model": "paper-trail-nli-scifact (fine-tuned on SciFact), q8, wasm, in Chrome",
+   "recordedAt": "2026-11-26T07:18:56.847Z",
+   "loadMs": 8656,
+   "perClaimMs": 148,
    "premise": "Each score is the model reading the claim against one sentence: the closest sentence by shared words (rankSentences), the way tests/e2e/model.spec.ts records it. That sentence is stored as premise. When the ranking code picks a different sentence, the score no longer fits and must be recorded again with MODEL=1.",
    "regenerate": "LAB_WRITE_CLAIMS=1 npx vitest run tests/unit/lab-claims-eval.test.ts",
    "counts": {
@@ -45,8 +45,8 @@
     "doi": "10.1093/qje/qju032",
     "premise": "Home working led to a 13% performance increase, of which 9% was from working more minutes per shift (fewer breaks and sick days) and 4% from more calls per minute (attributed to a quieter and more convenient working environment).",
     "score": {
-     "entails": 0.001,
-     "contradicts": 0.9933
+     "entails": 0.018,
+     "contradicts": 0.9133
     }
    },
    {
@@ -56,8 +56,8 @@
     "doi": "10.1093/qje/qju032",
     "premise": "Home working led to a 13% performance increase, of which 9% was from working more minutes per shift (fewer breaks and sick days) and 4% from more calls per minute (attributed to a quieter and more convenient working environment).",
     "score": {
-     "entails": 0.0003,
-     "contradicts": 0.9987
+     "entails": 0.0035,
+     "contradicts": 0.9774
     }
    },
    {
@@ -67,8 +67,8 @@
     "doi": "10.1093/qje/qju032",
     "premise": "Home working led to a 13% performance increase, of which 9% was from working more minutes per shift (fewer breaks and sick days) and 4% from more calls per minute (attributed to a quieter and more convenient working environment).",
     "score": {
-     "entails": 0.0001,
-     "contradicts": 0.9996
+     "entails": 0.0015,
+     "contradicts": 0.9917
     }
    },
    {
@@ -78,8 +78,8 @@
     "doi": "10.1093/qje/qju032",
     "premise": "Home working led to a 13% performance increase, of which 9% was from working more minutes per shift (fewer breaks and sick days) and 4% from more calls per minute (attributed to a quieter and more convenient working environment).",
     "score": {
-     "entails": 0.0048,
-     "contradicts": 0.0057
+     "entails": 0.2887,
+     "contradicts": 0.0454
     }
    },
    {
@@ -89,8 +89,8 @@
     "doi": "10.1093/qje/qju032",
     "premise": "Home working led to a 13% performance increase, of which 9% was from working more minutes per shift (fewer breaks and sick days) and 4% from more calls per minute (attributed to a quieter and more convenient working environment).",
     "score": {
-     "entails": 0.0175,
-     "contradicts": 0.972
+     "entails": 0.4005,
+     "contradicts": 0.4989
     }
    },
    {
@@ -100,8 +100,8 @@
     "doi": "10.1093/qje/qju032",
     "premise": "Home working led to a 13% performance increase, of which 9% was from working more minutes per shift (fewer breaks and sick days) and 4% from more calls per minute (attributed to a quieter and more convenient working environment).",
     "score": {
-     "entails": 0.0012,
-     "contradicts": 0.9896
+     "entails": 0.0326,
+     "contradicts": 0.8336
     }
    },
    {
@@ -111,8 +111,8 @@
     "doi": "10.1093/qje/qju032",
     "premise": "Home working led to a 13% performance increase, of which 9% was from working more minutes per shift (fewer breaks and sick days) and 4% from more calls per minute (attributed to a quieter and more convenient working environment).",
     "score": {
-     "entails": 0.0545,
-     "contradicts": 0.0005
+     "entails": 0.9359,
+     "contradicts": 0.0031
     }
    },
    {
@@ -122,8 +122,8 @@
     "doi": "10.1093/qje/qju032",
     "premise": "Home workers also reported improved work satisfaction, and their attrition rate halved, but their promotion rate conditional on performance fell.",
     "score": {
-     "entails": 0.0005,
-     "contradicts": 0.9972
+     "entails": 0.0051,
+     "contradicts": 0.9716
     }
    },
    {
@@ -133,8 +133,8 @@
     "doi": "10.1093/qje/qju032",
     "premise": "Home workers also reported improved work satisfaction, and their attrition rate halved, but their promotion rate conditional on performance fell.",
     "score": {
-     "entails": 0.0002,
-     "contradicts": 0.9987
+     "entails": 0.0035,
+     "contradicts": 0.9705
     }
    },
    {
@@ -144,8 +144,8 @@
     "doi": "10.1093/qje/qju032",
     "premise": "Home workers also reported improved work satisfaction, and their attrition rate halved, but their promotion rate conditional on performance fell.",
     "score": {
-     "entails": 0.0009,
-     "contradicts": 0.9962
+     "entails": 0.0123,
+     "contradicts": 0.9503
     }
    },
    {
@@ -155,8 +155,8 @@
     "doi": "10.1093/qje/qju032",
     "premise": "Interestingly, over half of them switched, which led to the gains from WFH almost doubling to 22%.",
     "score": {
-     "entails": 0.0061,
-     "contradicts": 0.0004
+     "entails": 0.5556,
+     "contradicts": 0.0027
     }
    },
    {
@@ -166,8 +166,8 @@
     "doi": "10.1093/qje/qju032",
     "premise": "Call center employees who volunteered to WFH were randomly assigned either to work from home or in the office for nine months.",
     "score": {
-     "entails": 0.0036,
-     "contradicts": 0.9824
+     "entails": 0.0462,
+     "contradicts": 0.7938
     }
    },
    {
@@ -177,8 +177,8 @@
     "doi": "10.1093/qje/qju032",
     "premise": "We report the results of a WFH experiment at Ctrip, a 16,000-employee, NASDAQ-listed Chinese travel agency.",
     "score": {
-     "entails": 0.0002,
-     "contradicts": 0.9981
+     "entails": 0.0063,
+     "contradicts": 0.9344
     }
    },
    {
@@ -188,8 +188,8 @@
     "doi": "10.1093/qje/qju032",
     "premise": "Due to the success of the experiment, Ctrip rolled out the option to WFH to the whole firm and allowed the experimental employees to reselect between the home and office.",
     "score": {
-     "entails": 0.0374,
-     "contradicts": 0.9345
+     "entails": 0.9513,
+     "contradicts": 0.0112
     }
    },
    {
@@ -199,8 +199,8 @@
     "doi": "10.1093/qje/qju032",
     "premise": "Interestingly, over half of them switched, which led to the gains from WFH almost doubling to 22%.",
     "score": {
-     "entails": 0.0054,
-     "contradicts": 0.9858
+     "entails": 0.0654,
+     "contradicts": 0.8608
     }
    },
    {
@@ -210,8 +210,8 @@
     "doi": "10.1093/qje/qju032",
     "premise": "Interestingly, over half of them switched, which led to the gains from WFH almost doubling to 22%.",
     "score": {
-     "entails": 0.0011,
-     "contradicts": 0.992
+     "entails": 0.0148,
+     "contradicts": 0.9253
     }
    },
    {
@@ -221,8 +221,8 @@
     "doi": "10.1126/science.adh2586",
     "premise": "Our results show that ChatGPT substantially raised productivity: The average time taken decreased by 40% and output quality rose by 18%.",
     "score": {
-     "entails": 0.4327,
-     "contradicts": 0.468
+     "entails": 0.4736,
+     "contradicts": 0.3978
     }
    },
    {
@@ -232,8 +232,8 @@
     "doi": "10.1126/science.adh2586",
     "premise": "Our results show that ChatGPT substantially raised productivity: The average time taken decreased by 40% and output quality rose by 18%.",
     "score": {
-     "entails": 0.6616,
-     "contradicts": 0.0251
+     "entails": 0.7979,
+     "contradicts": 0.0556
     }
    },
    {
@@ -243,8 +243,8 @@
     "doi": "10.1126/science.adh2586",
     "premise": "Our results show that ChatGPT substantially raised productivity: The average time taken decreased by 40% and output quality rose by 18%.",
     "score": {
-     "entails": 0.0008,
-     "contradicts": 0.9974
+     "entails": 0.0102,
+     "contradicts": 0.9671
     }
    },
    {
@@ -254,8 +254,8 @@
     "doi": "10.1126/science.adh2586",
     "premise": "Our results show that ChatGPT substantially raised productivity: The average time taken decreased by 40% and output quality rose by 18%.",
     "score": {
-     "entails": 0.0006,
-     "contradicts": 0.9971
+     "entails": 0.0126,
+     "contradicts": 0.9532
     }
    },
    {
@@ -265,8 +265,8 @@
     "doi": "10.1126/science.adh2586",
     "premise": "Our results show that ChatGPT substantially raised productivity: The average time taken decreased by 40% and output quality rose by 18%.",
     "score": {
-     "entails": 0.0002,
-     "contradicts": 0.9991
+     "entails": 0.0028,
+     "contradicts": 0.9884
     }
    },
    {
@@ -276,8 +276,8 @@
     "doi": "10.1126/science.adh2586",
     "premise": "We examined the productivity effects of a generative artificial intelligence (AI) technology, the assistive chatbot ChatGPT, in the context of midlevel professional writing tasks.",
     "score": {
-     "entails": 0.0003,
-     "contradicts": 0.9918
+     "entails": 0.0031,
+     "contradicts": 0.0106
     }
    },
    {
@@ -287,8 +287,8 @@
     "doi": "10.1126/science.adh2586",
     "premise": "Inequality between workers decreased, and concern and excitement about AI temporarily rose.",
     "score": {
-     "entails": 0.0004,
-     "contradicts": 0.9988
+     "entails": 0.0057,
+     "contradicts": 0.9786
     }
    },
    {
@@ -298,8 +298,8 @@
     "doi": "10.1126/science.adh2586",
     "premise": "Inequality between workers decreased, and concern and excitement about AI temporarily rose.",
     "score": {
-     "entails": 0.0001,
-     "contradicts": 0.9993
+     "entails": 0.0039,
+     "contradicts": 0.96
     }
    },
    {
@@ -309,8 +309,8 @@
     "doi": "10.1126/science.adh2586",
     "premise": "In a preregistered online experiment, we assigned occupation-specific, incentivized writing tasks to 453 college-educated professionals and randomly exposed half of them to ChatGPT.",
     "score": {
-     "entails": 0.0004,
-     "contradicts": 0.9896
+     "entails": 0.0141,
+     "contradicts": 0.6104
     }
    },
    {
@@ -320,8 +320,8 @@
     "doi": "10.1126/science.adh2586",
     "premise": "In a preregistered online experiment, we assigned occupation-specific, incentivized writing tasks to 453 college-educated professionals and randomly exposed half of them to ChatGPT.",
     "score": {
-     "entails": 0.0007,
-     "contradicts": 0.9945
+     "entails": 0.0493,
+     "contradicts": 0.6414
     }
    },
    {
@@ -331,8 +331,8 @@
     "doi": "10.1126/science.adh2586",
     "premise": "Workers exposed to ChatGPT during the experiment were 2 times as likely to report using it in their real job 2 weeks after the experiment and 1.6 times as likely 2 months after the experiment.",
     "score": {
-     "entails": 0.0031,
-     "contradicts": 0.9859
+     "entails": 0.029,
+     "contradicts": 0.8841
     }
    },
    {
@@ -342,8 +342,8 @@
     "doi": "10.1126/science.adh2586",
     "premise": "Workers exposed to ChatGPT during the experiment were 2 times as likely to report using it in their real job 2 weeks after the experiment and 1.6 times as likely 2 months after the experiment.",
     "score": {
-     "entails": 0.9819,
-     "contradicts": 0.0014
+     "entails": 0.9533,
+     "contradicts": 0.0133
     }
    },
    {
@@ -353,8 +353,8 @@
     "doi": "10.1126/science.adh2586",
     "premise": "Our results show that ChatGPT substantially raised productivity: The average time taken decreased by 40% and output quality rose by 18%.",
     "score": {
-     "entails": 0.9408,
-     "contradicts": 0.0064
+     "entails": 0.9407,
+     "contradicts": 0.0079
     }
    },
    {
@@ -364,8 +364,8 @@
     "doi": "10.1038/s41598-023-41032-5",
     "premise": "Likewise, 43% of the real (non-fabricated) GPT-3.5 citations but just 24% of the real GPT-4 citations include substantive citation errors.",
     "score": {
-     "entails": 0.0005,
-     "contradicts": 0.9947
+     "entails": 0.009,
+     "contradicts": 0.9023
     }
    },
    {
@@ -375,8 +375,8 @@
     "doi": "10.1038/s41598-023-41032-5",
     "premise": "Within this set of documents, 55% of the GPT-3.5 citations but just 18% of the GPT-4 citations are fabricated.",
     "score": {
-     "entails": 0.0047,
-     "contradicts": 0.9782
+     "entails": 0.0409,
+     "contradicts": 0.8539
     }
    },
    {
@@ -386,8 +386,8 @@
     "doi": "10.1038/s41598-023-41032-5",
     "premise": "Within this set of documents, 55% of the GPT-3.5 citations but just 18% of the GPT-4 citations are fabricated.",
     "score": {
-     "entails": 0.9014,
-     "contradicts": 0.0362
+     "entails": 0.8444,
+     "contradicts": 0.0565
     }
    },
    {
@@ -397,8 +397,8 @@
     "doi": "10.1038/s41598-023-41032-5",
     "premise": "Likewise, 43% of the real (non-fabricated) GPT-3.5 citations but just 24% of the real GPT-4 citations include substantive citation errors.",
     "score": {
-     "entails": 0.0098,
-     "contradicts": 0.9447
+     "entails": 0.0857,
+     "contradicts": 0.6487
     }
    },
    {
@@ -408,8 +408,8 @@
     "doi": "10.1038/s41598-023-41032-5",
     "premise": "Likewise, 43% of the real (non-fabricated) GPT-3.5 citations but just 24% of the real GPT-4 citations include substantive citation errors.",
     "score": {
-     "entails": 0.9488,
-     "contradicts": 0.019
+     "entails": 0.9005,
+     "contradicts": 0.0381
     }
    },
    {
@@ -419,8 +419,8 @@
     "doi": "10.1038/s41598-023-41032-5",
     "premise": "Within this set of documents, 55% of the GPT-3.5 citations but just 18% of the GPT-4 citations are fabricated.",
     "score": {
-     "entails": 0.0194,
-     "contradicts": 0.9228
+     "entails": 0.3252,
+     "contradicts": 0.2393
     }
    },
    {
@@ -430,8 +430,8 @@
     "doi": "10.1038/s41598-023-41032-5",
     "premise": "Although GPT-4 is a major improvement over GPT-3.5, problems remain.",
     "score": {
-     "entails": 0.0013,
-     "contradicts": 0.9958
+     "entails": 0.026,
+     "contradicts": 0.947
     }
    },
    {
@@ -441,8 +441,8 @@
     "doi": "10.1038/s41598-023-41032-5",
     "premise": "Although GPT-4 is a major improvement over GPT-3.5, problems remain.",
     "score": {
-     "entails": 0.0031,
-     "contradicts": 0.9943
+     "entails": 0.0451,
+     "contradicts": 0.9247
     }
    },
    {
@@ -452,8 +452,8 @@
     "doi": "10.1038/s41598-023-41032-5",
     "premise": "We used ChatGPT-3.5 and ChatGPT-4 to produce short literature reviews on 42 multidisciplinary topics, compiling data on the 636 bibliographic citations (references) found in the 84 papers.",
     "score": {
-     "entails": 0.0046,
-     "contradicts": 0.9817
+     "entails": 0.1029,
+     "contradicts": 0.5892
     }
    },
    {
@@ -463,8 +463,8 @@
     "doi": "10.1038/s41598-023-41032-5",
     "premise": "We used ChatGPT-3.5 and ChatGPT-4 to produce short literature reviews on 42 multidisciplinary topics, compiling data on the 636 bibliographic citations (references) found in the 84 papers.",
     "score": {
-     "entails": 0.0035,
-     "contradicts": 0.9928
+     "entails": 0.0393,
+     "contradicts": 0.9074
     }
    },
    {
@@ -474,8 +474,8 @@
     "doi": "10.1038/s41598-023-41032-5",
     "premise": "Although chatbots such as ChatGPT can facilitate cost-effective text generation and editing, factually incorrect responses (hallucinations) limit their utility.",
     "score": {
-     "entails": 0.0001,
-     "contradicts": 0.9991
+     "entails": 0.0019,
+     "contradicts": 0.9754
     }
    },
    {
@@ -485,8 +485,8 @@
     "doi": "10.1037/0033-2909.117.3.497",
     "premise": "Consistent with the belongingness hypothesis, people form social attachments readily under most conditions and resist the dissolution of existing bonds.",
     "score": {
-     "entails": 0.0043,
-     "contradicts": 0.0056
+     "entails": 0.1088,
+     "contradicts": 0.0331
     }
    },
    {
@@ -496,8 +496,8 @@
     "doi": "10.1037/0033-2909.117.3.497",
     "premise": "Lack of attachments is linked to a variety of ill effects on health, adjustment, and well-being.",
     "score": {
-     "entails": 0.0002,
-     "contradicts": 0.999
+     "entails": 0.0056,
+     "contradicts": 0.957
     }
    },
    {
@@ -507,8 +507,8 @@
     "doi": "10.1093/qje/qju032",
     "premise": "Home working led to a 13% performance increase, of which 9% was from working more minutes per shift (fewer breaks and sick days) and 4% from more calls per minute (attributed to a quieter and more convenient working environment).",
     "score": {
-     "entails": 0.9923,
-     "contradicts": 0.0005
+     "entails": 0.9736,
+     "contradicts": 0.0048
     }
    },
    {
@@ -518,8 +518,8 @@
     "doi": "10.1093/qje/qju032",
     "premise": "Home working led to a 13% performance increase, of which 9% was from working more minutes per shift (fewer breaks and sick days) and 4% from more calls per minute (attributed to a quieter and more convenient working environment).",
     "score": {
-     "entails": 0.9951,
-     "contradicts": 0.0004
+     "entails": 0.9825,
+     "contradicts": 0.0043
     }
    },
    {
@@ -529,8 +529,8 @@
     "doi": "10.1093/qje/qju032",
     "premise": "Home workers also reported improved work satisfaction, and their attrition rate halved, but their promotion rate conditional on performance fell.",
     "score": {
-     "entails": 0.9908,
-     "contradicts": 0.0003
+     "entails": 0.9738,
+     "contradicts": 0.0028
     }
    },
    {
@@ -540,8 +540,8 @@
     "doi": "10.1093/qje/qju032",
     "premise": "Home workers also reported improved work satisfaction, and their attrition rate halved, but their promotion rate conditional on performance fell.",
     "score": {
-     "entails": 0.9422,
-     "contradicts": 0.0021
+     "entails": 0.8935,
+     "contradicts": 0.0096
     }
    },
    {
@@ -551,8 +551,8 @@
     "doi": "10.1093/qje/qju032",
     "premise": "Home workers also reported improved work satisfaction, and their attrition rate halved, but their promotion rate conditional on performance fell.",
     "score": {
-     "entails": 0.9929,
-     "contradicts": 0.0005
+     "entails": 0.9668,
+     "contradicts": 0.0051
     }
    },
    {
@@ -562,8 +562,8 @@
     "doi": "10.1093/qje/qju032",
     "premise": "Interestingly, over half of them switched, which led to the gains from WFH almost doubling to 22%.",
     "score": {
-     "entails": 0.995,
-     "contradicts": 0.0003
+     "entails": 0.9867,
+     "contradicts": 0.0016
     }
    },
    {
@@ -573,8 +573,8 @@
     "doi": "10.1126/science.adh2586",
     "premise": "Our results show that ChatGPT substantially raised productivity: The average time taken decreased by 40% and output quality rose by 18%.",
     "score": {
-     "entails": 0.9899,
-     "contradicts": 0.0002
+     "entails": 0.9734,
+     "contradicts": 0.0021
     }
    },
    {
@@ -584,8 +584,8 @@
     "doi": "10.1126/science.adh2586",
     "premise": "Our results show that ChatGPT substantially raised productivity: The average time taken decreased by 40% and output quality rose by 18%.",
     "score": {
-     "entails": 0.6663,
-     "contradicts": 0.0014
+     "entails": 0.9124,
+     "contradicts": 0.0147
     }
    },
    {
@@ -595,8 +595,8 @@
     "doi": "10.1126/science.adh2586",
     "premise": "Our results show that ChatGPT substantially raised productivity: The average time taken decreased by 40% and output quality rose by 18%.",
     "score": {
-     "entails": 0.9791,
-     "contradicts": 0.0004
+     "entails": 0.9694,
+     "contradicts": 0.0043
     }
    },
    {
@@ -606,8 +606,8 @@
     "doi": "10.1126/science.adh2586",
     "premise": "Inequality between workers decreased, and concern and excitement about AI temporarily rose.",
     "score": {
-     "entails": 0.9895,
-     "contradicts": 0.0006
+     "entails": 0.9548,
+     "contradicts": 0.0054
     }
    },
    {
@@ -617,8 +617,8 @@
     "doi": "10.1038/s41598-023-41032-5",
     "premise": "Within this set of documents, 55% of the GPT-3.5 citations but just 18% of the GPT-4 citations are fabricated.",
     "score": {
-     "entails": 0.091,
-     "contradicts": 0.8418
+     "entails": 0.1447,
+     "contradicts": 0.6781
     }
    },
    {
@@ -628,8 +628,8 @@
     "doi": "10.1038/s41598-023-41032-5",
     "premise": "Within this set of documents, 55% of the GPT-3.5 citations but just 18% of the GPT-4 citations are fabricated.",
     "score": {
-     "entails": 0.9917,
-     "contradicts": 0.0005
+     "entails": 0.9528,
+     "contradicts": 0.0088
     }
    },
    {
@@ -639,8 +639,8 @@
     "doi": "10.1038/s41598-023-41032-5",
     "premise": "Although GPT-4 is a major improvement over GPT-3.5, problems remain.",
     "score": {
-     "entails": 0.9927,
-     "contradicts": 0.0003
+     "entails": 0.981,
+     "contradicts": 0.0019
     }
    },
    {
@@ -650,8 +650,8 @@
     "doi": "10.1038/s41598-023-41032-5",
     "premise": "We used ChatGPT-3.5 and ChatGPT-4 to produce short literature reviews on 42 multidisciplinary topics, compiling data on the 636 bibliographic citations (references) found in the 84 papers.",
     "score": {
-     "entails": 0.7065,
-     "contradicts": 0.0125
+     "entails": 0.798,
+     "contradicts": 0.0095
     }
    },
    {
@@ -661,8 +661,8 @@
     "doi": "10.1126/science.aac4716",
     "premise": "Thirty-six percent of replications had statistically significant results; 47% of original effect sizes were in the 95% confidence interval of the replication effect size; 39% of effects were subjectively rated to have replicated the original result; and if no bias in original results is assumed, combining original and replication results left 68% with statistically significant effects.",
     "score": {
-     "entails": 0.008,
-     "contradicts": 0.9815
+     "entails": 0.3435,
+     "contradicts": 0.5309
     }
    },
    {
@@ -672,8 +672,8 @@
     "doi": "10.1126/science.aac4716",
     "premise": "Thirty-six percent of replications had statistically significant results; 47% of original effect sizes were in the 95% confidence interval of the replication effect size; 39% of effects were subjectively rated to have replicated the original result; and if no bias in original results is assumed, combining original and replication results left 68% with statistically significant effects.",
     "score": {
-     "entails": 0.0007,
-     "contradicts": 0.997
+     "entails": 0.0259,
+     "contradicts": 0.8935
     }
    },
    {
@@ -683,8 +683,8 @@
     "doi": "10.1126/science.aac4716",
     "premise": "We conducted replications of 100 experimental and correlational studies published in three psychology journals using high-powered designs and original materials when available.",
     "score": {
-     "entails": 0.0003,
-     "contradicts": 0.997
+     "entails": 0.0076,
+     "contradicts": 0.9248
     }
    },
    {
@@ -694,8 +694,8 @@
     "doi": "10.1126/science.aac4716",
     "premise": "Replication effects were half the magnitude of original effects, representing a substantial decline.",
     "score": {
-     "entails": 0.0014,
-     "contradicts": 0.9935
+     "entails": 0.0099,
+     "contradicts": 0.9524
     }
    },
    {
@@ -705,8 +705,8 @@
     "doi": "10.1126/science.aac4716",
     "premise": "Replication effects were half the magnitude of original effects, representing a substantial decline.",
     "score": {
-     "entails": 0.0004,
-     "contradicts": 0.9987
+     "entails": 0.0057,
+     "contradicts": 0.9813
     }
    },
    {
@@ -716,8 +716,8 @@
     "doi": "10.1126/science.aac4716",
     "premise": "Thirty-six percent of replications had statistically significant results; 47% of original effect sizes were in the 95% confidence interval of the replication effect size; 39% of effects were subjectively rated to have replicated the original result; and if no bias in original results is assumed, combining original and replication results left 68% with statistically significant effects.",
     "score": {
-     "entails": 0.0347,
-     "contradicts": 0.9301
+     "entails": 0.477,
+     "contradicts": 0.3387
     }
    },
    {
@@ -727,8 +727,8 @@
     "doi": "10.1126/science.aac4716",
     "premise": "We conducted replications of 100 experimental and correlational studies published in three psychology journals using high-powered designs and original materials when available.",
     "score": {
-     "entails": 0.003,
-     "contradicts": 0.9909
+     "entails": 0.0558,
+     "contradicts": 0.8706
     }
    },
    {
@@ -738,8 +738,8 @@
     "doi": "10.1126/science.aac4716",
     "premise": "Correlational tests suggest that replication success was better predicted by the strength of original evidence than by characteristics of the original and replication teams.",
     "score": {
-     "entails": 0.001,
-     "contradicts": 0.9967
+     "entails": 0.0078,
+     "contradicts": 0.9722
     }
    },
    {
@@ -749,8 +749,8 @@
     "doi": "10.1126/science.aac4716",
     "premise": "Ninety-seven percent of original studies had statistically significant results.",
     "score": {
-     "entails": 0.0006,
-     "contradicts": 0.9799
+     "entails": 0.0706,
+     "contradicts": 0.1509
     }
    },
    {
@@ -760,8 +760,8 @@
     "doi": "10.1126/science.aac4716",
     "premise": "Thirty-six percent of replications had statistically significant results; 47% of original effect sizes were in the 95% confidence interval of the replication effect size; 39% of effects were subjectively rated to have replicated the original result; and if no bias in original results is assumed, combining original and replication results left 68% with statistically significant effects.",
     "score": {
-     "entails": 0.0069,
-     "contradicts": 0.9735
+     "entails": 0.1065,
+     "contradicts": 0.7366
     }
    },
    {
@@ -771,8 +771,8 @@
     "doi": "10.1126/science.aac4716",
     "premise": "Reproducibility is a defining feature of science, but the extent to which it characterizes current research is unknown.",
     "score": {
-     "entails": 0.0002,
-     "contradicts": 0.999
+     "entails": 0.0046,
+     "contradicts": 0.97
     }
    },
    {
@@ -782,8 +782,8 @@
     "doi": "10.1126/science.aac4716",
     "premise": "We conducted replications of 100 experimental and correlational studies published in three psychology journals using high-powered designs and original materials when available.",
     "score": {
-     "entails": 0.0004,
-     "contradicts": 0.1879
+     "entails": 0.0015,
+     "contradicts": 0.0077
     }
    },
    {
@@ -793,8 +793,8 @@
     "doi": "10.1073/pnas.1218772110",
     "premise": "The model correctly discriminates between homosexual and heterosexual men in 88% of cases, African Americans and Caucasian Americans in 95% of cases, and between Democrat and Republican in 85% of cases.",
     "score": {
-     "entails": 0.4746,
-     "contradicts": 0.4468
+     "entails": 0.8846,
+     "contradicts": 0.0529
     }
    },
    {
@@ -804,8 +804,8 @@
     "doi": "10.1073/pnas.1218772110",
     "premise": "The model correctly discriminates between homosexual and heterosexual men in 88% of cases, African Americans and Caucasian Americans in 95% of cases, and between Democrat and Republican in 85% of cases.",
     "score": {
-     "entails": 0.534,
-     "contradicts": 0.295
+     "entails": 0.8576,
+     "contradicts": 0.0546
     }
    },
    {
@@ -815,8 +815,8 @@
     "doi": "10.1073/pnas.1218772110",
     "premise": "The model correctly discriminates between homosexual and heterosexual men in 88% of cases, African Americans and Caucasian Americans in 95% of cases, and between Democrat and Republican in 85% of cases.",
     "score": {
-     "entails": 0.2432,
-     "contradicts": 0.6677
+     "entails": 0.4529,
+     "contradicts": 0.3857
     }
    },
    {
@@ -826,8 +826,8 @@
     "doi": "10.1073/pnas.1218772110",
     "premise": "The analysis presented is based on a dataset of over 58,000 volunteers who provided their Facebook Likes, detailed demographic profiles, and the results of several psychometric tests.",
     "score": {
-     "entails": 0.0002,
-     "contradicts": 0.9991
+     "entails": 0.0033,
+     "contradicts": 0.9686
     }
    },
    {
@@ -837,8 +837,8 @@
     "doi": "10.1073/pnas.1218772110",
     "premise": "We show that easily accessible digital records of behavior, Facebook Likes, can be used to automatically and accurately predict a range of highly sensitive personal attributes including: sexual orientation, ethnicity, religious and political views, personality traits, intelligence, happiness, use of addictive substances, parental separation, age, and gender.",
     "score": {
-     "entails": 0.0094,
-     "contradicts": 0.9583
+     "entails": 0.7348,
+     "contradicts": 0.0453
     }
    },
    {
@@ -848,8 +848,8 @@
     "doi": "10.1073/pnas.1218772110",
     "premise": "We show that easily accessible digital records of behavior, Facebook Likes, can be used to automatically and accurately predict a range of highly sensitive personal attributes including: sexual orientation, ethnicity, religious and political views, personality traits, intelligence, happiness, use of addictive substances, parental separation, age, and gender.",
     "score": {
-     "entails": 0.0001,
-     "contradicts": 0.9993
+     "entails": 0.0013,
+     "contradicts": 0.9813
     }
    },
    {
@@ -859,8 +859,8 @@
     "doi": "10.1073/pnas.1218772110",
     "premise": "We show that easily accessible digital records of behavior, Facebook Likes, can be used to automatically and accurately predict a range of highly sensitive personal attributes including: sexual orientation, ethnicity, religious and political views, personality traits, intelligence, happiness, use of addictive substances, parental separation, age, and gender.",
     "score": {
-     "entails": 0.0017,
-     "contradicts": 0.0041
+     "entails": 0.0616,
+     "contradicts": 0.0057
     }
    },
    {
@@ -870,8 +870,8 @@
     "doi": "10.1073/pnas.1218772110",
     "premise": "For the personality trait \"Openness,\" prediction accuracy is close to the test-retest accuracy of a standard personality test.",
     "score": {
-     "entails": 0.0003,
-     "contradicts": 0.9988
+     "entails": 0.0055,
+     "contradicts": 0.9694
     }
    },
    {
@@ -881,8 +881,8 @@
     "doi": "10.1126/science.1207745",
     "premise": "The advent of the Internet, with sophisticated algorithmic search engines, has made accessing information as easy as lifting a finger.",
     "score": {
-     "entails": 0.0008,
-     "contradicts": 0.9705
+     "entails": 0.0159,
+     "contradicts": 0.6073
     }
    },
    {
@@ -892,8 +892,8 @@
     "doi": "10.1126/science.1207745",
     "premise": "The results of four studies suggest that when faced with difficult questions, people are primed to think about computers and that when people expect to have future access to information, they have lower rates of recall of the information itself and enhanced recall instead for where to access it.",
     "score": {
-     "entails": 0.0054,
-     "contradicts": 0.9683
+     "entails": 0.1124,
+     "contradicts": 0.6053
     }
    },
    {
@@ -903,8 +903,8 @@
     "doi": "10.1126/science.1207745",
     "premise": "The results of four studies suggest that when faced with difficult questions, people are primed to think about computers and that when people expect to have future access to information, they have lower rates of recall of the information itself and enhanced recall instead for where to access it.",
     "score": {
-     "entails": 0.0068,
-     "contradicts": 0.9631
+     "entails": 0.0654,
+     "contradicts": 0.7829
     }
    },
    {
@@ -914,8 +914,8 @@
     "doi": "10.1126/science.1207745",
     "premise": "The results of four studies suggest that when faced with difficult questions, people are primed to think about computers and that when people expect to have future access to information, they have lower rates of recall of the information itself and enhanced recall instead for where to access it.",
     "score": {
-     "entails": 0.0003,
-     "contradicts": 0.9962
+     "entails": 0.0138,
+     "contradicts": 0.9111
     }
    },
    {
@@ -925,8 +925,8 @@
     "doi": "10.1126/science.1207745",
     "premise": "The Internet has become a primary form of external or transactive memory, where information is stored collectively outside ourselves.",
     "score": {
-     "entails": 0.0001,
-     "contradicts": 0.9994
+     "entails": 0.0022,
+     "contradicts": 0.9787
     }
    },
    {
@@ -936,8 +936,8 @@
     "doi": "10.1126/science.1207745",
     "premise": "The Internet has become a primary form of external or transactive memory, where information is stored collectively outside ourselves.",
     "score": {
-     "entails": 0.0867,
-     "contradicts": 0.4804
+     "entails": 0.4477,
+     "contradicts": 0.0917
     }
    },
    {
@@ -947,8 +947,8 @@
     "doi": "10.1126/science.aap9559",
     "premise": "Falsehood diffused significantly farther, faster, deeper, and more broadly than the truth in all categories of information, and the effects were more pronounced for false political news than for false news about terrorism, natural disasters, science, urban legends, or financial information.",
     "score": {
-     "entails": 0.0008,
-     "contradicts": 0.9978
+     "entails": 0.0138,
+     "contradicts": 0.9716
     }
    },
    {
@@ -958,8 +958,8 @@
     "doi": "10.1126/science.aap9559",
     "premise": "We found that false news was more novel than true news, which suggests that people were more likely to share novel information.",
     "score": {
-     "entails": 0.0007,
-     "contradicts": 0.9972
+     "entails": 0.0058,
+     "contradicts": 0.9719
     }
    },
    {
@@ -969,8 +969,8 @@
     "doi": "10.1126/science.aap9559",
     "premise": "We found that false news was more novel than true news, which suggests that people were more likely to share novel information.",
     "score": {
-     "entails": 0.0008,
-     "contradicts": 0.9972
+     "entails": 0.0075,
+     "contradicts": 0.9713
     }
    },
    {
@@ -980,8 +980,8 @@
     "doi": "10.1126/science.aap9559",
     "premise": "Contrary to conventional wisdom, robots accelerated the spread of true and false news at the same rate, implying that false news spreads more than the truth because humans, not robots, are more likely to spread it.",
     "score": {
-     "entails": 0.0153,
-     "contradicts": 0.9215
+     "entails": 0.3302,
+     "contradicts": 0.3996
     }
    },
    {
@@ -991,8 +991,8 @@
     "doi": "10.1126/science.aap9559",
     "premise": "Whereas false stories inspired fear, disgust, and surprise in replies, true stories inspired anticipation, sadness, joy, and trust.",
     "score": {
-     "entails": 0.0026,
-     "contradicts": 0.9922
+     "entails": 0.0303,
+     "contradicts": 0.9246
     }
    },
    {
@@ -1002,8 +1002,8 @@
     "doi": "10.1126/science.aap9559",
     "premise": "Whereas false stories inspired fear, disgust, and surprise in replies, true stories inspired anticipation, sadness, joy, and trust.",
     "score": {
-     "entails": 0.0018,
-     "contradicts": 0.9948
+     "entails": 0.0358,
+     "contradicts": 0.9177
     }
    },
    {
@@ -1013,8 +1013,8 @@
     "doi": "10.1126/science.aap9559",
     "premise": "The data comprise ~126,000 stories tweeted by ~3 million people more than 4.5 million times.",
     "score": {
-     "entails": 0.0033,
-     "contradicts": 0.9903
+     "entails": 0.0565,
+     "contradicts": 0.8311
     }
    },
    {
@@ -1024,8 +1024,8 @@
     "doi": "10.1126/science.aap9559",
     "premise": "We investigated the differential diffusion of all of the verified true and false news stories distributed on Twitter from 2006 to 2017.",
     "score": {
-     "entails": 0.0042,
-     "contradicts": 0.9813
+     "entails": 0.176,
+     "contradicts": 0.5103
     }
    },
    {
@@ -1035,8 +1035,8 @@
     "doi": "10.1126/science.aap9559",
     "premise": "We classified news as true or false using information from six independent fact-checking organizations that exhibited 95 to 98% agreement on the classifications.",
     "score": {
-     "entails": 0.0009,
-     "contradicts": 0.9944
+     "entails": 0.0208,
+     "contradicts": 0.8739
     }
    },
    {
@@ -1046,8 +1046,8 @@
     "doi": "10.1126/science.aap9559",
     "premise": "Contrary to conventional wisdom, robots accelerated the spread of true and false news at the same rate, implying that false news spreads more than the truth because humans, not robots, are more likely to spread it.",
     "score": {
-     "entails": 0.0031,
-     "contradicts": 0.9892
+     "entails": 0.0581,
+     "contradicts": 0.8337
     }
    },
    {
@@ -1057,8 +1057,8 @@
     "doi": "10.1126/science.aap9559",
     "premise": "Falsehood diffused significantly farther, faster, deeper, and more broadly than the truth in all categories of information, and the effects were more pronounced for false political news than for false news about terrorism, natural disasters, science, urban legends, or financial information.",
     "score": {
-     "entails": 0.0005,
-     "contradicts": 0.9983
+     "entails": 0.0035,
+     "contradicts": 0.9816
     }
    },
    {
@@ -1068,8 +1068,8 @@
     "doi": "10.1126/science.aap9559",
     "premise": "Falsehood diffused significantly farther, faster, deeper, and more broadly than the truth in all categories of information, and the effects were more pronounced for false political news than for false news about terrorism, natural disasters, science, urban legends, or financial information.",
     "score": {
-     "entails": 0.0008,
-     "contradicts": 0.9965
+     "entails": 0.0125,
+     "contradicts": 0.9646
     }
    },
    {
@@ -1079,8 +1079,8 @@
     "doi": "10.1126/science.aac4716",
     "premise": "Ninety-seven percent of original studies had statistically significant results.",
     "score": {
-     "entails": 0.9926,
-     "contradicts": 0.0006
+     "entails": 0.9819,
+     "contradicts": 0.0034
     }
    },
    {
@@ -1090,8 +1090,8 @@
     "doi": "10.1126/science.aac4716",
     "premise": "Thirty-six percent of replications had statistically significant results; 47% of original effect sizes were in the 95% confidence interval of the replication effect size; 39% of effects were subjectively rated to have replicated the original result; and if no bias in original results is assumed, combining original and replication results left 68% with statistically significant effects.",
     "score": {
-     "entails": 0.9348,
-     "contradicts": 0.013
+     "entails": 0.6752,
+     "contradicts": 0.1373
     }
    },
    {
@@ -1101,8 +1101,8 @@
     "doi": "10.1126/science.aac4716",
     "premise": "Replication effects were half the magnitude of original effects, representing a substantial decline.",
     "score": {
-     "entails": 0.9725,
-     "contradicts": 0.0017
+     "entails": 0.9472,
+     "contradicts": 0.0105
     }
    },
    {
@@ -1112,8 +1112,8 @@
     "doi": "10.1073/pnas.1218772110",
     "premise": "The model correctly discriminates between homosexual and heterosexual men in 88% of cases, African Americans and Caucasian Americans in 95% of cases, and between Democrat and Republican in 85% of cases.",
     "score": {
-     "entails": 0.9924,
-     "contradicts": 0.0005
+     "entails": 0.971,
+     "contradicts": 0.0057
     }
    },
    {
@@ -1123,8 +1123,8 @@
     "doi": "10.1073/pnas.1218772110",
     "premise": "We show that easily accessible digital records of behavior, Facebook Likes, can be used to automatically and accurately predict a range of highly sensitive personal attributes including: sexual orientation, ethnicity, religious and political views, personality traits, intelligence, happiness, use of addictive substances, parental separation, age, and gender.",
     "score": {
-     "entails": 0.9894,
-     "contradicts": 0.0004
+     "entails": 0.9728,
+     "contradicts": 0.0027
     }
    },
    {
@@ -1134,8 +1134,8 @@
     "doi": "10.1126/science.1207745",
     "premise": "The Internet has become a primary form of external or transactive memory, where information is stored collectively outside ourselves.",
     "score": {
-     "entails": 0.9898,
-     "contradicts": 0.0006
+     "entails": 0.9712,
+     "contradicts": 0.0045
     }
    },
    {
@@ -1145,8 +1145,8 @@
     "doi": "10.1126/science.aap9559",
     "premise": "We found that false news was more novel than true news, which suggests that people were more likely to share novel information.",
     "score": {
-     "entails": 0.9834,
-     "contradicts": 0.0005
+     "entails": 0.9584,
+     "contradicts": 0.0055
     }
    },
    {
@@ -1156,8 +1156,8 @@
     "doi": "10.1126/science.aap9559",
     "premise": "Contrary to conventional wisdom, robots accelerated the spread of true and false news at the same rate, implying that false news spreads more than the truth because humans, not robots, are more likely to spread it.",
     "score": {
-     "entails": 0.9771,
-     "contradicts": 0.0007
+     "entails": 0.9148,
+     "contradicts": 0.0114
     }
    },
    {
@@ -1167,8 +1167,8 @@
     "doi": "10.1126/science.aap9559",
     "premise": "Falsehood diffused significantly farther, faster, deeper, and more broadly than the truth in all categories of information, and the effects were more pronounced for false political news than for false news about terrorism, natural disasters, science, urban legends, or financial information.",
     "score": {
-     "entails": 0.9921,
-     "contradicts": 0.0007
+     "entails": 0.9726,
+     "contradicts": 0.0065
     }
    },
    {
@@ -1178,8 +1178,8 @@
     "doi": "10.1126/science.aap9559",
     "premise": "The data comprise ~126,000 stories tweeted by ~3 million people more than 4.5 million times.",
     "score": {
-     "entails": 0.9746,
-     "contradicts": 0.006
+     "entails": 0.9161,
+     "contradicts": 0.0309
     }
    }
   ]

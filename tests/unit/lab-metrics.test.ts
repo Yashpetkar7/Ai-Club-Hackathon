@@ -129,17 +129,20 @@ describe('AUC and Brier on cases with a known answer', () => {
   });
 });
 
-// Measured on 26 November 2026 with the claim code at this commit and the scores recorded on 25 November 2026.
+// Measured on 26 November 2026 with the claim code at this commit and the scores of the support model the site ships.
 // If a rule change moves one of these, the change must be deliberate and the pinned value updated with a reason.
+// 26 November, merge of main: the site now ships the SciFact fine-tune (nli-scifact.json, recorded 26 November), so
+// the Lab measures it. With the original model's scores (nli.json, 25 November) these were: false claims Disputed
+// 72 of 80, AUC 0.9865, Brier 0.0558, contradiction alone 64 of 80, 11 misses. Verified counts did not change.
 describe('regression facts, as measured', () => {
   it('no false claim is Verified, with the model, without it, or with it forced to say yes', () => {
     for (const m of ['recorded', 'none', 'forced-yes'] as const) expect(mode(m).metrics.falseVerified).toMatchObject({ k: 0, n: 80 });
     expect(bench.misses.filter((m) => m.kind === 'false-verified' || m.kind === 'true-disputed')).toEqual([]);
   });
   it('with the recorded model scores', () => {
-    expect(mode('recorded').metrics.confusion).toEqual({ true: { verified: 21, reported: 3, disputed: 0, other: 0 }, false: { verified: 0, reported: 8, disputed: 72, other: 0 } });
+    expect(mode('recorded').metrics.confusion).toEqual({ true: { verified: 21, reported: 3, disputed: 0, other: 0 }, false: { verified: 0, reported: 15, disputed: 65, other: 0 } });
     expect(mode('recorded').bySet.map((s) => [s.set, s.counts.verified, s.counts.reported, s.counts.disputed])).toEqual([
-      ['FALSE_CLAIMS', 0, 5, 37], ['TRUE_CLAIMS', 12, 2, 0], ['HOLD_FALSE', 0, 3, 35], ['HOLD_TRUE', 9, 1, 0],
+      ['FALSE_CLAIMS', 0, 7, 35], ['TRUE_CLAIMS', 12, 2, 0], ['HOLD_FALSE', 0, 8, 30], ['HOLD_TRUE', 9, 1, 0],
     ]);
   });
   it('without the model, and with it forced to say yes', () => {
@@ -148,17 +151,19 @@ describe('regression facts, as measured', () => {
   });
   it('the model alone', () => {
     const at = (t: number) => bench.model.sweep.find((p) => p.threshold === t)!;
-    expect([at(0.9).tp, at(0.9).fp]).toEqual([21, 4]);
-    expect([at(0.95).tp, at(0.95).fp]).toEqual([19, 1]);
-    expect([at(0.99).tp, at(0.99).fp]).toEqual([10, 0]);
-    expect(bench.model.auc).toBeCloseTo(0.9865, 4);
-    expect(bench.model.brier).toBeCloseTo(0.0558, 4);
-    expect(bench.model.contradiction.falseFlagged).toMatchObject({ k: 64, n: 80 });
+    expect([at(0.9).tp, at(0.9).fp]).toEqual([20, 5]);
+    expect([at(0.95).tp, at(0.95).fp]).toEqual([16, 2]);
+    expect([at(0.99).tp, at(0.99).fp]).toEqual([0, 0]);
+    expect(bench.model.auc).toBeCloseTo(0.9693, 4);
+    expect(bench.model.brier).toBeCloseTo(0.1019, 4);
+    expect(bench.model.contradiction.falseFlagged).toMatchObject({ k: 36, n: 80 });
     expect(bench.model.contradiction.trueFlagged).toMatchObject({ k: 0, n: 24 });
   });
-  it('the misses: 8 false claims only Reported (all scope words), 3 true claims not confirmed', () => {
-    expect(bench.misses.map((m) => m.kind)).toEqual([...Array(8).fill('false-not-disputed'), ...Array(3).fill('true-not-verified')]);
-    expect(bench.misses.filter((m) => !m.gold).every((m) => m.reasons.includes('SCOPE_OVERCLAIM'))).toBe(true);
+  it('the misses: 15 false claims only Reported (14 by scope words, 1 the model was unsure), 3 true claims not confirmed', () => {
+    expect(bench.misses.map((m) => m.kind)).toEqual([...Array(15).fill('false-not-disputed'), ...Array(3).fill('true-not-verified')]);
+    const falseMisses = bench.misses.filter((m) => !m.gold);
+    expect(falseMisses.filter((m) => m.reasons.includes('SCOPE_OVERCLAIM'))).toHaveLength(14);
+    expect(falseMisses.filter((m) => !m.reasons.includes('SCOPE_OVERCLAIM')).map((m) => m.reasons)).toEqual([['MODEL_UNSURE']]);
   });
 });
 
