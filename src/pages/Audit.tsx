@@ -687,7 +687,7 @@ function PairDetail({ claim, it, pair, modelOn, bucket }: { claim: string; it: I
             </blockquote>
           </figure>
           {pair.against >= 0 && <p className={css.warnLine}>Another close sentence may say the opposite: “{pair.candidates[pair.against]!.text}” Read it before you rely on this.</p>}
-          {pair.pick > 0 && <p className="soft">This is close sentence {pair.pick + 1} of {pair.candidates.length}: the model backs it most. The model can be wrong, so read it.</p>}
+          {pair.pick > 0 && <p className="soft">This is close sentence {pair.pick + 1} of {pair.candidates.length}: it says the claim word for word.</p>}
           <Checks claim={claim} passage={best.text} judged={j} />
           <ModelScores support={support} wordForWord={j.wordForWord} modelOn={modelOn} />
           <Aids words={best.words} meaning={best.meaning} />

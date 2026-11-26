@@ -6,7 +6,7 @@ import { titleOf } from '@/core/cite/preflight';
 import { directionSides, numberSides, scopeSides, type Bit, type Sides } from '@/core/claims/explain';
 import { coverage, runGuards } from '@/core/claims/guards';
 import { judge, type Judged, type Support } from '@/core/claims/label';
-import { mostSupported, startAt } from '@/core/claims/nli';
+import { startAt } from '@/core/claims/nli';
 import { rankSentences } from '@/core/claims/rank';
 import { removeClaim, saveClaim } from '@/core/claims/store';
 import { cancelSupport, loadSupport, onSupport, scoreSupport, scoreSupportMany, SUPPORT_MB, SUPPORT_MODEL, supportState } from '@/core/claims/support';
@@ -190,9 +190,9 @@ export function Evidence({ project }: StepProps) {
           if (s) next[at(list[i]!)] = s;
         });
         setScores(next);
-        // Start on the sentence the model backs most, unless one of them disputes the claim: then start there,
-        // so the disagreement is the first thing seen. The student can pick another.
-        const best = source ? startAt(list.map((c, i) => judge(claim, source, c.text, got[i] ?? null)), got) : mostSupported(got);
+        // Start on a word-for-word match, else stay on the closest sentence (measured: see startAt).
+        // The other sentences keep their scores, and one against the claim is pointed out.
+        const best = source ? startAt(list.map((c, i) => judge(claim, source, c.text, got[i] ?? null))) : 0;
         if (!chosen.current && best >= 0) {
           setPick(best);
           setMoved(best > 0);
@@ -450,7 +450,7 @@ export function Evidence({ project }: StepProps) {
                 </ul>
               )}
             </div>
-            {moved && <p className="soft">We started on sentence {pick + 1} because the model backs it most. The model can be wrong, so read it.</p>}
+            {moved && <p className="soft">We started on sentence {pick + 1} because it says your claim word for word.</p>}
             {against >= 0 && (
               <p className={css.against}>
                 Another close sentence may say the opposite: number {against + 1} in the list. Read it before you decide.

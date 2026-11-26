@@ -25,15 +25,15 @@ function labelFor(r: Row, ranking: 'words' | 'meaning', n: number, rule: Rule) {
   if (!cands.length) return 'reported';
   const src = { text: text.get(r.claim)!, check: confirmed };
   const judged = cands.map((c) => judge(r.claim, src, c.text, c));
-  const i = rule === 'first' ? 0 : rule === 'most-supported' ? Math.max(0, mostSupported(cands)) : startAt(judged, cands);
+  const i = rule === 'first' ? 0 : rule === 'most-supported' ? Math.max(0, mostSupported(cands)) : startAt(judged);
   return judged[i]!.label;
 }
 function tally(ranking: 'words' | 'meaning', n: number, rule: Rule) {
   const rows = rec!.rows;
   const f = rows.filter(isFalse);
   const t = rows.filter((r) => !isFalse(r));
-  const v = (list: Row[]) => list.filter((r) => labelFor(r, ranking, n, rule) === 'verified');
-  return { falseVerified: v(f).map((r) => r.claim), falseTotal: f.length, trueVerified: v(t).length, trueTotal: t.length };
+  const v = (list: Row[], l = 'verified') => list.filter((r) => labelFor(r, ranking, n, rule) === l);
+  return { falseVerified: v(f).map((r) => r.claim), falseDisputed: v(f, 'disputed').length, falseTotal: f.length, trueVerified: v(t).length, trueDisputed: v(t, 'disputed').map((r) => r.claim), trueTotal: t.length };
 }
 
 describe.skipIf(!rec)('starting on a candidate sentence, with the real models', () => {
@@ -49,27 +49,32 @@ describe.skipIf(!rec)('starting on a candidate sentence, with the real models', 
         for (const rule of ['first', 'most-supported', 'start-at'] as const) {
           if (n === 1 && rule !== 'first') continue;
           const x = tally(ranking, n, rule);
-          lines.push(`${ranking.padEnd(7)} top ${n} ${rule.padEnd(14)} false Verified ${x.falseVerified.length}/${x.falseTotal}  true Verified ${x.trueVerified}/${x.trueTotal}${x.falseVerified.length ? `  [${x.falseVerified.join(' | ')}]` : ''}`);
+          lines.push(`${ranking.padEnd(7)} top ${n} ${rule.padEnd(14)} false Verified ${x.falseVerified.length}/${x.falseTotal}, Disputed ${x.falseDisputed}  true Verified ${x.trueVerified}/${x.trueTotal}, Disputed ${x.trueDisputed.length}`);
         }
     console.log(`Recorded ${rec!.recordedAt}\n${lines.join('\n')}`);
     expect(lines.length).toBe(14);
   });
 
-  it('the rule the pages use never starts on a false Verified, by words or by meaning, top 3 or top 4', () => {
-    for (const ranking of ['words', 'meaning'] as const) for (const n of [3, 4]) expect(tally(ranking, n, 'start-at').falseVerified).toEqual([]);
+  it('the rule the pages use: no false claim Verified, no true claim Disputed, and as many disputes as the closest sentence', () => {
+    for (const ranking of ['words', 'meaning'] as const)
+      for (const n of [3, 4]) {
+        const x = tally(ranking, n, 'start-at');
+        expect(x.falseVerified).toEqual([]);
+        expect(x.trueDisputed).toEqual([]);
+        expect(x.trueVerified).toBeGreaterThanOrEqual(tally(ranking, n, 'most-supported').trueVerified);
+        expect(x.falseDisputed).toBeGreaterThanOrEqual(tally(ranking, n, 'first').falseDisputed);
+      }
   });
 });
 
 describe('startAt', () => {
   const v = (label: string, wordForWord = false) => ({ label, wordForWord });
   it('starts on a word-for-word sentence that passes every check', () => {
-    expect(startAt([v('reported'), v('disputed'), v('verified', true)], [{ entails: 0.99 }, { entails: 0.1, contradicts: 0.95 }, { entails: 0.5 }])).toBe(2);
+    expect(startAt([v('reported'), v('disputed'), v('verified', true)])).toBe(2);
   });
-  it('otherwise a sentence that disputes the claim wins over one that backs it', () => {
-    expect(startAt([v('verified'), v('disputed'), v('disputed')], [{ entails: 0.99 }, { entails: 0.1, contradicts: 0.5 }, { entails: 0.1, contradicts: 0.97 }])).toBe(2);
-  });
-  it('otherwise the best supported, and the closest when nothing was scored', () => {
-    expect(startAt([v('reported'), v('verified')], [{ entails: 0.4 }, { entails: 0.95 }])).toBe(1);
-    expect(startAt([v('reported'), v('reported')], [null, null])).toBe(0);
+  it('otherwise stays on the closest sentence, even when the model backs another one more', () => {
+    expect(startAt([v('reported'), v('verified')])).toBe(0);
+    expect(startAt([v('disputed'), v('verified')])).toBe(0);
+    expect(startAt([])).toBe(0);
   });
 });

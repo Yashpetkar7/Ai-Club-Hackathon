@@ -32,21 +32,17 @@ export function mostSupported(scores: ({ entails: number } | null | undefined)[]
 }
 
 /**
- * Where a page starts when several candidates were judged.
- * 1. A sentence that says the claim word for word and passes every check: the source says exactly this.
- * 2. Otherwise the weaker label wins: when any candidate disputes the claim, start on the one that disputes
- *    it most clearly, so a disagreement is never hidden behind a sentence that happens to agree.
- * 3. Otherwise the sentence the model backs most (the closest by words when the model is off).
+ * Where a page starts when several candidates were judged: a sentence that says the claim word for word and
+ * passes every check, otherwise the closest sentence (first in the ranking). The other candidates stay on
+ * screen with their scores, and one the model reads as against the claim is pointed out.
+ *
+ * Measured on the real models (tests/unit/best-candidate.test.ts, 80 false and 24 true claims, top 3):
+ * starting on the closest sentence gave 0 false Verified, 72 false claims Disputed and no true claim Disputed.
+ * Starting on the sentence the model backs most also gave 0 false Verified but only 44 to 52 Disputed.
+ * Starting on any sentence that disputes the claim showed 5 or 6 true claims as Disputed.
  * Only chooses a starting sentence; every label still comes from judge(). The student can pick another.
  */
-export function startAt(judged: { label: string; wordForWord?: boolean }[], scores: ({ entails: number; contradicts?: number } | null | undefined)[]): number {
+export function startAt(judged: { label: string; wordForWord?: boolean }[]): number {
   const exact = judged.findIndex((j) => j.label === 'verified' && j.wordForWord);
-  if (exact >= 0) return exact;
-  let disputed = -1;
-  judged.forEach((j, i) => {
-    if (j.label !== 'disputed') return;
-    if (disputed < 0 || (scores[i]?.contradicts ?? 0) > (scores[disputed]?.contradicts ?? 0)) disputed = i;
-  });
-  if (disputed >= 0) return disputed;
-  return Math.max(0, mostSupported(scores));
+  return exact >= 0 ? exact : 0;
 }

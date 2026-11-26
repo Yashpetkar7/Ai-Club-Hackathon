@@ -270,7 +270,7 @@ export interface PairOptions {
 
 /**
  * One claim against one reference: the closest sentences, their support scores when the model is on,
- * then judge() on the sentence the model backs most (the closest one when it is off).
+ * then judge() on each. Starts on a word-for-word match, else on the closest sentence.
  */
 export async function checkPair(claim: string, source: Pick<Source, 'check' | 'text'>, o: PairOptions = {}): Promise<PairResult> {
   if (!source.text?.trim()) return { candidates: [], support: [], pick: -1, judged: judge(claim, source, undefined, null), hasText: false, against: -1, fellBack: false };
@@ -284,9 +284,9 @@ export async function checkPair(claim: string, source: Pick<Source, 'check' | 't
   }
   const support: (Support | null)[] = [];
   for (const c of candidates) support.push(o.score ? await o.score(c.text, claim).catch(() => null) : null);
-  // Every candidate is judged. Start on one that disputes the claim if there is one, else on the best supported.
+  // Every candidate is judged. Start on a word-for-word match, else on the closest sentence (see startAt).
   const all = candidates.map((c, i) => judge(claim, source, c.text, support[i] ?? null));
-  const pick = candidates.length ? startAt(all, support) : -1;
+  const pick = candidates.length ? startAt(all) : -1;
   const judged = all[pick] ?? judge(claim, source, undefined, null);
   const against = candidates.findIndex((_, i) => i !== pick && (support[i]?.contradicts ?? 0) >= POLICY.thresholds.contradiction);
   return { candidates, support, pick, judged, hasText: true, against, fellBack };
