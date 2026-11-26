@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { Link, useRoute } from '@/app/router';
 import { cancelSupport, loadSupport, onSupport, scoreSupport, SUPPORT_MB, supportState } from '@/core/claims/support';
 import { CLAIM_TEXT, REASON_TEXT } from '@/core/contracts';
 import { loadBenchmark, type Benchmark } from '@/core/lab/benchmark';
@@ -322,6 +323,15 @@ function BenchmarkSection({ online, onGoToLive }: { online: boolean; onGoToLive:
 
 function BenchmarkBody({ b, online }: { b: Benchmark; online: boolean }) {
   const { data, claims, references: refs, sample } = b;
+  const { path } = useRoute();
+  const missHeading = useRef<HTMLHeadingElement>(null);
+  // #/lab?misses, linked from the Guardrails page, opens on the list of every miss.
+  const toMisses = new URLSearchParams(path.split('?')[1] ?? '').has('misses');
+  useEffect(() => {
+    if (!toMisses) return;
+    missHeading.current?.scrollIntoView?.({ block: 'start' });
+    missHeading.current?.focus({ preventScroll: true });
+  }, [toMisses]);
   const pv = data.payload.provenance;
   const m = claims.main.metrics;
   const policy = claims.model.threshold;
@@ -439,7 +449,7 @@ function BenchmarkBody({ b, online }: { b: Benchmark; online: boolean }) {
       </section>
 
       <section className="stack" aria-labelledby="lab-every-miss-heading">
-        <h3 id="lab-every-miss-heading">Every miss</h3>
+        <h3 id="lab-every-miss-heading" ref={missHeading} tabIndex={-1}>Every miss</h3>
         <p className="soft">Every claim that did not get the right label, and every Lab case that was missed, flagged wrongly or left without an answer. Worst first.</p>
         {claims.misses.length ? (
           <ul className={css.list} aria-label="Claim checker misses">{claims.misses.map((x) => <ClaimMissItem key={x.claim} m={x} />)}</ul>
@@ -599,6 +609,7 @@ export function Lab() {
       <div className="stack">
         <h1>Integrity Lab</h1>
         <p className="soft">We test our own checker here, in public. Half of these references are real and half are invented on purpose. Every miss stays on this page.</p>
+        <p className={css.see}>Every guardrail our deck promises, run on the real code: <Link to="/guardrails">see every guardrail run live</Link>.</p>
       </div>
       <OwnerKey />
 

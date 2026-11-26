@@ -17,6 +17,7 @@ const Account = lazy(() => import('@/pages/Account').then((m) => ({ default: m.A
 const Guide = lazy(() => import('@/pages/Guide').then((m) => ({ default: m.Guide })));
 const Rules = lazy(() => import('@/pages/Rules').then((m) => ({ default: m.Rules })));
 const Audit = lazy(() => import('@/pages/Audit').then((m) => ({ default: m.Audit })));
+const Guardrails = lazy(() => import('@/pages/Guardrails').then((m) => ({ default: m.Guardrails })));
 
 class Boundary extends Component<{ children: ReactNode; resetKey: string }, { error: Error | null }> {
   state = { error: null as Error | null };
@@ -83,6 +84,7 @@ export function App() {
   else if (section === 'p' && parts[1]) page = <ProjectShell projectId={parts[1]} step={parts[2] ?? ''} />;
   else if (section === 'lab') page = <Lab />;
   else if (section === 'rules') page = <Rules />;
+  else if (section === 'guardrails') page = <Guardrails />;
   else if (section === 'guide') page = <Guide />;
   else
     page = (

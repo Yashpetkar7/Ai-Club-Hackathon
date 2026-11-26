@@ -14,6 +14,7 @@ const MORE = [
   { to: '/guide', key: 'guide', label: 'How it works' },
   { to: '/lab', key: 'lab', label: 'Integrity Lab' },
   { to: '/rules', key: 'rules', label: 'House rules' },
+  { to: '/guardrails', key: 'guardrails', label: 'Guardrails' },
 ];
 
 const saved = (): 'light' | 'dark' => {

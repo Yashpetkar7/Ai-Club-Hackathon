@@ -73,3 +73,4 @@
 .retrieval { border-top: 1px solid var(--line); padding-top: var(--s3); }
 .progress { width: 100%; max-width: 420px; accent-color: var(--accent); }
 @media (max-width: 620px) { .claimMiss, .metric { padding: 14px 16px; } .compact { min-width: 26rem; } }
+.see { color: var(--soft); }

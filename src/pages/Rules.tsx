@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from '@/app/router';
 import { policyLines } from '@/policy/apply';
 import { AGENTS, AI_LEVELS, POLICY } from '@/policy/policy';
 import { SUPPORT_MB } from '@/core/claims/support';
@@ -72,6 +73,10 @@ export function Rules() {
       <div className="stack">
         <h1>House rules</h1>
         <p className="soft">The rules below read the shared policy configuration. They describe product controls; they do not certify compliance or prevent all misuse.</p>
+        <p className={css.live}>
+          <Link to="/guardrails" className="btn main">See every guardrail run live</Link>
+          <span className="soft">Each promise from our deck, run on the real code with a SAMPLE input.</span>
+        </p>
       </div>
       <section className="stack">
         <h2>Rules in force</h2>

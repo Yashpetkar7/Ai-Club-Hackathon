@@ -19,6 +19,7 @@ export const PAGE_PLACES: { key: string; label: string; to: string; words: strin
   { key: 'p-lab', label: 'Integrity Lab', to: '/lab', words: 'accuracy accurate metrics proof benchmark self test precision recall misses evaluation numbers' },
   { key: 'p-guide', label: 'How it works', to: '/guide', words: 'guide help explain three keys labels meaning scorecard tour' },
   { key: 'p-rules', label: 'House rules', to: '/rules', words: 'policy ai levels allowed limits what we check' },
+  { key: 'p-guardrails', label: 'Guardrails', to: '/guardrails', words: 'guardrails safety governance ethics architecture tests run live deck promises nist owasp unesco model cards' },
   { key: 'p-account', label: 'Account', to: '/account', words: 'sign in passphrase backup profile' },
   { key: 'p-home', label: 'Start page', to: '/', words: 'landing front' },
 ];
