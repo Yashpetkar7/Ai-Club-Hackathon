@@ -33,6 +33,19 @@ export const registries: Registries = {
     const j = await getJson<{ message: { items: Record<string, unknown>[] } }>(`https://api.crossref.org/works?rows=6&query.bibliographic=${q}`, 'crossref-search');
     return (j?.message.items ?? []).map(fromCrossref).filter((r) => r.title);
   },
+  async openalexSearch(query, hint) {
+    const get = async (url: string) => ((await getJson<{ results: Record<string, unknown>[] }>(url, 'openalex'))?.results ?? []).map(fromOpenAlex).filter((r) => r.title);
+    // With a title, ask OpenAlex for that title (near the stated year first, then any year). Ranked by OpenAlex, compared by our code.
+    const t = hint?.title?.replace(/[^\p{L}\p{N}\s-]/gu, ' ').replace(/\s+/g, ' ').trim().slice(0, 200);
+    if (t && t.split(' ').length >= 2) {
+      const base = `https://api.openalex.org/works?per-page=6&sort=cited_by_count:desc&select=${OA_FIELDS}&filter=title.search:${encodeURIComponent(t)}`;
+      const near = hint?.year ? await get(`${base},publication_year:${hint.year - 1}-${hint.year + 1}`) : [];
+      if (near.length) return near;
+      const any = await get(base);
+      if (any.length) return any;
+    }
+    return get(`https://api.openalex.org/works?search=${encodeURIComponent(query.slice(0, 300))}&per-page=6&select=${OA_FIELDS}`);
+  },
   retractionWatch: (doi) => retractionWatch.lookup(doi),
 };
 

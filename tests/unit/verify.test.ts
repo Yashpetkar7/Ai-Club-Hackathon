@@ -5,9 +5,10 @@ import { registries } from '@/core/registries';
 import { compare } from '@/core/verify/compare';
 import { extractReferences, parseReference } from '@/core/verify/parse';
 import { checkReference, type Registries } from '@/core/verify/verdict';
-import { installReplay, saveReplay } from './replay';
+import { installReplayWith, saveReplay } from './replay';
 
-beforeAll(installReplay);
+// Phase 2 adds the OpenAlex title search. Its recorded real answers live in their own file, so the Lab's pinned shared fixture is untouched.
+beforeAll(() => installReplayWith('tests/unit/fixtures/registry-phase2.json'));
 afterAll(saveReplay);
 
 const verdictOf = async (line: string): Promise<{ verdict: Verdict; reasons: string[] }> => {

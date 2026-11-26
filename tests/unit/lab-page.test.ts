@@ -181,7 +181,7 @@ describe('Integrity Lab interface', () => {
     await user.click(screen.getByRole('button', { name: 'Run live checks' }));
     await waitFor(() => expect(check).toHaveBeenCalledTimes(24));
     const cases = screen.getByRole('list', { name: 'All cases' });
-    expect(within(cases).getAllByText('Confirmed').length).toBe(24);
+    expect(within(cases).getAllByText('Verified').length).toBe(24);
     expect(within(cases).getAllByText(/Limited registry coverage/).length).toBe(24);
     const misses = screen.getByRole('region', { name: 'Misses and false alarms' });
     expect(within(misses).getAllByText(/Missed:/).length).toBe(12);
@@ -196,7 +196,7 @@ describe('Integrity Lab interface', () => {
     await user.click(screen.getByRole('button', { name: 'Run live checks' }));
     await waitFor(() => expect(check).toHaveBeenCalledTimes(24));
     expect(screen.getAllByText(/Injected checker exception/).length).toBe(24);
-    expect(screen.queryByText('Confirmed')).toBeNull();
+    expect(screen.queryByText('Verified')).toBeNull();
   });
 
   it('renders unknown verdicts neutrally without crashing or counting a success', async () => {

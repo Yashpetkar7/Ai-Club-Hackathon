@@ -24,7 +24,7 @@ test('whatever is typed into Check gets a label, and nothing unchecked looks rea
   }
   await axe(page, 'check, nothing to look up');
   await page.getByText('What the labels mean').click();
-  for (const t of ['Confirmed', 'Not yet verified', 'AI suggestion', 'Disputed']) await expect(page.locator('details[open] .stamp', { hasText: t }).first()).toBeVisible();
+  for (const t of ['Verified', 'Not yet verified', 'AI suggestion', 'Disputed']) await expect(page.locator('details[open] .stamp', { hasText: t }).first()).toBeVisible();
   await axe(page, 'check, labels open');
   await page.getByLabel('Text to check').fill('10.1073/pnas.1523821113');
   await page.getByRole('button', { name: 'Check', exact: true }).click();
@@ -49,7 +49,7 @@ test('every reference in Write and Export carries its label, and the exported li
   // Added is not approved: the reference list is still empty.
   await step(page, 'Export');
   await expect(page.getByRole('heading', { name: 'Nothing to export yet' })).toBeVisible();
-  await expect(page.locator('main li .stamp', { hasText: 'Confirmed' }).first()).toBeVisible();
+  await expect(page.locator('main li .stamp', { hasText: 'Verified' }).first()).toBeVisible();
   await step(page, 'Library');
   await page.locator('main ul > li > button').first().click();
   await page.getByRole('button', { name: 'Approve', exact: true }).click();
@@ -59,22 +59,24 @@ test('every reference in Write and Export carries its label, and the exported li
   await page.getByLabel('Your draft').fill('It helped (Bloom et al., 2015). It faded (Hargrove, 2024).');
   const margin = page.getByLabel('Citation checks');
   await expect(margin.locator('li', { hasText: 'Hargrove' }).locator('.stamp')).toHaveText(/Not yet verified$/);
-  await expect(margin.locator('li', { hasText: 'Does Working from Home Work' }).locator('.stamp')).toHaveText(/Confirmed$/);
+  await expect(margin.locator('li', { hasText: 'Does Working from Home Work' }).locator('.stamp')).toHaveText(/Verified$/);
   await page.getByRole('button', { name: 'Cite', exact: true }).click();
-  await expect(page.locator('#cite-list [role=option] .stamp')).toHaveText(/Confirmed$/);
+  await expect(page.locator('#cite-list [role=option] .stamp')).toHaveText(/Verified$/);
   await axe(page, 'write labels');
   await page.keyboard.press('Escape');
 
   await step(page, 'Export');
   const sheet = page.getByLabel('Reference list preview');
-  await expect(sheet.locator('.stamp')).toHaveText(/Confirmed$/);
+  await expect(sheet.locator('.stamp')).toHaveText(/Verified$/);
   await expect(sheet.getByText('Approved by you')).toBeVisible();
   await axe(page, 'export labels');
   await page.getByRole('button', { name: 'Copy', exact: true }).click();
   await expect(page.getByText('Copied list ready.')).toBeVisible();
   const copied = await page.evaluate(() => navigator.clipboard.readText());
   expect(copied).toContain('https://doi.org/10.1093/qje/qju032');
-  expect(copied).not.toMatch(/Confirmed|Approved by you/);
+  // Phase 2: every exported reference carries its verification status in words; the on-screen approval note stays out.
+  expect(copied).toContain('[VERIFIED]');
+  expect(copied).not.toMatch(/Approved by you/);
   await page.setViewportSize({ width: 375, height: 812 });
   await noSideways(page, 'export');
   expect(errors).toEqual([]);

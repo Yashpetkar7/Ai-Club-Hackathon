@@ -12,7 +12,7 @@ test('live: sample check and a real search', async ({ page }) => {
   await page.goto('/#/check');
   await page.getByRole('button', { name: 'Try a sample' }).click();
   await expect(page.getByText('5 references checked')).toBeVisible({ timeout: 60_000 });
-  for (const t of ['2 confirmed', '1 wrong paper', '1 retracted', '1 not found']) await expect(page.locator('.stamp', { hasText: t })).toBeVisible();
+  for (const t of ['2 verified', '1 mismatch', '1 retracted', '1 not found']) await expect(page.locator('.stamp', { hasText: t })).toBeVisible();
   await page.goto('/#/projects');
   await page.getByLabel('What are you researching?').fill('Does remote work improve employee productivity?');
   await page.getByRole('button', { name: 'Start project' }).click();

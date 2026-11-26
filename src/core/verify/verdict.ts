@@ -15,6 +15,8 @@ export interface Registries {
   dataciteByDoi(doi: string): Promise<RegistryRecord | null>;
   doiExists(doi: string): Promise<boolean>;
   crossrefSearch(query: string): Promise<RegistryRecord[]>;
+  /** A second, independent title search. Optional so recorded tests can leave it out; when present it is always asked. */
+  openalexSearch?(query: string, hint?: { title?: string; year?: number }): Promise<RegistryRecord[]>;
   /** The shipped Retraction Watch index. null means it has no notice for this DOI. Optional: it can only add a warning. */
   retractionWatch?(doi: string): Promise<RwEntry | null>;
 }
@@ -66,10 +68,11 @@ export async function checkReference(ref: RawReference, reg: Registries, now: ()
     ...(record ? { record } : {}),
   });
 
-  const judge = async (rec: RegistryRecord, viaDoi: boolean): Promise<ReferenceCheck> => {
+  const judge = async (rec: RegistryRecord, viaDoi: boolean, corroborated = false): Promise<ReferenceCheck> => {
     let c = compare(ref, rec);
     let record = rec;
-    let second: 'answered' | 'silent' | 'none' = 'none';
+    // A record without a DOI can still be vouched for by the other registry's own search finding the same work.
+    let second: 'answered' | 'silent' | 'none' = corroborated ? 'answered' : 'none';
     if (rec.doi) {
       const oa = await timed(trace, 'openalex', () => reg.openalexByDoi(rec.doi!), (v) => (v ? 'match' : 'not-found'));
       second = oa.ok ? 'answered' : 'silent';
@@ -96,12 +99,29 @@ export async function checkReference(ref: RawReference, reg: Registries, now: ()
     }
     const bareDoi = viaDoi && !ref.title && !ref.authors?.length && tokens(ref.raw).length <= 8;
     if (viaDoi && !bareDoi && ref.title && c.title < 0.6) return done('wrong-paper', ['DOI_IS_ANOTHER_PAPER'], record, c);
+    // The DOI opens a work by entirely different people: not a typo in one name, a different paper's identity.
+    if (viaDoi && !bareDoi && (ref.authors?.length ?? 0) > 0 && !c.authorsUnknown && record.authors.length > 0 && c.authors === 0 && !c.firstAuthor)
+      return done('wrong-paper', ['DOI_IS_ANOTHER_PAPER', 'AUTHOR_DIFFERS'], record, c);
     if (record.retracted) return done('retracted', ['RETRACTED', ...(bareDoi ? [] : reasonsFrom(c))], record, c);
     // A clean match that only one registry could vouch for is never shown as Confirmed.
     const clean = (): ReferenceCheck => (second === 'answered' ? done('confirmed', [], record, c) : done('one-registry', ['SECOND_REGISTRY_UNREACHABLE'], record, c));
     if (bareDoi) return clean();
     const reasons = reasonsFrom(c);
     if (c.title >= th.titleMatch && !reasons.length) return clean();
+    return done('details-differ', reasons.length ? reasons : ['TITLE_DIFFERS'], record, c);
+  };
+
+  /** A record OpenAlex found. It is not asked to vouch for itself: `second` is the Crossref or DataCite answer. */
+  const judgeOpenAlex = async (rec: RegistryRecord, vouched: boolean): Promise<ReferenceCheck> => {
+    const c = compare(ref, rec);
+    let record = rec;
+    if (record.doi && reg.retractionWatch) {
+      const rw = await timed(trace, 'retraction-watch', () => reg.retractionWatch!(record.doi!), (v) => (v ? 'match' : 'not-found'));
+      if (rw.ok) record = withRetractionWatch(record, rw.value);
+    }
+    if (record.retracted) return done('retracted', ['RETRACTED', ...reasonsFrom(c)], record, c);
+    const reasons = reasonsFrom(c);
+    if (c.title >= th.titleMatch && !reasons.length) return vouched ? done('confirmed', [], record, c) : done('one-registry', ['SECOND_REGISTRY_UNREACHABLE'], record, c);
     return done('details-differ', reasons.length ? reasons : ['TITLE_DIFFERS'], record, c);
   };
 
@@ -123,28 +143,53 @@ export async function checkReference(ref: RawReference, reg: Registries, now: ()
   if (!searchable) {
     if (doiMissing) return done('not-found', ['DOI_DOES_NOT_EXIST']);
     if (doiUnknown) return done('could-not-check', ['REGISTRY_UNREACHABLE']);
+    if (!ref.doi && webUrl(ref)) return done('web-source', ['WEB_SOURCE']);
     return done('not-found', ['NOT_ENOUGH_TO_SEARCH']);
   }
 
   const s = await timed(trace, 'crossref', () => reg.crossrefSearch(query), (v) => (v.length ? 'match' : 'no-match'), (v) => `${v.length} candidates`);
-  if (!s.ok) return done('could-not-check', ['REGISTRY_UNREACHABLE', ...(doiMissing ? (['DOI_DOES_NOT_EXIST'] as ReasonCode[]) : [])]);
-  const best = s.value.map((r) => ({ r, c: compare(ref, r) })).sort((a, b) => rank(b.c) - rank(a.c))[0];
-  const last = trace[trace.length - 1]!;
+  const crTrace = trace[trace.length - 1]!;
+  const o = reg.openalexSearch ? await timed(trace, 'openalex', () => reg.openalexSearch!(query, { ...(ref.title ? { title: ref.title } : {}), ...(ref.year ? { year: ref.year } : {}) }), (v) => (v.length ? 'match' : 'no-match'), (v) => `${v.length} candidates`) : null;
+  const oaTrace = o ? trace[trace.length - 1]! : null;
+  // Not found needs every registry asked to have answered. One silent registry makes it Could not check.
+  if (!s.ok && (!o || !o.ok)) return done('could-not-check', ['REGISTRY_UNREACHABLE', ...(doiMissing ? (['DOI_DOES_NOT_EXIST'] as ReasonCode[]) : [])]);
+  const pool = [...(s.ok ? s.value.map((r) => ({ r, from: 'crossref' as const })) : []), ...(o?.ok ? o.value.map((r) => ({ r, from: 'openalex' as const })) : [])];
+  const ranked = pool.map((x) => ({ ...x, c: compare(ref, x.r) })).sort((a, b) => rank(b.c) - rank(a.c));
+  const best = ranked[0];
+  const credible = (x: (typeof ranked)[number]) => x.c.title >= th.titlePossible && !(!x.c.firstAuthor && x.c.authors === 0 && x.c.title < 0.97);
+  const silent = !s.ok || (!!o && !o.ok);
 
-  if (!best || best.c.title < th.titlePossible) {
-    last.status = 'no-match';
-    if (doiUnknown) return done('could-not-check', ['REGISTRY_UNREACHABLE']);
-    return done('not-found', doiMissing ? ['DOI_DOES_NOT_EXIST', 'NO_MATCH_IN_REGISTRIES'] : ['NO_MATCH_IN_REGISTRIES']);
+  if (!best || !credible(best)) {
+    if (s.ok) crTrace.status = 'no-match';
+    if (o?.ok && oaTrace) oaTrace.status = 'no-match';
+    if (doiUnknown || silent) return done('could-not-check', ['REGISTRY_UNREACHABLE', ...(doiMissing ? (['DOI_DOES_NOT_EXIST'] as ReasonCode[]) : [])]);
+    // A web page is not a scholarly record. Saying "not found" would imply it is suspect.
+    if (!ref.doi && webUrl(ref)) return done('web-source', ['WEB_SOURCE']);
+    return done('not-found', doiMissing ? ['DOI_DOES_NOT_EXIST', 'NO_MATCH_IN_REGISTRIES'] : ['NO_MATCH_IN_REGISTRIES'], undefined, best?.c);
   }
-  if (!best.c.firstAuthor && best.c.authors === 0 && best.c.title < 0.97) {
-    last.status = 'no-match';
-    return done('not-found', doiMissing ? ['DOI_DOES_NOT_EXIST', 'NO_MATCH_IN_REGISTRIES'] : ['NO_MATCH_IN_REGISTRIES'], undefined, best.c);
+  if (best.from === 'crossref' && oaTrace && o?.ok && !ranked.some((x) => x.from === 'openalex' && credible(x))) oaTrace.status = 'no-match';
+  if (best.from === 'openalex' && s.ok && !ranked.some((x) => x.from === 'crossref' && credible(x))) crTrace.status = 'no-match';
+  // The other registry's search found the same work (title and first author), so the record is vouched for twice.
+  let other = ranked.some((x) => x.from !== best.from && x.c.title >= th.titleMatch && x.c.firstAuthor && (x.c.yearGap ?? 0) <= th.yearTolerance);
+  // Found by OpenAlex: the second, independent voice must be Crossref or DataCite holding the same DOI.
+  if (best.from === 'openalex' && best.r.doi) {
+    const cr = await timed(trace, 'crossref', () => reg.crossrefByDoi(best.r.doi!), (v) => (v ? 'match' : 'not-found'));
+    const dc = cr.ok && cr.value ? null : await timed(trace, 'datacite', () => reg.dataciteByDoi(best.r.doi!), (v) => (v ? 'match' : 'not-found'));
+    const got = cr.ok && cr.value ? cr.value : dc?.ok ? dc.value : null;
+    other = !!got && compare(ref, got).title >= th.titleMatch;
   }
-  const res = await judge(best.r, false);
+  const res = best.from === 'openalex' ? await judgeOpenAlex(best.r, other) : await judge(best.r, false, !best.r.doi && other);
   // The DOI could not be looked up and the search led to a work with another DOI: we cannot tell which is right.
   if (doiUnknown && res.record?.doi !== ref.doi) return { ...res, verdict: 'could-not-check', reasons: ['REGISTRY_UNREACHABLE'] };
   if (doiMissing && res.verdict !== 'retracted') {
     return { ...res, verdict: 'details-differ', reasons: ['DOI_DOES_NOT_EXIST', ...res.reasons], fields: [...res.fields, { field: 'doi', given: ref.doi!, registry: res.record?.doi ?? 'none', score: 0, ok: false }] };
   }
   return res;
+}
+
+/** A link to an ordinary web page, not to a DOI or a scholarly landing page we can look up. */
+export function webUrl(ref: RawReference): string | null {
+  const u = ref.url ?? ref.raw.match(/https?:\/\/[^\s<>"]+/)?.[0];
+  if (!u || /(^|\.)doi\.org\//i.test(u)) return null;
+  return u.replace(/[.,;)]+$/, '');
 }

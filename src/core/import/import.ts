@@ -1,3 +1,4 @@
+import { extractReferences } from '@/core/verify/parse';
 import type { RawReference, Source } from '@/core/contracts';
 import { registries } from '@/core/registries';
 import { findDoi } from '@/core/verify/normalise';
@@ -11,6 +12,12 @@ export interface Added { source: Source; isNew: boolean }
 export function refFromLine(line: string): RawReference | null {
   const t = line.trim();
   const doi = findDoi(t);
+  // Phase 2: a full reference (APA, Harvard, IEEE, Vancouver...) keeps its title, authors and year, so the Checker
+  // compares every field. Only a bare DOI or DOI link is looked up by DOI alone.
+  const rest = t.replace(/https?:\/\/(dx\.)?doi\.org\/\S+|\bdoi:\s*\S+|\b10\.\d{4,9}\/\S+/gi, '').trim();
+  if (doi && rest.split(/\s+/).filter(Boolean).length <= 2) return { raw: t, doi };
+  const parsed = rest.split(/\s+/).length >= 4 ? extractReferences(t).references[0] : undefined;
+  if (parsed && (parsed.title || parsed.authors?.length)) return { ...parsed, raw: t, ...(doi && !parsed.doi ? { doi } : {}) };
   if (doi) return { raw: t, doi };
   return t.split(/\s+/).length >= 3 ? { raw: t, title: t } : null;
 }

@@ -7,6 +7,8 @@ import { formatSources, LIST_HEADING, STYLE_NAME, type Formatted, type StyleFile
 import { saveFile, toBibtex, toDocx, toRis, toText } from '@/core/cite/export';
 import { loadStyle } from '@/core/cite/load';
 import { preflight, reasonNotes, titleOf } from '@/core/cite/preflight';
+import { tagOf } from '@/core/cite/export';
+import type { Source } from '@/core/contracts';
 import type { CitationStyle } from '@/core/contracts';
 import { statementLines } from '@/core/report/statement';
 import { claimTrail, trailLines } from '@/core/report/trail';
@@ -16,6 +18,15 @@ import { setStyle } from '@/store/actions';
 import { db } from '@/store/db';
 import { ClaimStamp, SourceStamp } from '@/ui/Stamp';
 import css from './Export.module.css';
+
+/** Retractions and web sources stay visible in the AI-use statement too. */
+const phase2Statement = (list: Source[]): string[] => [
+  ...list.filter((s) => s.check?.verdict === 'retracted').map((s) => `A retracted work is cited: ${titleOf(s)} ${tagOf(s)}${s.retractionAcknowledged ? ` The student acknowledged the retraction: “${s.retractionAcknowledged.text}”.` : ''}`),
+  ...list.filter((s) => s.check?.verdict === 'web-source' || (s.origin === 'web' && !s.check)).map((s) => `${titleOf(s)} is a web source. Scholarly database verification does not apply and was not performed.`),
+  'No reference status in this document was set by an AI. Statuses come only from database lookups compared by plain code; the student made every decision to keep, fix or merge.',
+];
+/** Every reference in the library with its status, including those left out of the list. */
+const appendixLines = (all: Source[], list: Source[]): string[] => all.map((s) => `${list.includes(s) ? 'In the list' : 'Left out of the list'}: ${titleOf(s)} ${tagOf(s)}`);
 
 export function Export({ project }: StepProps) {
   const sources = useLiveQuery(() => db.sources.where('projectId').equals(project.id).toArray(), [project.id]);
@@ -94,6 +105,16 @@ export function Export({ project }: StepProps) {
           <Link to={`/p/${project.id}/library`}>Decide in the library</Link>
         </section>
       )}
+      <details className="stack" open>
+        <summary>Verification status of every reference ({sources.length})</summary>
+        <ul aria-label="Verification status of every reference">
+          {sources.map((s) => (
+            <li key={s.id}>
+              <strong>{tagOf(s)}</strong> {titleOf(s)} <span className="soft">{list.includes(s) ? 'in the list' : 'left out of the list'}</span>
+            </li>
+          ))}
+        </ul>
+      </details>
       {drafted.unknown.length > 0 && (
         <p role="alert" className={css.warn}>
           Your draft cites {drafted.unknown.join('; ')}, which {drafted.unknown.length === 1 ? 'is' : 'are'} not in your library.
@@ -164,13 +185,13 @@ export function Export({ project }: StepProps) {
                     </p>
                     {s && (
                       <span className={css.trust}>
-                        <SourceStamp s={s} /> {s.keptWithReason ? 'Kept with your reason' : 'Approved by you'}
+                        <SourceStamp s={s} /> <strong data-tag>{tagOf(s)}</strong> {s.keptWithReason ? 'Kept with your reason' : 'Approved by you'}
                       </span>
                     )}
                   </div>
                 );
               })}
-              <p className={css.trust}>The labels are for you. They are not in the list you copy or download.</p>
+              <p className={css.trust}>Each reference carries its verification status in brackets in every export: Word, copied text, BibTeX and RIS.</p>
               {notes.length > 0 && (
                 <div className={css.notes}>
                   <h3>Notes on sources</h3>
@@ -183,7 +204,7 @@ export function Export({ project }: StepProps) {
             <div className="row">
               <button className="btn main" type="button" disabled={!out} onClick={() => void leave('Word file', async () => {
                 const { Packer } = await import('docx');
-                const doc = await toDocx({ sources: list, style, files: files!.f, question: project.question, statement: statementLines(events, project), ...(withDraft && draft.trim() ? { draft } : {}), ...(withTrail && trail.length ? { trail: trail.map(trailLines) } : {}) });
+                const doc = await toDocx({ sources: list, style, files: files!.f, question: project.question, statement: [...statementLines(events, project), ...phase2Statement(list)], appendix: appendixLines(sources, list), ...(withDraft && draft.trim() ? { draft } : {}), ...(withTrail && trail.length ? { trail: trail.map(trailLines) } : {}) });
                 saveFile('paper-trail.docx', await Packer.toBlob(doc));
               })}>
                 Word

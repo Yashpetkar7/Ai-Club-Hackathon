@@ -4,6 +4,12 @@ import { citeKey, sourceToCsl } from './csl';
 import { checkDraft, numberCitations } from './draft';
 import { formatSources, LIST_HEADING, type Entry, type StyleFiles } from './engine';
 import { mustBeExportable, reasonNotes } from './preflight';
+import { statusTag } from '@/core/verify/status';
+
+/** Phase 2: every exported reference carries its verification status, in words. */
+export const tagOf = (s: Source): string =>
+  !s.check && s.origin === 'web' ? '[NOT CHECKED – WEB SOURCE, SCHOLARLY DATABASE VERIFICATION NOT APPLICABLE]' : statusTag(s.check, { acknowledged: !!s.retractionAcknowledged || (s.check?.verdict === 'retracted' && !!s.keptWithReason) });
+const tagById = (sources: Source[], id: string): string => { const s = sources.find((x) => x.id === id); return s ? ` ${tagOf(s)}` : ''; };
 
 /** Every function here refuses a source that fails pre-flight. */
 
@@ -12,7 +18,7 @@ const NOTES = 'Notes on sources';
 export function toText(sources: Source[], style: CitationStyle, files: StyleFiles): string {
   mustBeExportable(sources);
   const notes = reasonNotes(sources);
-  return [LIST_HEADING[style], '', ...formatSources(sources, style, files).entries.map((e) => e.text), ...(notes.length ? ['', NOTES, '', ...notes] : [])].join('\n');
+  return [LIST_HEADING[style], '', ...formatSources(sources, style, files).entries.map((e) => `${e.text}${tagById(sources, e.id)}`), ...(notes.length ? ['', NOTES, '', ...notes] : [])].join('\n');
 }
 
 const BIB: Record<string, string> = { 'article-journal': 'article', 'paper-conference': 'inproceedings', book: 'book', chapter: 'incollection', report: 'techreport', thesis: 'phdthesis', webpage: 'misc', article: 'misc', dataset: 'misc', document: 'misc' };
@@ -41,7 +47,7 @@ export function toBibtex(sources: Source[]): string {
         ['publisher', c.publisher && tex(c.publisher)],
         ['doi', c.DOI],
         ['url', c.DOI ? undefined : c.URL],
-        ['note', s.keptWithReason ? tex(line(`Kept by the student with a reason: ${s.keptWithReason}`)) : undefined],
+        ['note', tex(line(`${tagOf(s)}${s.keptWithReason ? ` Kept by the student with a reason: ${s.keptWithReason}` : ''}`))],
       ];
       return `@${BIB[c.type] ?? 'misc'}{${base}${n ? String.fromCharCode(96 + n + 1) : ''},\n${f.filter(([, v]) => v).map(([k, v]) => `  ${k} = {${v}}`).join(',\n')}\n}`;
     })
@@ -67,7 +73,7 @@ export function toRis(sources: Source[]): string {
         ['PB', c.publisher],
         ['DO', c.DOI],
         ['UR', c.DOI ? `https://doi.org/${c.DOI}` : c.URL],
-        ['N1', s.keptWithReason ? line(`Kept by the student with a reason: ${s.keptWithReason}`) : undefined],
+        ['N1', line(`${tagOf(s)}${s.keptWithReason ? ` Kept by the student with a reason: ${s.keptWithReason}` : ''}`)],
       ];
       return `${rows.filter(([, v]) => v).map(([k, v]) => `${k}  - ${v}`).join('\r\n')}\r\nER  - \r\n`;
     })
@@ -75,7 +81,7 @@ export function toRis(sources: Source[]): string {
 }
 
 /** Word file. A hanging indent of half an inch and double spacing, with italics kept as real runs. */
-export async function toDocx(o: { sources: Source[]; style: CitationStyle; files: StyleFiles; question: string; draft?: string; statement?: string[]; trail?: string[][] }): Promise<import('docx').Document> {
+export async function toDocx(o: { sources: Source[]; style: CitationStyle; files: StyleFiles; question: string; draft?: string; statement?: string[]; trail?: string[][]; appendix?: string[] }): Promise<import('docx').Document> {
   mustBeExportable(o.sources);
   const { AlignmentType, Document, HeadingLevel, Paragraph, TabStopType, TextRun } = await import('docx');
   const font = 'Times New Roman';
@@ -97,7 +103,7 @@ export async function toDocx(o: { sources: Source[]; style: CitationStyle; files
       spacing: { line: 480 },
       indent: { left: 720, hanging: 720 },
       tabStops: [{ type: TabStopType.LEFT, position: 720 }],
-      children: [...(e.label ? [run(`${e.label}\t`)] : []), ...e.runs.map((r) => run(r.text, { ...(r.italic ? { italics: true } : {}), ...(r.bold ? { bold: true } : {}) }))],
+      children: [...(e.label ? [run(`${e.label}\t`)] : []), ...e.runs.map((r) => run(r.text, { ...(r.italic ? { italics: true } : {}), ...(r.bold ? { bold: true } : {}) })), run(tagById(list, e.id), { bold: true })],
     });
   const formatted = formatSources(list, o.style, o.files);
   body.push(head(LIST_HEADING[o.style], !!o.draft?.trim()), ...formatted.entries.map(entry));
@@ -105,6 +111,7 @@ export async function toDocx(o: { sources: Source[]; style: CitationStyle; files
   if (notes.length) body.push(head(NOTES), ...notes.map(para));
   // Each claim the student used, with the exact words of its source: the trail from claim to evidence.
   if (o.trail?.length) body.push(head('Claims and their sources'), ...o.trail.flatMap((lines) => lines.map(para)));
+  if (o.appendix?.length) body.push(head('Verification status of every reference'), ...o.appendix.map(para));
   if (o.statement?.length) body.push(head('AI-use statement'), ...o.statement.map(para));
   return new Document({ creator: 'Paper Trail', title: cleanTitle(o.question), sections: [{ children: body }] });
 }

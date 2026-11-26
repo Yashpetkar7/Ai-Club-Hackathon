@@ -45,7 +45,7 @@ test('check: the sample gets exactly the verdicts we promise', async ({ page }) 
   await page.getByRole('button', { name: 'Try a sample' }).click();
   await expect(page.getByText('5 references checked')).toBeVisible({ timeout: 30_000 });
   expect(unknown).toEqual([]);
-  for (const t of ['2 confirmed', '1 wrong paper', '1 retracted', '1 not found']) await expect(page.locator('.stamp', { hasText: t })).toBeVisible();
+  for (const t of ['2 verified', '1 mismatch', '1 retracted', '1 not found']) await expect(page.locator('.stamp', { hasText: t })).toBeVisible();
   await expect(page.locator('.sample').first()).toBeVisible();
   await page.getByRole('button', { name: /ChatGPT in the classroom/ }).click();
   await expect(page.locator('article')).toContainText('Retracted on 2025-02-21');

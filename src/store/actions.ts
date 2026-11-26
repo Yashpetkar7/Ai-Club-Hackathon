@@ -47,7 +47,7 @@ export async function addSource(projectId: string, origin: SourceOrigin, input: 
     notes: '',
     addedAt: new Date().toISOString(),
     ...(rec ? { record: rec } : {}),
-    ...(input.raw ? { raw: input.raw } : {}),
+    ...(input.raw ? { raw: input.raw, original: input.raw } : {}),
     ...(input.check ? { check: input.check } : {}),
     ...(input.folder ? { folder: input.folder } : {}),
     ...(rec?.abstract ? { text: rec.abstract, textOrigin: 'abstract' as const } : {}),

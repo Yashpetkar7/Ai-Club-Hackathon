@@ -14,6 +14,7 @@ import { recordAiDecision } from '@/store/actions';
 import { db } from '@/store/db';
 import { AiMark, SourceStamp, VerdictStamp } from '@/ui/Stamp';
 import css from './Ask.module.css';
+import { Assistant } from './Assistant';
 
 interface Line { text: string; source: Source }
 interface Answer { question: string; asked: Asked; ai?: { model: string; lines: Line[] }; aiNote?: string }
@@ -67,6 +68,8 @@ export function Ask({ project }: StepProps) {
         <h1>Ask your library</h1>
         <p className="soft">The answer is made only of exact sentences from sources you approved, each with its source. If your library does not say, we tell you. {aiOn ? 'At this level the AI Reader may also point at sentences. It cannot add words.' : 'No AI takes part.'}</p>
       </div>
+      <Assistant project={project} sources={sources} />
+      <h2>Ask your library</h2>
       <form className="stack" onSubmit={(e) => void ask(e)}>
         <label htmlFor="ask-q">
           <strong>Your question</strong>

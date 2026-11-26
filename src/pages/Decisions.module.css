@@ -1,0 +1,20 @@
+.status { border: 1px solid var(--line); padding: 0.6rem 0.8rem; margin: 0.6rem 0; }
+.status p { margin: 0.15rem 0; }
+.status[data-status='VERIFIED'] strong { color: var(--ok); }
+.status[data-status='RETRACTED'] strong, .status[data-status='MISMATCH'] strong { color: var(--bad); }
+.status[data-status='NEEDS FIX'] strong { color: var(--warn); }
+.panel { border: 1px solid var(--line); padding: 0.8rem; margin: 0.8rem 0; overflow-x: auto; }
+.panel[data-kind='retracted'], .panel[data-kind='mismatch'] { border-color: var(--bad); border-left-width: 4px; }
+.panel[data-kind='fix'] { border-left: 4px solid var(--warn); }
+.panel h3 { margin: 0 0 0.5rem; font-size: 1.05rem; }
+.sides { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.sides h4 { margin: 0 0 0.3rem; font-size: 0.95rem; }
+.sides dl { display: grid; grid-template-columns: max-content 1fr; gap: 0.2rem 0.6rem; margin: 0; }
+.sides dt { color: var(--soft); }
+.sides dd { margin: 0; overflow-wrap: anywhere; }
+.fix { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+.fix th, .fix td { border-top: 1px solid var(--line); padding: 0.4rem; text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+.history { margin: 0.6rem 0; }
+.history ol { padding-left: 1.2rem; font-size: 0.9rem; }
+.history li { margin: 0.3rem 0; }
+@media (max-width: 640px) { .sides { grid-template-columns: 1fr; } }

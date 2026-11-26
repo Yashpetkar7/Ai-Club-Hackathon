@@ -9,7 +9,7 @@ export type AiLevel = 0 | 1 | 2 | 3;
 export type RegistryName = 'crossref' | 'openalex' | 'datacite' | 'doi.org' | 'retraction-watch';
 
 /** Verdict on whether a reference is real. Only code in core/verify may create one. */
-export type Verdict = 'confirmed' | 'one-registry' | 'details-differ' | 'wrong-paper' | 'retracted' | 'not-found' | 'could-not-check';
+export type Verdict = 'confirmed' | 'one-registry' | 'details-differ' | 'wrong-paper' | 'retracted' | 'not-found' | 'could-not-check' | 'web-source';
 
 /** Label on a claim. Only code in core/claims may create one. */
 export type ClaimLabel = 'verified' | 'reported' | 'ai-reasoning' | 'disputed' | 'not-found';
@@ -35,7 +35,8 @@ export type ReasonCode =
   | 'NO_READABLE_TEXT'
   | 'MODEL_UNSURE'
   | 'CONTRADICTED_BY_SOURCE'
-  | 'INSTRUCTION_IN_SOURCE';
+  | 'INSTRUCTION_IN_SOURCE'
+  | 'WEB_SOURCE';
 
 /** A reference as the student (or an AI tool) wrote it. Nothing here is trusted. */
 export interface RawReference {
@@ -172,8 +173,16 @@ export interface Source {
   retractedRefs?: { at: string; items: { id: string; title: string; doi?: string; year?: number }[] };
   /** Set when the student keeps a flagged source. Shown on every export. */
   keptWithReason?: string;
+  /** The reference exactly as first submitted. Written once, never changed: fixes go to raw, this stays. */
+  original?: RawReference;
+  /** Every suggested correction the student accepted or rejected. */
+  fixes?: FixDecision[];
+  /** Set when the student acknowledged a retraction in writing. */
+  retractionAcknowledged?: { at: string; text: string };
   addedAt: string;
 }
+
+export interface FixDecision { field: FieldDiff['field']; decision: 'accepted' | 'rejected'; from: string; to: string; evidence: string; at: string }
 
 export interface Passage {
   id: string;
@@ -259,13 +268,14 @@ export interface LabelText {
 }
 
 export const VERDICT_TEXT: Record<Verdict, LabelText> = {
-  confirmed: { label: 'Confirmed', tone: 'ok', mark: '✓', plain: 'A registry has this exact work.' },
-  'one-registry': { label: 'One registry only', tone: 'mute', mark: '1', plain: 'One registry has this exact work. The second did not answer, so a retraction could be missed. Check again before you rely on it.' },
-  'details-differ': { label: 'Details differ', tone: 'warn', mark: '≠', plain: 'The work is real, but something you wrote does not match the registry.' },
-  'wrong-paper': { label: 'Wrong paper', tone: 'bad', mark: '⇄', plain: 'The DOI is real and belongs to a different work.' },
-  retracted: { label: 'Retracted', tone: 'bad', mark: '✕', plain: 'The publisher has withdrawn this work.' },
+  confirmed: { label: 'Verified', tone: 'ok', mark: '✓', plain: 'Two registries have this exact work: title, authors and year match, and no retraction is recorded.' },
+  'one-registry': { label: 'Not checked', tone: 'mute', mark: '1', plain: 'One registry has this exact work. The second did not answer, so a retraction could be missed. Check again before you rely on it.' },
+  'details-differ': { label: 'Needs fix', tone: 'warn', mark: '≠', plain: 'The work is real, but something you wrote does not match the registry. Accept or reject each suggested fix.' },
+  'wrong-paper': { label: 'Mismatch', tone: 'bad', mark: '⇄', plain: 'The DOI is real and belongs to a different work.' },
+  retracted: { label: 'Retracted', tone: 'bad', mark: '✕', plain: 'The publisher has withdrawn this work. Do not cite it without acknowledging the retraction.' },
   'not-found': { label: 'Not found', tone: 'mute', mark: '?', plain: 'This could not be verified. None of the registries we searched has it. Some real books and regional journals are not indexed.' },
-  'could-not-check': { label: 'Could not check', tone: 'mute', mark: '…', plain: 'This could not be verified. A registry did not answer, so it is neither a pass nor a fail.' },
+  'could-not-check': { label: 'Not checked', tone: 'mute', mark: '…', plain: 'Could not check. Try again. A registry did not answer, so it is neither a pass nor a fail.' },
+  'web-source': { label: 'Not checked', tone: 'mute', mark: '⌂', plain: 'Web source. Scholarly databases do not hold web pages, so database verification does not apply. Check the page yourself.' },
 };
 
 export const CLAIM_TEXT: Record<ClaimLabel, LabelText> = {
@@ -297,6 +307,7 @@ export const REASON_TEXT: Record<ReasonCode, string> = {
   MODEL_UNSURE: 'The support check was not sure.',
   CONTRADICTED_BY_SOURCE: 'The source contradicts this.',
   INSTRUCTION_IN_SOURCE: 'The source text contains instructions aimed at an AI. They were ignored.',
+  WEB_SOURCE: 'This is a web page, not a scholarly record. Database verification does not apply.',
 };
 
 /** The only place that decides whether a source may be cited. */

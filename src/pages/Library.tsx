@@ -12,6 +12,9 @@ import { cleanTitle } from '@/core/verify/normalise';
 import { sourceIssues } from '@/policy/apply';
 import { POLICY } from '@/policy/policy';
 import { Duplicates, RetractionCheck } from '@/pages/LibraryChecks';
+import { FixPanel, History, RetractionAck, StatusLine } from '@/pages/Decisions';
+import { STATUSES, statusOf, type Status as RefStatus } from '@/core/verify/status';
+import { recheckDecision, saveNote } from '@/store/decisions';
 import { approveSource, citable, editSource, removeSource } from '@/store/actions';
 import { db } from '@/store/db';
 import { PdfDrop } from '@/ui/PdfDrop';
@@ -48,7 +51,7 @@ export function KeyRow({ s }: { s: Source }) {
 export function Library({ project }: StepProps) {
   const sources = useLiveQuery(() => db.sources.where('projectId').equals(project.id).toArray(), [project.id]);
   const [q, setQ] = useState('');
-  const [verdict, setVerdict] = useState<'all' | Verdict | 'none'>('all');
+  const [verdict, setVerdict] = useState<'all' | RefStatus>('all');
   const [status, setStatus] = useState<Status>('all');
   const [folder, setFolder] = useState('all');
   const [tag, setTag] = useState('all');
@@ -66,7 +69,7 @@ export function Library({ project }: StepProps) {
       const hay = [titleOf(s), by(s), yearOf(s), s.record?.container, s.record?.doi, s.notes, s.tags.join(' '), s.folder].join(' ').toLowerCase();
       return (
         words.every((w) => hay.includes(w)) &&
-        (verdict === 'all' || (verdict === 'none' ? !s.check : s.check?.verdict === verdict)) &&
+        (verdict === 'all' || statusOf(s.check) === verdict) &&
         (status === 'all' || (status === 'citable') === citable(s)) &&
         (folder === 'all' || (folder === 'none' ? !s.folder : s.folder === folder)) &&
         (tag === 'all' || s.tags.includes(tag))
@@ -75,7 +78,6 @@ export function Library({ project }: StepProps) {
     .sort((a, b) =>
       sort === 'author' ? by(a).localeCompare(by(b)) : sort === 'year' ? (yearOf(b) ?? 0) - (yearOf(a) ?? 0) : sort === 'title' ? titleOf(a).localeCompare(titleOf(b)) : b.addedAt.localeCompare(a.addedAt),
     );
-  const present = [...new Set(sources.map((s) => s.check?.verdict).filter((v): v is Verdict => !!v))];
   const ready = sources.filter((s) => citable(s)).length;
   const current = sources.find((s) => s.id === open);
 
@@ -119,15 +121,14 @@ export function Library({ project }: StepProps) {
               </select>
             </label>
             <label>
-              <span>Label</span>
-              <select className="field" value={verdict} onChange={(e) => setVerdict(e.target.value as Verdict)}>
-                <option value="all">All</option>
-                {present.map((v) => (
+              <span>Verification</span>
+              <select className="field" aria-label="Verification status" value={verdict} onChange={(e) => setVerdict(e.target.value as RefStatus)}>
+                <option value="all">All references</option>
+                {STATUSES.map((v) => (
                   <option key={v} value={v}>
-                    {VERDICT_TEXT[v].label}
+                    {v.charAt(0) + v.slice(1).toLowerCase()} ({sources.filter((x) => statusOf(x.check) === v).length})
                   </option>
                 ))}
-                {sources.some((s) => !s.check) && <option value="none">Not checked</option>}
               </select>
             </label>
             {folders.length > 0 && (
@@ -211,6 +212,7 @@ function Detail({ s, folders, onClose }: { s: Source; folders: string[]; onClose
   const [tags, setTags] = useState(s.tags.join(', '));
   const [folder, setFolder] = useState(s.folder ?? '');
   const [notes, setNotes] = useState(s.notes);
+  const [noteSaid, setNoteSaid] = useState('');
   const [title, setTitle] = useState(s.citeTitle ?? sentenceCase(titleOf(s)).text);
   const clean = isClean(s);
   const issues = sourceIssues(s);
@@ -228,7 +230,7 @@ function Detail({ s, folders, onClose }: { s: Source; folders: string[]; onClose
   }
   const again = () =>
     attempt(async () => {
-      const r = await checkAgain(s);
+      const r = await recheckDecision(s.id);
       if (!r.ok) throw new Error(`A registry did not answer, so the result from ${new Date(s.check!.checkedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} stays.`);
     });
 
@@ -263,6 +265,9 @@ function Detail({ s, folders, onClose }: { s: Source; folders: string[]; onClose
           )}
         </div>
       )}
+      <StatusLine s={s} />
+      <FixPanel s={s} />
+      <RetractionAck s={s} />
       {issues.map((x) => (
         <p key={x} className={css.warn}>
           {x}
@@ -342,7 +347,13 @@ function Detail({ s, folders, onClose }: { s: Source; folders: string[]; onClose
         className={css.notes}
         onSubmit={(e) => {
           e.preventDefault();
-          void attempt(() => editSource(s.id, { folder: folder.trim(), tags: [...new Set(tags.split(',').map((t) => t.trim().replace(/^#/, '')).filter(Boolean))], notes }));
+          void attempt(async () => {
+            await editSource(s.id, { folder: folder.trim(), tags: [...new Set(tags.split(',').map((t) => t.trim().replace(/^#/, '')).filter(Boolean))] });
+            if (notes !== s.notes) {
+              const r = await saveNote(s.id, notes);
+              setNoteSaid(r.flagged.length ? `Saved as plain text. This note reads like an instruction to an AI (“${r.flagged[0]}”). It changes nothing: status stays ${r.statusAfter}, no rule or other reference was touched.` : 'Note saved.');
+            }
+          });
         }}
       >
         <label>
@@ -365,7 +376,9 @@ function Detail({ s, folders, onClose }: { s: Source; folders: string[]; onClose
         <button className="btn" type="submit" disabled={busy || (folder === (s.folder ?? '') && tags === s.tags.join(', ') && notes === s.notes)}>
           Save notes
         </button>
+        {noteSaid && <p role="status" className="soft">{noteSaid}</p>}
       </form>
+      <History s={s} />
 
       {(cased.check.length > 0 || s.citeTitle) && (
         <form
