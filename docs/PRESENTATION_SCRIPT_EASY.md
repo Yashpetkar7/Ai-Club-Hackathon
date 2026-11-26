@@ -122,7 +122,7 @@ The one line everyone must know:
 | `04b` wrong DOI | Siddal | "Here the DOI is real, but it opens a paper by different authors. A working link is **not** proof. Result: **Mismatch**, shown side by side." |
 | `04c` small error | Siddal | "Right paper, wrong year: 1981 instead of 1979. We **suggest** the fix and show where it came from. You click **Accept** or **Reject**. We never fix it silently, and your original stays in the history." |
 | `04d` retracted | Yash | "This famous paper was withdrawn in 2010. Result: **Retracted**, with the date and the reasons. You can only use it if you write why, and the warning follows it into every export." |
-| `04e` duplicate | Yash | "The same paper pasted twice in two styles. We spot it, show both, and **you** choose: merge or keep separate." |
+| `04e` duplicate | Yash | "The same paper pasted twice in two styles. We spot that it's the same paper by its DOI and keep **one copy**. If two entries are different versions, like a preprint and the published paper, we show both and **you** choose: keep one, or 'they are different works'." |
 | `04f` no research | Yash | "Someone asks for three studies that don't exist. Most AI tools would invent three. We return **zero**, and say so honestly." |
 
 ---
