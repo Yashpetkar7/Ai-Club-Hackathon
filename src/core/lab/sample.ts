@@ -17,7 +17,7 @@ export interface RecordedSample {
 
 const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const digestPattern = /^[a-f0-9]{64}$/;
-async function digest(value: unknown): Promise<string> {
+export async function digest(value: unknown): Promise<string> {
   if (!globalThis.crypto?.subtle) throw new Error('This browser cannot verify the recorded sample integrity. Live checks are still available when online.');
   const bytes = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify(value)));
   return [...new Uint8Array(bytes)].map((n) => n.toString(16).padStart(2, '0')).join('');

@@ -33,3 +33,43 @@
 .comparison dt { font-weight: 600; }
 .comparison dd { margin: 4px 0 0; overflow-wrap: anywhere; }
 @media (max-width: 620px) { .case, .recording, .miss { padding: 16px; } }
+
+/* How accurate is it? */
+.bench { border-bottom: 1px solid var(--line); padding-bottom: var(--s4); gap: var(--s3); }
+.bench h3 { font-size: 1.35rem; }
+.caveat { border: 1px solid var(--line); background: var(--raise); padding: 14px 16px; display: grid; gap: 8px; min-width: 0; }
+.caveat ul, .facts, .reasons { margin: 0; padding-left: 20px; display: grid; gap: 6px; min-width: 0; }
+.caveat li, .facts li, .reasons li { overflow-wrap: anywhere; max-width: 72ch; }
+.cards { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); min-width: 0; }
+.metric { padding: 16px 18px; display: grid; gap: 4px; align-content: start; min-width: 0; }
+.metric h4 { font-family: var(--body); font-size: 0.95rem; font-weight: 700; }
+.metric p { font-size: 0.9rem; }
+.metric .figure { font-family: var(--display); font-size: 2rem; line-height: 1.15; color: var(--ink); font-variant-numeric: tabular-nums; }
+.metric[data-bad='true'] { border-color: var(--bad); }
+.metric[data-bad='true'] h4 { color: var(--bad); }
+.compact { border-collapse: collapse; width: 100%; min-width: 30rem; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+.compact caption { text-align: left; padding: 12px 14px; color: var(--soft); }
+.compact th, .compact td { text-align: left; padding: 9px 14px; border-top: 1px solid var(--line); vertical-align: top; overflow-wrap: break-word; }
+.compact thead th { background: var(--raise); font-weight: 600; }
+.compact tbody th { font-weight: 600; }
+.cellNote { font-weight: 400; color: var(--soft); font-size: 0.84rem; }
+.figureBox { margin: 0; display: grid; gap: var(--s2); min-width: 0; }
+.chart { display: block; width: 100%; max-width: 520px; height: auto; background: var(--sheet); border: 1px solid var(--line); }
+.chart text { fill: var(--soft); font-family: var(--body); font-size: 13px; }
+.grid { stroke: var(--line); stroke-width: 1; }
+.policy { stroke: var(--soft); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.precision, .recall { fill: none; stroke-width: 2; stroke-linejoin: round; }
+.precision { stroke: var(--accent); }
+.recall { stroke: var(--ink); }
+.precisionDot { fill: var(--accent); stroke: var(--sheet); stroke-width: 2; }
+.recallDot { fill: var(--ink); stroke: var(--sheet); stroke-width: 2; }
+.legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 0.9rem; color: var(--soft); }
+.legend li { display: flex; gap: 10px; align-items: center; overflow-wrap: anywhere; }
+.key { flex: none; width: 24px; height: 10px; overflow: visible; align-self: center; }
+.claimMiss { padding: 16px 20px; display: grid; gap: 8px; min-width: 0; }
+.claimMiss[data-serious='true'] { border-color: var(--bad); }
+.claimMiss[data-serious='true'] > strong { color: var(--bad); }
+.quote { margin: 0; padding-left: 14px; border-left: 2px solid var(--line); overflow-wrap: anywhere; max-width: 72ch; }
+.retrieval { border-top: 1px solid var(--line); padding-top: var(--s3); }
+.progress { width: 100%; max-width: 420px; accent-color: var(--accent); }
+@media (max-width: 620px) { .claimMiss, .metric { padding: 14px 16px; } .compact { min-width: 26rem; } }

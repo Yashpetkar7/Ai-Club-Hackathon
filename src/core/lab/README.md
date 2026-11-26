@@ -59,3 +59,21 @@ LAB_WRITE_SAMPLE=1 npx vitest run tests/unit/lab-recording.test.ts --disableCons
 Without `LAB_WRITE_SAMPLE=1`, the test reruns the checker and compares the result content with the stored artifact; it does not write files. It refuses `RECORD=1` and never fills missing registry responses. `sample.ts` checks the artifact's content hash, corpus identity, mode and provenance before exposing an immutable snapshot. These checks detect mismatches; they are not an external signature or proof of complete history.
 
 Live registry availability, real-browser cancellation interaction, contrast, visual layout and 375 px rendering still need browser validation. Unit and jsdom structural checks do not establish those results.
+
+## How accurate is it? (claim benchmark and metrics)
+
+The Lab page opens with numbers worked out in the browser on every visit, with no network:
+
+- `claims-eval.json` is a browser copy of `tests/claims-set.ts` (FALSE_CLAIMS 42, TRUE_CLAIMS 14) and `tests/claims-holdout-set.ts` (HOLD_FALSE 38, HOLD_TRUE 10), the 8 real abstracts in `tests/unit/fixtures/abstracts.json` and the recorded support-model scores in `tests/unit/fixtures/nli.json`. Its provenance block names the source files and their SHA-256 values (line endings normalised), the model, when the scores were recorded, and the hold-out caveat copied word for word from its file. `tests/unit/lab-claims-eval.test.ts` rebuilds it from those files and fails when the copy drifts. Refresh it only after a reviewed source change:
+
+  ```sh
+  LAB_WRITE_CLAIMS=1 npx vitest run tests/unit/lab-claims-eval.test.ts
+  ```
+
+- Each claim stores the sentence its recorded score belongs to (`premise`). `nli.json` does not store it; it is the closest sentence by shared words, the way `tests/e2e/model.spec.ts` records it. On 26 November 2026 the ranking code at commit 5827eca (where `nli.json` was committed) and the current code picked the same sentence for all 104 claims. If the ranking ever picks another sentence, the drift test fails and the page leaves that score out instead of applying it to the wrong sentence. Record again with `MODEL=1`.
+- `claims-data.ts` checks the copy's hash, kinds, counts, gold labels per set and score ranges before anything is shown.
+- `metrics.ts` runs the real `rankSentences` and `judge()` over every claim three ways (recorded scores, no model, model forced to say yes), and works out the confusion matrix, false-Verified rate, precision, recall, F1 and Wilson 95% intervals; the support score alone by threshold, its ROC AUC and Brier score; and the contradiction score alone. Each claim is judged as if its source had passed the reference check, so only the claim checker is measured; that input is never stored or shown as a verdict. For the reference checker it reads `evaluateCase` over the recorded replay: detection on invented cases, false alarms on real controls and coverage, each with its denominator. Cases without an answer are left out of the rates and listed; they are never counted as caught.
+- `retrieval.ts` compares picking sentences by shared words with picking them by meaning and words (`hybridRank`). It needs both on-device models, so it only runs when the student presses Compare on this device; unit tests use stand-in models. The support model is the referee, not a person who marked the right sentence.
+- `tests/unit/lab-metrics.test.ts` checks the numbers against `judge()` run directly on the test sets, checks that they agree with each other, and pins the values measured on 26 November 2026.
+
+These are development numbers: the team wrote the claims against 8 abstracts, the rules were tuned on both sets, and the model scores are a recording. The only genuinely held-out measurement is the hold-out set's first run, quoted from its file. This is not a comparison with any other product.

@@ -8,6 +8,7 @@ import type { ReferenceCheck } from '@/core/contracts';
 import { Lab } from '@/pages/Lab';
 import { checkReference } from '@/core/verify/verdict';
 import * as sampleLoader from '@/core/lab/sample';
+import * as benchmarkLoader from '@/core/lab/benchmark';
 import recordedSample from '@/core/lab/sample-run.json';
 
 vi.mock('@/core/verify/verdict', async (original) => ({ ...await original<typeof import('@/core/verify/verdict')>(), checkReference: vi.fn() }));
@@ -226,5 +227,47 @@ describe('Integrity Lab interface', () => {
     await user.click(screen.getAllByText('Check trace and provenance')[8]!);
     const result = await axe.run(container, { rules: { 'color-contrast': { enabled: false } } });
     expect(result.violations.map((v) => ({ id: v.id, nodes: v.nodes.length }))).toEqual([]);
+  });
+
+  it('works out how accurate it is on load, states its limits and lists every miss, without any lookup', async () => {
+    const user = userEvent.setup();
+    const { container } = mount();
+    const bench = screen.getByRole('region', { name: 'How accurate is it?' });
+    expect(within(bench).getByText(/working out the numbers/i)).toBeTruthy();
+    await within(bench).findByRole('heading', { name: 'Claim checker' });
+    expect(check).not.toHaveBeenCalled();
+    expect(bench.getAttribute('aria-busy')).toBe('false');
+    expect(within(bench).getByText(/team wrote these 104 claims against 8 real abstracts/)).toBeTruthy();
+    expect(within(bench).getByText(/Those 7 became rules, so this set is now a regression test/)).toBeTruthy();
+    expect(within(bench).getByText(/not a comparison with any other product/)).toBeTruthy();
+    const cards = within(within(bench).getByRole('list', { name: 'Claim checker numbers' })).getAllByRole('listitem');
+    expect(cards[0]!.textContent).toMatch(/False claims labelled Verified.*0 of 80.*95% range 0% to 4\.6%/);
+    expect(cards[1]!.textContent).toMatch(/True claims labelled Verified.*21 of 24/);
+    const refs = within(within(bench).getByRole('list', { name: 'Reference checker numbers' })).getAllByRole('listitem');
+    expect(refs[0]!.textContent).toMatch(/8 of 8.*without one as misses: 8 of 12/);
+    expect(within(bench).getByRole('img', { name: /support score alone decided Verified/ })).toBeTruthy();
+    expect(within(bench).getByRole('list', { name: 'Claim checker misses' }).children).toHaveLength(11);
+    expect(within(bench).getByRole('list', { name: /Reference checker misses/ }).children).toHaveLength(9);
+    await user.click(within(bench).getByText('Show the chart as a table'));
+    await user.click(within(bench).getByText('By claim set'));
+    expect(within(bench).getByRole('region', { name: 'The support score alone, by threshold' }).tabIndex).toBe(0);
+    const result = await axe.run(container, { rules: { 'color-contrast': { enabled: false } } });
+    expect(result.violations.map((v) => ({ id: v.id, nodes: v.nodes.length }))).toEqual([]);
+  });
+
+  it('says why when the recorded data does not check out, and the live checks still work', async () => {
+    vi.spyOn(benchmarkLoader, 'loadBenchmark').mockRejectedValue(new Error('The claim benchmark data does not match its hash. No numbers were worked out.'));
+    mount();
+    expect(await screen.findByText(/does not match its hash/)).toBeTruthy();
+    expect(screen.queryByRole('heading', { name: 'Claim checker' })).toBeNull();
+    expect((screen.getByRole('button', { name: 'Run live checks' }) as HTMLButtonElement).disabled).toBe(false);
+  });
+
+  it('jumps to the live checks by keyboard', async () => {
+    const user = userEvent.setup();
+    mount();
+    screen.getByRole('button', { name: 'Go to the live checks' }).focus();
+    await user.keyboard('{Enter}');
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Run live checks' }));
   });
 });
